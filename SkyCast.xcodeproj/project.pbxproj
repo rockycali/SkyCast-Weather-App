@@ -16,7 +16,7 @@
 		5F09A59D2F6C01E70027CE17 /* WeatherButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F09A5962F6C01E70027CE17 /* WeatherButton.swift */; };
 		5F09A59E2F6C01E70027CE17 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F09A5942F6C01E70027CE17 /* ContentView.swift */; };
 		5F09A59F2F6C01E70027CE17 /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F09A5992F6C01E70027CE17 /* WeatherViewModel.swift */; };
-		5F09A5A12F6C05C10027CE17 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5F09A5A02F6C05B50027CE17 /* README.md */; };
+		5F09A5A12F6C05C10027CE17 /* DEV_NOTES.md in Resources */ = {isa = PBXBuildFile; fileRef = 5F09A5A02F6C05B50027CE17 /* DEV_NOTES.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,7 @@
 		5F09A5972F6C01E70027CE17 /* WeatherModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModels.swift; sourceTree = "<group>"; };
 		5F09A5982F6C01E70027CE17 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		5F09A5992F6C01E70027CE17 /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
-		5F09A5A02F6C05B50027CE17 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5F09A5A02F6C05B50027CE17 /* DEV_NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DEV_NOTES.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +80,7 @@
 		5CB5D4EF2AE9660400EC9EE8 /* Weather-Helper */ = {
 			isa = PBXGroup;
 			children = (
-				5F09A5A02F6C05B50027CE17 /* README.md */,
+				5F09A5A02F6C05B50027CE17 /* DEV_NOTES.md */,
 				5F09A5942F6C01E70027CE17 /* ContentView.swift */,
 				5F09A5952F6C01E70027CE17 /* LocationManager.swift */,
 				5F09A5962F6C01E70027CE17 /* WeatherButton.swift */,
@@ -232,7 +232,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F09A5A12F6C05C10027CE17 /* README.md in Resources */,
+				5F09A5A12F6C05C10027CE17 /* DEV_NOTES.md in Resources */,
 				5CDB603F2AE554A800033E64 /* Preview Assets.xcassets in Resources */,
 				5CDB603C2AE554A800033E64 /* Assets.xcassets in Resources */,
 			);
