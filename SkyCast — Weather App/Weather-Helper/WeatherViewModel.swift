@@ -94,24 +94,33 @@ final class WeatherViewModel: ObservableObject {
 
     private func observeLocation() {
         locationManager.$lastLocation
-            .combineLatest(locationManager.$cityName)
-            .compactMap { (location: CLLocation?, cityName: String) -> (CLLocation, String)? in
-                guard let location else { return nil }
-                return (location, cityName)
-            }
-            .sink { [weak self] value in
+            .compactMap { $0 }
+            .removeDuplicates(by: { lhs, rhs in
+                abs(lhs.coordinate.latitude - rhs.coordinate.latitude) < 0.000001 &&
+                abs(lhs.coordinate.longitude - rhs.coordinate.longitude) < 0.000001
+            })
+            .sink { [weak self] location in
                 guard let self else { return }
-                let (location, cityName) = value
                 print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
-                let resolvedName = cityName.isEmpty ? "My Location" : cityName
                 self.currentSource = .myLocation
                 Task {
                     await self.loadWeather(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
-                        name: resolvedName
+                        name: "My Location"
                     )
                 }
+            }
+            .store(in: &cancellables)
+
+        locationManager.$cityName
+            .removeDuplicates()
+            .filter { !$0.isEmpty }
+            .sink { [weak self] cityName in
+                guard let self else { return }
+                guard case .myLocation = self.currentSource else { return }
+                print("🌦 cityName updated:", cityName)
+                self.displayName = cityName
             }
             .store(in: &cancellables)
 
