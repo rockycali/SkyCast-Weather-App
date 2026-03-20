@@ -57,10 +57,12 @@ final class WeatherViewModel: ObservableObject {
     }
 
     func requestLocation() {
+        print("🌦 requestLocation() called from WeatherViewModel")
         locationManager.requestLocation()
     }
 
     func loadWeather(latitude: Double, longitude: Double, name: String) async {
+        print("🌦 loadWeather called:", latitude, longitude, name)
         isLoading = true
         defer { isLoading = false }
 
@@ -78,6 +80,7 @@ final class WeatherViewModel: ObservableObject {
             .compactMap { $0 }
             .sink { [weak self] location in
                 guard let self else { return }
+                print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
                 Task {
                     await self.loadWeather(
                         latitude: location.coordinate.latitude,
@@ -91,6 +94,7 @@ final class WeatherViewModel: ObservableObject {
         locationManager.$errorMessage
             .compactMap { $0 }
             .sink { [weak self] message in
+                print("🌦 location error from manager:", message)
                 self?.errorMessage = message
             }
             .store(in: &cancellables)
