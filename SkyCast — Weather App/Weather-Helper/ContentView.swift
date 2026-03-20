@@ -27,9 +27,16 @@ struct ContentView: View {
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                 }
                 .refreshable {
-                    if let weather = viewModel.weather {
-                        await viewModel.searchCity(named: weather.locationName)
-                    } else {
+                    print("🔄 Pull-to-refresh triggered")
+
+                    switch viewModel.currentSource {
+                    case .myLocation:
+                        viewModel.requestLocation()
+
+                    case .city(let name):
+                        await viewModel.searchCity(named: name)
+
+                    case .default:
                         await viewModel.loadDefaultWeatherIfNeeded()
                     }
                 }
