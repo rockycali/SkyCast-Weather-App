@@ -102,7 +102,8 @@ struct CurrentWeather {
     var precipitationChanceText: String { "\(precipitationProbability)%" }
     var summary: String { WeatherCodeMapper.description(for: weatherCode) }
     var symbolName: String { WeatherCodeMapper.symbolName(for: weatherCode) }
-
+    var nightSymbolName: String { WeatherCodeMapper.nightSymbolName(for: weatherCode) }
+    
     static func formatTemperature(_ value: Double) -> String {
         "\(Int(value.rounded()))°"
     }
@@ -164,15 +165,47 @@ struct DailyForecastItem: Identifiable {
 enum WeatherCodeMapper {
     static func symbolName(for code: Int) -> String {
         switch code {
-        case 0: return "sun.max.fill"
-        case 1, 2: return "cloud.sun.fill"
-        case 3: return "cloud.fill"
-        case 45, 48: return "cloud.fog.fill"
-        case 51, 53, 55, 56, 57: return "cloud.drizzle.fill"
-        case 61, 63, 65, 66, 67, 80, 81, 82: return "cloud.rain.fill"
-        case 71, 73, 75, 77, 85, 86: return "cloud.snow.fill"
-        case 95, 96, 99: return "cloud.bolt.rain.fill"
-        default: return "cloud.fill"
+        case 0:
+            return "sun.max.fill"
+        case 1, 2:
+            return "cloud.sun.fill"
+        case 3:
+            return "cloud.fill"
+        case 45, 48:
+            return "cloud.fog.fill"
+        case 51, 53, 55, 56, 57:
+            return "cloud.drizzle.fill"
+        case 61, 63, 65, 66, 67, 80, 81, 82:
+            return "cloud.rain.fill"
+        case 71, 73, 75, 77, 85, 86:
+            return "cloud.snow.fill"
+        case 95, 96, 99:
+            return "cloud.bolt.rain.fill"
+        default:
+            return "cloud.fill"
+        }
+    }
+
+    static func nightSymbolName(for code: Int) -> String {
+        switch code {
+        case 0:
+            return "moon.stars.fill"
+        case 1, 2:
+            return "cloud.moon.fill"
+        case 3:
+            return "cloud.fill"
+        case 45, 48:
+            return "cloud.fog.fill"
+        case 51, 53, 55, 56, 57:
+            return "cloud.drizzle.fill"
+        case 61, 63, 65, 66, 67, 80, 81, 82:
+            return "cloud.rain.fill"
+        case 71, 73, 75, 77, 85, 86:
+            return "cloud.snow.fill"
+        case 95, 96, 99:
+            return "cloud.bolt.rain.fill"
+        default:
+            return "cloud.moon.fill"
         }
     }
 

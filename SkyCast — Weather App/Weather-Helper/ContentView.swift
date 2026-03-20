@@ -58,6 +58,53 @@ struct ContentView: View {
             )
         }
 
+        if viewModel.isNight {
+            switch weather.current.weatherCode {
+            case 0:
+                return LinearGradient(
+                    colors: [Color(red: 0.03, green: 0.05, blue: 0.15), Color(red: 0.10, green: 0.16, blue: 0.32)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case 1...3:
+                return LinearGradient(
+                    colors: [Color(red: 0.06, green: 0.08, blue: 0.18), Color(red: 0.14, green: 0.18, blue: 0.30)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case 45, 48:
+                return LinearGradient(
+                    colors: [Color(red: 0.08, green: 0.08, blue: 0.10), Color(red: 0.18, green: 0.18, blue: 0.22)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case 51...67:
+                return LinearGradient(
+                    colors: [Color(red: 0.05, green: 0.08, blue: 0.16), Color(red: 0.11, green: 0.16, blue: 0.26)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case 71...77:
+                return LinearGradient(
+                    colors: [Color(red: 0.08, green: 0.12, blue: 0.22), Color(red: 0.18, green: 0.20, blue: 0.32)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            case 95...99:
+                return LinearGradient(
+                    colors: [Color.black, Color(red: 0.20, green: 0.10, blue: 0.30)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            default:
+                return LinearGradient(
+                    colors: [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.10, green: 0.14, blue: 0.24)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+
         switch weather.current.weatherCode {
         case 0:
             return LinearGradient(colors: [.blue, .yellow], startPoint: .top, endPoint: .bottom)
@@ -167,7 +214,7 @@ struct ContentView: View {
         Group {
             if let weather = viewModel.weather {
                 VStack(spacing: 12) {
-                    Image(systemName: weather.current.symbolName)
+                    Image(systemName: viewModel.isNight ? weather.current.nightSymbolName : weather.current.symbolName)
                         .symbolRenderingMode(.multicolor)
                         .resizable()
                         .scaledToFit()

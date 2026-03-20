@@ -28,6 +28,12 @@ final class WeatherViewModel: ObservableObject {
         weather?.daily ?? []
     }
 
+    var isNight: Bool {
+        guard let today = dailyForecast.first else { return false }
+        let now = Date()
+        return now < today.sunrise || now > today.sunset
+    }
+
     func loadDefaultWeatherIfNeeded() async {
         guard !hasLoadedDefault else { return }
         hasLoadedDefault = true
