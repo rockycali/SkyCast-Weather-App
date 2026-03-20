@@ -20,14 +20,17 @@ final class LocationManager: NSObject, ObservableObject {
 
     func requestLocation() {
         print("📍 requestLocation tapped")
+        errorMessage = nil
 
         switch manager.authorizationStatus {
         case .notDetermined:
             print("📍 requesting permission")
+            cityName = "My Location"
             manager.requestWhenInUseAuthorization()
 
         case .authorizedWhenInUse, .authorizedAlways:
             print("📍 requesting actual location")
+            cityName = "My Location"
             manager.requestLocation()
 
         case .denied, .restricted:
