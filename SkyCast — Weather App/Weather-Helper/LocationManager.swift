@@ -5,8 +5,10 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: CLAuthorizationStatus
     @Published var lastLocation: CLLocation?
     @Published var errorMessage: String?
+    @Published var cityName: String = "My Location"
 
     private let manager = CLLocationManager()
+    private let geocoder = CLGeocoder()
 
     override init() {
         self.authorizationStatus = manager.authorizationStatus
@@ -80,6 +82,19 @@ extension LocationManager: CLLocationManagerDelegate {
         DispatchQueue.main.async {
             self.errorMessage = nil
             self.lastLocation = location
+        }
+
+        Task {
+            do {
+                let placemarks = try await geocoder.reverseGeocodeLocation(location)
+                if let city = placemarks.first?.locality {
+                    await MainActor.run {
+                        self.cityName = city
+                    }
+                }
+            } catch {
+                print("❌ Geocoding error:", error)
+            }
         }
     }
 

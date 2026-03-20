@@ -69,7 +69,7 @@ final class WeatherViewModel: ObservableObject {
         do {
             let result = try await weatherService.fetchWeather(latitude: latitude, longitude: longitude, locationName: name)
             weather = result
-            displayName = result.locationName
+            displayName = name
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -77,15 +77,21 @@ final class WeatherViewModel: ObservableObject {
 
     private func observeLocation() {
         locationManager.$lastLocation
-            .compactMap { $0 }
-            .sink { [weak self] location in
+            .combineLatest(locationManager.$cityName)
+            .compactMap { (location: CLLocation?, cityName: String) -> (CLLocation, String)? in
+                guard let location else { return nil }
+                return (location, cityName)
+            }
+            .sink { [weak self] value in
                 guard let self else { return }
+                let (location, cityName) = value
                 print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
+                let resolvedName = cityName.isEmpty ? "My Location" : cityName
                 Task {
                     await self.loadWeather(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
-                        name: "My Location"
+                        name: resolvedName
                     )
                 }
             }
