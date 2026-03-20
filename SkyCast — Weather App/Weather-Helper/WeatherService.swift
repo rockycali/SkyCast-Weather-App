@@ -65,7 +65,15 @@ final class WeatherService: WeatherServiceProtocol {
     }
 
     private func mapForecast(_ forecast: ForecastResponse, locationName: String) -> WeatherData {
-        let isoFormatter = ISO8601DateFormatter()
+        let cityTimeZone = TimeZone(identifier: forecast.timezone) ?? .current
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = cityTimeZone
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        timeFormatter.timeZone = cityTimeZone
 
         let current = CurrentWeather(
             temperature: forecast.current.temperature2m,
@@ -79,19 +87,12 @@ final class WeatherService: WeatherServiceProtocol {
         let hourly = zip(zip(forecast.hourly.time, forecast.hourly.temperature2m), forecast.hourly.weatherCode)
             .compactMap { pair -> HourlyForecastItem? in
                 let ((timeString, temperature), code) = pair
-                guard let date = isoFormatter.date(from: timeString) else { return nil }
+                guard let date = timeFormatter.date(from: timeString) else { return nil }
                 return HourlyForecastItem(date: date, temperature: temperature, weatherCode: code)
             }
             .prefix(12)
             .map { $0 }
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        dateFormatter.timeZone = .current
-
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-        timeFormatter.timeZone = .current
 
         let daily = zip(
             zip(forecast.daily.time, forecast.daily.temperature2mMin),
@@ -105,8 +106,8 @@ final class WeatherService: WeatherServiceProtocol {
 
             guard
                 let date = dateFormatter.date(from: timeString),
-                let sunrise = timeFormatter.date(from: sunriseString) ?? isoFormatter.date(from: sunriseString),
-                let sunset = timeFormatter.date(from: sunsetString) ?? isoFormatter.date(from: sunsetString)
+                let sunrise = timeFormatter.date(from: sunriseString),
+                let sunset = timeFormatter.date(from: sunsetString)
             else {
                 return nil
             }

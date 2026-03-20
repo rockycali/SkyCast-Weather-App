@@ -19,6 +19,7 @@ struct LocationResult: Decodable, Identifiable {
 }
 
 struct ForecastResponse: Decodable {
+    let timezone: String
     let current: CurrentWeatherDTO
     let hourly: HourlyWeatherDTO
     let daily: DailyWeatherDTO
@@ -120,13 +121,20 @@ struct HourlyForecastItem: Identifiable {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
+    
+    var isNight: Bool {
+        let hour = Calendar.current.component(.hour, from: date)
+        return hour < 6 || hour >= 18
+    }
 
     var temperatureText: String {
         CurrentWeather.formatTemperature(temperature)
     }
 
     var symbolName: String {
-        WeatherCodeMapper.symbolName(for: weatherCode)
+        isNight
+            ? WeatherCodeMapper.nightSymbolName(for: weatherCode)
+            : WeatherCodeMapper.symbolName(for: weatherCode)
     }
 }
 
