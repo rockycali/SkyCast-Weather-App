@@ -57,12 +57,7 @@ final class WeatherViewModel: ObservableObject {
     }
 
     func requestLocation() {
-        switch locationManager.authorizationStatus {
-        case .denied, .restricted:
-            errorMessage = "Location permission is turned off. Enable it in iPhone Settings > Privacy & Security > Location Services."
-        default:
-            locationManager.requestLocation()
-        }
+        locationManager.requestLocation()
     }
 
     func loadWeather(latitude: Double, longitude: Double, name: String) async {
@@ -90,6 +85,13 @@ final class WeatherViewModel: ObservableObject {
                         name: "My Location"
                     )
                 }
+            }
+            .store(in: &cancellables)
+
+        locationManager.$errorMessage
+            .compactMap { $0 }
+            .sink { [weak self] message in
+                self?.errorMessage = message
             }
             .store(in: &cancellables)
     }
