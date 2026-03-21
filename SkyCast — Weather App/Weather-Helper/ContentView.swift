@@ -27,11 +27,8 @@ struct ContentView: View {
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                 }
                 .refreshable {
-                    if let weather = viewModel.weather {
-                        await viewModel.searchCity(named: weather.locationName)
-                    } else {
-                        await viewModel.loadDefaultWeatherIfNeeded()
-                    }
+                    print("🔄 Pull-to-refresh triggered")
+                    await viewModel.refreshCurrentSource()
                 }
             }
             .navigationBarHidden(true)
