@@ -84,16 +84,6 @@ final class WeatherService: WeatherServiceProtocol {
             precipitationProbability: forecast.current.precipitationProbability
         )
 
-        let hourly = zip(zip(forecast.hourly.time, forecast.hourly.temperature2m), forecast.hourly.weatherCode)
-            .compactMap { pair -> HourlyForecastItem? in
-                let ((timeString, temperature), code) = pair
-                guard let date = timeFormatter.date(from: timeString) else { return nil }
-                return HourlyForecastItem(date: date, temperature: temperature, weatherCode: code)
-            }
-            .prefix(12)
-            .map { $0 }
-
-
         let daily = zip(
             zip(forecast.daily.time, forecast.daily.temperature2mMin),
             zip(
@@ -121,6 +111,41 @@ final class WeatherService: WeatherServiceProtocol {
                 sunset: sunset
             )
         }
+
+        var calendar = Calendar.current
+        calendar.timeZone = cityTimeZone
+
+        let now = Date()
+        let currentHour = calendar.dateInterval(of: .hour, for: now)?.start ?? now
+
+        let allHourly = zip(zip(forecast.hourly.time, forecast.hourly.temperature2m), forecast.hourly.weatherCode)
+            .compactMap { pair -> HourlyForecastItem? in
+                let ((timeString, temperature), code) = pair
+                guard let date = timeFormatter.date(from: timeString) else { return nil }
+
+                let matchingDay = daily.first {
+                    calendar.isDate($0.date, inSameDayAs: date)
+                }
+
+                let isNight = if let matchingDay {
+                    date < matchingDay.sunrise || date >= matchingDay.sunset
+                } else {
+                    false
+                }
+
+                return HourlyForecastItem(
+                    date: date,
+                    temperature: temperature,
+                    weatherCode: code,
+                    isNight: isNight
+                )
+            }
+
+        let hourly = allHourly
+            .drop { $0.date < currentHour }
+            .prefix(12)
+            .map { $0 }
+
 
         return WeatherData(locationName: locationName, current: current, hourly: hourly, daily: daily)
     }
