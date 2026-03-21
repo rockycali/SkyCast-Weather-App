@@ -115,6 +115,7 @@ struct HourlyForecastItem: Identifiable {
     let date: Date
     let temperature: Double
     let weatherCode: Int
+    let isNight: Bool
 
     var timeLabel: String {
         let formatter = DateFormatter()
@@ -122,11 +123,6 @@ struct HourlyForecastItem: Identifiable {
         return formatter.string(from: date)
     }
     
-    var isNight: Bool {
-        let hour = Calendar.current.component(.hour, from: date)
-        return hour < 6 || hour >= 18
-    }
-
     var temperatureText: String {
         CurrentWeather.formatTemperature(temperature)
     }
