@@ -28,6 +28,16 @@ Designed with a clean, Apple-inspired UI and dynamic visuals based on current we
 
 ---
 
+## 🚀 Upcoming Features
+- [ ] ⭐ Save favorite locations
+- [ ] 📱 Home screen widgets
+- [ ] ⌚ Apple Watch app (watchOS support)
+- [ ] 🌐 Offline mode (last known weather)
+- [ ] ⚡ Performance improvements
+- [ ] 🔔 Weather alerts / notifications
+
+---
+
 ## 🛠 Tech Stack
 
 - Swift  
