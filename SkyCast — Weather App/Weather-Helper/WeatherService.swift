@@ -84,12 +84,21 @@ final class WeatherService: WeatherServiceProtocol {
             precipitationProbability: forecast.current.precipitationProbability
         )
 
-        let hourly = zip(zip(forecast.hourly.time, forecast.hourly.temperature2m), forecast.hourly.weatherCode)
+        let allHourly = zip(zip(forecast.hourly.time, forecast.hourly.temperature2m), forecast.hourly.weatherCode)
             .compactMap { pair -> HourlyForecastItem? in
                 let ((timeString, temperature), code) = pair
                 guard let date = timeFormatter.date(from: timeString) else { return nil }
                 return HourlyForecastItem(date: date, temperature: temperature, weatherCode: code)
             }
+
+        // 👉 Get current time in correct timezone
+        let now = Date()
+        let calendar = Calendar.current
+        let currentHour = calendar.dateInterval(of: .hour, for: now)?.start ?? now
+
+        // 👉 Only future hours
+        let hourly = allHourly
+            .drop { $0.date < currentHour }
             .prefix(12)
             .map { $0 }
 
