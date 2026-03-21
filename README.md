@@ -1,7 +1,7 @@
 # 🌦 SkyCast Weather App
 
 SkyCast is a modern iOS weather application built with SwiftUI and MVVM architecture.  
-It provides real-time weather updates using the user's location or city search, with smooth state management and responsive UI.
+It provides real-time weather data using location services or city search, with a smooth and responsive user experience.
 
 ---
 
@@ -14,22 +14,24 @@ It provides real-time weather updates using the user's location or city search, 
 ---
 
 ## ✨ Features
-- 📍 Real-time location-based weather
-- 🔍 City search with instant results
-- 🔄 Pull-to-refresh support
-- 🌙 Day/Night adaptive UI
-- ⚡ Async/await data fetching
-- 🧠 Smart state handling with Combine
+
+- 📍 Real-time location-based weather  
+- 🔍 City search with instant results  
+- 🔄 Pull-to-refresh support  
+- 🌙 Day/Night adaptive UI  
+- ⚡ Async/await data fetching  
+- 🧠 Smart state handling with Combine  
 
 ---
 
-🚀 Roadmap
-	•	⭐ Persistent favorite locations with local storage
-	•	📱 Home screen widgets (WidgetKit integration)
-	•	⌚ Apple Watch companion app (watchOS)
-	•	🌐 Offline-first support with cached data
-	•	🔔 Weather alerts and notification system
-	•	⚡ Performance and data layer optimizations
+## 🚀 Roadmap
+
+- ⭐ Persistent favorite locations with local storage  
+- 📱 Home screen widgets (WidgetKit integration)  
+- ⌚ Apple Watch companion app (watchOS)  
+- 🌐 Offline-first support with cached data  
+- 🔔 Weather alerts and notification system  
+- ⚡ Performance and data layer optimizations  
 
 ---
 
@@ -42,7 +44,7 @@ Built using MVVM (Model-View-ViewModel) with a clear separation of concerns:
 - Service layer for API communication  
 - Combine for reactive data flow  
 
-→ See [Developer Notes](./SkyCast%20%E2%80%94%20Weather%20App/Weather-Helper/DEV_NOTES.md) for full details
+👉 [Developer Notes](./SkyCast%20%E2%80%94%20Weather%20App/Weather-Helper/DEV_NOTES.md)
 
 ---
 
@@ -56,11 +58,13 @@ Built using MVVM (Model-View-ViewModel) with a clear separation of concerns:
 
 ---
 
-## ▶️ How to Run
+## ▶️ Installation
 
-1. Clone the repository  
-2. Open the project in Xcode  
-3. Build and run on simulator or device  
+```bash
+git clone https://github.com/rockycali/SkyCast-Weather-App.git
+cd SkyCast-Weather-App
+open SkyCast.xcodeproj
+```
 
 ### Requirements
 - Xcode 15+  
@@ -79,11 +83,11 @@ This app uses:
 
 ---
 
-## 📚 Developer Notes
+## 📚 Documentation
 
-For detailed architecture and implementation:
+Full documentation available in the Wiki:
 
-👉 `SkyCast — Weather App/Weather-Helper/DEV_NOTES.md`
+👉 https://github.com/rockycali/SkyCast-Weather-App/wiki
 
 ---
 
