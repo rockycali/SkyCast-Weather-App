@@ -28,17 +28,7 @@ struct ContentView: View {
                 }
                 .refreshable {
                     print("🔄 Pull-to-refresh triggered")
-
-                    switch viewModel.currentSource {
-                    case .myLocation:
-                        viewModel.requestLocation()
-
-                    case .city(let name):
-                        await viewModel.searchCity(named: name)
-
-                    case .default:
-                        await viewModel.loadDefaultWeatherIfNeeded()
-                    }
+                    await viewModel.refreshCurrentSource()
                 }
             }
             .navigationBarHidden(true)

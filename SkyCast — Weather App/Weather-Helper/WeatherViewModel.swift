@@ -10,7 +10,15 @@ final class WeatherViewModel: ObservableObject {
     @Published var displayName = "Weather"
     @Published var currentSource: WeatherSource = .default
 
-    init(weatherService: WeatherServiceProtocol = WeatherService(), locationManager: LocationManager = LocationManager()) {
+    private let weatherService: WeatherServiceProtocol
+    private let locationManager: LocationManager
+    private var cancellables = Set<AnyCancellable>()
+    private var hasLoadedDefault = false
+
+    init(
+        weatherService: WeatherServiceProtocol = WeatherService(),
+        locationManager: LocationManager = LocationManager()
+    ) {
         self.weatherService = weatherService
         self.locationManager = locationManager
         observeLocation()
@@ -36,13 +44,59 @@ final class WeatherViewModel: ObservableObject {
         return now < today.sunrise || now > today.sunset
     }
 
+    private func isCancellationError(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+
+        if let urlError = error as? URLError, urlError.code == .cancelled {
+            return true
+        }
+
+        let nsError = error as NSError
+        return nsError.domain == NSURLErrorDomain && nsError.code == URLError.cancelled.rawValue
+    }
+
+    func loadInitialWeatherIfNeeded() async {
+        guard !hasLoadedDefault else { return }
+        hasLoadedDefault = true
+
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            currentSource = .myLocation
+
+            if let location = locationManager.lastLocation {
+                let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
+                await loadWeather(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
+                    name: name
+                )
+            } else {
+                requestLocation()
+            }
+
+        case .notDetermined:
+            currentSource = .myLocation
+            requestLocation()
+
+        case .denied, .restricted:
+            currentSource = .default
+            await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
+
+        @unknown default:
+            currentSource = .default
+            await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
+        }
+    }
+
     func loadDefaultWeatherIfNeeded() async {
         guard !hasLoadedDefault else { return }
         hasLoadedDefault = true
         currentSource = .default
         await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
     }
-    
+
     func refreshCurrentSource() async {
         switch currentSource {
         case .myLocation:
@@ -64,7 +118,7 @@ final class WeatherViewModel: ObservableObject {
             await loadDefaultWeatherIfNeeded()
         }
     }
-    
+
     func searchCity(named query: String) async {
         errorMessage = nil
         isLoading = true
@@ -77,10 +131,11 @@ final class WeatherViewModel: ObservableObject {
             }
             currentSource = .city(first.displayName)
             await loadWeather(latitude: first.latitude, longitude: first.longitude, name: first.displayName)
-        } catch is CancellationError {
-            print("⚠️ search cancelled")
-            return
         } catch {
+            if isCancellationError(error) {
+                print("⚠️ search cancelled")
+                return
+            }
             errorMessage = error.localizedDescription
         }
     }
@@ -88,7 +143,19 @@ final class WeatherViewModel: ObservableObject {
     func requestLocation() {
         print("🌦 requestLocation() called from WeatherViewModel")
         currentSource = .myLocation
-        locationManager.requestLocation()
+
+        if let location = locationManager.lastLocation {
+            let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
+            Task {
+                await loadWeather(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
+                    name: name
+                )
+            }
+        } else {
+            locationManager.requestLocation()
+        }
     }
 
     func loadWeather(latitude: Double, longitude: Double, name: String) async {
@@ -98,33 +165,66 @@ final class WeatherViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let result = try await weatherService.fetchWeather(latitude: latitude, longitude: longitude, locationName: name)
+            let requestDisplayName: String
+            if case .myLocation = currentSource, !locationManager.cityName.isEmpty {
+                requestDisplayName = locationManager.cityName
+            } else {
+                requestDisplayName = name
+            }
+
+            let result = try await weatherService.fetchWeather(
+                latitude: latitude,
+                longitude: longitude,
+                locationName: requestDisplayName
+            )
+
+            let finalDisplayName: String
+            if case .myLocation = currentSource, !locationManager.cityName.isEmpty {
+                finalDisplayName = locationManager.cityName
+            } else {
+                finalDisplayName = requestDisplayName
+            }
+
             weather = result
-            displayName = name
-        } catch is CancellationError {
-            print("⚠️ load cancelled")
-            return
+            displayName = finalDisplayName
         } catch {
+            if isCancellationError(error) {
+                print("⚠️ load cancelled")
+                return
+            }
             errorMessage = error.localizedDescription
         }
     }
-
-    private let weatherService: WeatherServiceProtocol
-    private let locationManager: LocationManager
-    private var cancellables = Set<AnyCancellable>()
-    private var hasLoadedDefault = false
 
     private func observeLocation() {
         locationManager.$lastLocation
             .compactMap { $0 }
             .removeDuplicates(by: { lhs, rhs in
-                abs(lhs.coordinate.latitude - rhs.coordinate.latitude) < 0.000001 &&
-                abs(lhs.coordinate.longitude - rhs.coordinate.longitude) < 0.000001
+                abs(lhs.coordinate.latitude - rhs.coordinate.latitude) < 0.00005 &&
+                abs(lhs.coordinate.longitude - rhs.coordinate.longitude) < 0.00005
             })
             .sink { [weak self] location in
                 guard let self else { return }
+
+                let shouldUseLocationUpdate: Bool
+                switch self.currentSource {
+                case .myLocation:
+                    shouldUseLocationUpdate = true
+                case .default:
+                    shouldUseLocationUpdate = self.locationManager.authorizationStatus == .authorizedWhenInUse || self.locationManager.authorizationStatus == .authorizedAlways
+                    if shouldUseLocationUpdate {
+                        self.currentSource = .myLocation
+                    }
+                case .city:
+                    shouldUseLocationUpdate = false
+                }
+
+                guard shouldUseLocationUpdate else {
+                    print("🌦 ignored location update while viewing non-location source")
+                    return
+                }
+
                 print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
-                self.currentSource = .myLocation
                 Task {
                     await self.loadWeather(
                         latitude: location.coordinate.latitude,
