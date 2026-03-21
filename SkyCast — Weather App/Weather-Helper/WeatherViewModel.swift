@@ -42,7 +42,29 @@ final class WeatherViewModel: ObservableObject {
         currentSource = .default
         await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
     }
+    
+    func refreshCurrentSource() async {
+        switch currentSource {
+        case .myLocation:
+            if let location = locationManager.lastLocation {
+                let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
+                await loadWeather(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
+                    name: name
+                )
+            } else {
+                requestLocation()
+            }
 
+        case .city(let name):
+            await searchCity(named: name)
+
+        case .default:
+            await loadDefaultWeatherIfNeeded()
+        }
+    }
+    
     func searchCity(named query: String) async {
         errorMessage = nil
         isLoading = true
