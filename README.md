@@ -1,8 +1,7 @@
-🌤 SkyCast — Weather App
+# 🌦 SkyCast Weather App
 
-A production-focused SwiftUI weather application demonstrating real-time data handling, scalable MVVM architecture, and dynamic UI rendering based on live weather conditions.
-
-SkyCast delivers accurate weather insights with a clean, Apple-inspired interface and a responsive user experience across light and dark modes.
+SkyCast is a modern iOS weather application built with SwiftUI and MVVM architecture.  
+It provides real-time weather updates using the user's location or city search, with smooth state management and responsive UI.
 
 ---
 
@@ -14,17 +13,13 @@ SkyCast delivers accurate weather insights with a clean, Apple-inspired interfac
 
 ---
 
-## 🚀 Features
-
-- 🌍 Search weather by city name  
-- 📍 Get weather using current location  
-- 🌡️ Current temperature and condition summary  
-- 📊 Key metrics (Feels Like, Wind, Humidity, Rain)  
-- 🌅 Sunrise & Sunset tracking with daylight progress  
-- ⏱️ Hourly forecast  
-- 📅 5-day forecast  
-- 🎨 Dynamic background gradients based on weather  
-- 🌙 Full Light Mode & Dark Mode support  
+## ✨ Features
+- 📍 Real-time location-based weather
+- 🔍 City search with instant results
+- 🔄 Pull-to-refresh support
+- 🌙 Day/Night adaptive UI
+- ⚡ Async/await data fetching
+- 🧠 Smart state handling with Combine
 
 ---
 
