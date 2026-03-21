@@ -47,7 +47,7 @@ Built using MVVM (Model-View-ViewModel) with a clear separation of concerns:
 - Service layer for API communication  
 - Combine for reactive data flow  
 
-→ See [`DEV_NOTES.md`](Weather-Helper/DEV_NOTES.md) for full details
+→ See [`DEV_NOTES.md`](./Weather-Helper/DEV_NOTES.md) for full details
 
 ---
 
