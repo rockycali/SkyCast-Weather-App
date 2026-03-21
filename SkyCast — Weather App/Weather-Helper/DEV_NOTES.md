@@ -33,11 +33,11 @@ Handles user location permissions and updates
 ## 📂 Project Structure
     SkyCast/
     ├── ContentView.swift
-    ├── WeatherViewModel.swift
-    ├── WeatherService.swift
-    ├── WeatherModels.swift
     ├── LocationManager.swift
     ├── WeatherButton.swift
+    ├── WeatherModels.swift
+    ├── WeatherService.swift
+    ├── WeatherViewModel.swift
 
 ---
 
