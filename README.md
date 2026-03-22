@@ -1,5 +1,12 @@
 # 🌦 SkyCast Weather App
 
+![iOS](https://img.shields.io/badge/iOS-17+-blue)
+![Swift](https://img.shields.io/badge/Swift-5-orange)
+![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-green)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+> ⚡ Built to demonstrate modern SwiftUI architecture, Core Location integration, and responsive UI design.
+
 SkyCast is a modern iOS weather application built with SwiftUI and MVVM architecture.  
 It provides real-time weather data using location services or city search, with a smooth and responsive user experience.
 
@@ -93,7 +100,7 @@ This app uses:
 
 Full documentation available in the Wiki:
 
-👉 https://github.com/rockycali/SkyCast-Weather-App/wiki
+👉 [Project Wiki](https://github.com/rockycali/SkyCast-Weather-App/wiki)
 
 ---
 
