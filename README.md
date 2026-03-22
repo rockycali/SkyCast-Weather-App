@@ -1,4 +1,4 @@
-# 🌦 SkyCast Weather App
+# 🌦 ClimaFlow
 
 ![iOS](https://img.shields.io/badge/iOS-17+-blue)
 ![Swift](https://img.shields.io/badge/Swift-5-orange)
@@ -7,7 +7,7 @@
 
 > ⚡ Built to demonstrate modern SwiftUI architecture, Core Location integration, and responsive UI design.
 
-SkyCast is a modern iOS weather application built with SwiftUI and MVVM architecture.  
+ClimaFlow is a modern iOS weather application built with SwiftUI and MVVM architecture.  
 It provides real-time weather data using location services or city search, with a smooth and responsive user experience.
 
 ---
