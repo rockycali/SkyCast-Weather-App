@@ -110,6 +110,12 @@ Full documentation available in the Wiki:
 
 ---
 
+## 🔒 Security
+
+See [Security Policy](./.github/SECURITY.md)
+
+---
+
 ## 👨‍💻 Author
 
 **Rocky**  
