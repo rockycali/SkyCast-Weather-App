@@ -3,6 +3,7 @@
 ![iOS](https://img.shields.io/badge/iOS-17+-blue)
 ![Swift](https://img.shields.io/badge/Swift-5-orange)
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-green)
+![Status](https://img.shields.io/badge/status-active-success)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 > ⚡ Built to demonstrate modern SwiftUI architecture, Core Location integration, and responsive UI design.
