@@ -66,6 +66,12 @@ cd SkyCast-Weather-App
 open SkyCast.xcodeproj
 ```
 
+Or manually:
+
+1. Open the project in Xcode  
+2. Select a simulator or device  
+3. Click Run ▶️
+
 ### Requirements
 - Xcode 15+  
 - iOS 17+  
