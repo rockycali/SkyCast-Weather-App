@@ -31,13 +31,14 @@ Handles user location permissions and updates
 ---
 
 ## 📂 Project Structure
-    ClimaFlow/
-    ├── ContentView.swift
-    ├── LocationManager.swift
-    ├── WeatherButton.swift
-    ├── WeatherModels.swift
-    ├── WeatherService.swift
-    ├── WeatherViewModel.swift
+
+ClimaFlow/
+├── ContentView.swift
+├── WeatherViewModel.swift
+├── WeatherService.swift
+├── WeatherModels.swift
+├── LocationManager.swift
+├── WeatherButton.swift
 
 ---
 
