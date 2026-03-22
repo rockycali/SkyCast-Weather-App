@@ -20,6 +20,12 @@ It provides real-time weather data using location services or city search, with 
 
 ---
 
+## 📱 App Store
+
+Coming soon 🚀
+
+---
+
 ## ✨ Features
 
 - 📍 Real-time location-based weather  
