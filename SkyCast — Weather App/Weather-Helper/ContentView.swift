@@ -35,7 +35,7 @@ struct ContentView: View {
             .task {
                 await viewModel.loadDefaultWeatherIfNeeded()
             }
-            .alert("SkyCast", isPresented: Binding(
+            .alert("ClimaFlow", isPresented: Binding(
                 get: { viewModel.errorMessage != nil },
                 set: { if !$0 { viewModel.errorMessage = nil } }
             )) {
