@@ -1,12 +1,12 @@
-# 🧠 SkyCast — Developer Notes
+# 🧠 ClimaFlow — Developer Notes
 
-This document provides a deeper technical overview of the SkyCast Weather App.
+This document provides a deeper technical overview of the ClimaFlow Weather App.
 
 ---
 
 ## 🏗️ Architecture
 
-SkyCast follows the **MVVM (Model-View-ViewModel)** architecture:
+ClimaFlow follows the **MVVM (Model-View-ViewModel)** architecture:
 
 ### View (SwiftUI)
 Handles UI rendering and user interaction  
@@ -31,7 +31,7 @@ Handles user location permissions and updates
 ---
 
 ## 📂 Project Structure
-    SkyCast/
+    ClimaFlow/
     ├── ContentView.swift
     ├── LocationManager.swift
     ├── WeatherButton.swift

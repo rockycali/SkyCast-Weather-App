@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct SkyCastApp: App {
+struct ClimaFlowApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
