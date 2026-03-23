@@ -120,6 +120,13 @@ Full documentation available in the Wiki:
 
 ---
 
+## 🔗 Repository
+
+- GitHub (primary): https://github.com/rockycali/SkyCast-Weather-App  
+- GitLab (mirror): https://gitlab.com/rocky-dev-group/climaflow
+
+---
+
 ## 🔒 Security
 
 See [Security Policy](./.github/SECURITY.md)
