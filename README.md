@@ -13,11 +13,21 @@ It provides real-time weather data using location services or city search, with 
 
 ---
 
+## 🎬 Demo
+
+https://github.com/rockycali/SkyCast-Weather-App/assets/<your-video-id>/climaflow-ios-demo.mp4
+
+---
+
 ## 📸 Screenshots
 
 | Light Mode | Dark Mode |
 |-----------|-----------|
-| ![Light Mode](SkyCast — Weather App/Weather-Helper/screenshots/light.png) | ![Dark Mode](SkyCast — Weather App/Weather-Helper/screenshots/dark.png) |
+| ![Light Mode](screenshots/climaflow-home-light.png) | ![Dark Mode](screenshots/climaflow-home-dark.png) |
+
+### Forecast
+
+![Forecast](screenshots/climaflow-forecast.png)
 
 ---
 
