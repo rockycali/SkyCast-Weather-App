@@ -23,11 +23,11 @@ https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e
 
 | Light | Dark |
 |------|------|
-| ![Home Light](screenshots/climaflow-home-light.png) | ![Home Dark](screenshots/climaflow-home-dark.png) |
+| <img src="screenshots/climaflow-home-light.png" width="240"> | <img src="screenshots/climaflow-home-dark.png" width="240"> |
 
 ### Forecast
 
-![Forecast Screen](screenshots/climaflow-forecast.png)
+<img src="screenshots/climaflow-forecast.png" width="300">
 
 ---
 
