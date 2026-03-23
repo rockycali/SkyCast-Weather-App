@@ -23,13 +23,13 @@ https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e
 
 ## 📸 Screenshots
 
-| Light Mode | Dark Mode |
-|-----------|-----------|
-| ![Light Mode](screenshots/climaflow-home-light.png) | ![Dark Mode](screenshots/climaflow-home-dark.png) |
+| Light | Dark |
+|------|------|
+| ![Home Light](screenshots/climaflow-home-light.png) | ![Home Dark](screenshots/climaflow-home-dark.png) |
 
 ### Forecast
 
-![Forecast](screenshots/climaflow-forecast.png)
+![Forecast Screen](screenshots/climaflow-forecast.png)
 
 ---
 
