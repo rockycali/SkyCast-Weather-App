@@ -72,6 +72,12 @@ ClimaFlow/
 
 ---
 
+## 🔁 Repository Mirrorin
+
+This project is mirrored on GitLab as a backup and for future DevOps workflows.
+
+---
+
 ## 🧠 Developer Notes
 
 - Built entirely with SwiftUI  
