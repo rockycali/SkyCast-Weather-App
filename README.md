@@ -15,9 +15,7 @@ It provides real-time weather data using location services or city search, with 
 
 ## 🎬 Demo
 
-[▶️ Watch Demo] (https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e)
-
-
+https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e
 
 ---
 
