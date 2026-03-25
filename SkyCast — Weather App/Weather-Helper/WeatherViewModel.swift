@@ -115,7 +115,11 @@ final class WeatherViewModel: ObservableObject {
             await searchCity(named: name)
 
         case .default:
-            await loadDefaultWeatherIfNeeded()
+            await loadWeather(
+                latitude: 47.3769,
+                longitude: 8.5417,
+                name: "Zurich, Switzerland"
+            )
         }
     }
 

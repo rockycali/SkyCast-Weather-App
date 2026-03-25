@@ -33,7 +33,7 @@ struct ContentView: View {
             }
             .navigationBarHidden(true)
             .task {
-                await viewModel.loadDefaultWeatherIfNeeded()
+                await viewModel.loadInitialWeatherIfNeeded()
             }
             .alert("ClimaFlow", isPresented: Binding(
                 get: { viewModel.errorMessage != nil },
