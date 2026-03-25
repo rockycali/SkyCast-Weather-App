@@ -71,6 +71,22 @@ Built using MVVM (Model-View-ViewModel) with a clear separation of concerns:
 
 ---
 
+## 🛠 Development Workflow
+
+This project follows a feature-branch workflow:
+
+- Create a branch for each feature or fix  
+- Commit changes with clear messages  
+- Push to GitHub (portfolio) and GitLab (backup)  
+- Open a Pull Request  
+- Merge into `main`  
+
+Additional notes:
+- SSH authentication is used (no tokens)  
+- One push updates both remotes  
+
+---
+
 ## 🛠 Tech Stack
 
 - Swift  
