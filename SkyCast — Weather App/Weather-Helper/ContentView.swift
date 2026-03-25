@@ -4,6 +4,7 @@ struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel = WeatherViewModel()
     @State private var searchText = ""
+    @State private var showErrorAlert = false
 
     var body: some View {
         NavigationStack {
@@ -35,13 +36,15 @@ struct ContentView: View {
             .task {
                 await viewModel.loadInitialWeatherIfNeeded()
             }
-            .alert("ClimaFlow", isPresented: Binding(
-                get: { viewModel.errorMessage != nil },
-                set: { if !$0 { viewModel.errorMessage = nil } }
-            )) {
-                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            .alert("ClimaFlow", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) {
+                    viewModel.errorMessage = nil
+                }
             } message: {
                 Text(viewModel.errorMessage ?? "Unknown error")
+            }
+            .onChange(of: viewModel.errorMessage) { _, newValue in
+                showErrorAlert = newValue != nil
             }
         }
     }
@@ -391,7 +394,6 @@ private struct WeatherBackgroundView: View {
 }
 
 private struct WeatherMetricCard: View {
-    @Environment(\.colorScheme) private var colorScheme
     let title: String
     let value: String
     let systemImage: String
@@ -413,7 +415,6 @@ private struct WeatherMetricCard: View {
 }
 
 private struct HourlyForecastCard: View {
-    @Environment(\.colorScheme) private var colorScheme
     let hour: HourlyForecastItem
 
     var body: some View {
@@ -438,7 +439,6 @@ private struct HourlyForecastCard: View {
 }
 
 private struct DailyForecastRow: View {
-    @Environment(\.colorScheme) private var colorScheme
     let day: DailyForecastItem
 
     var body: some View {
@@ -474,7 +474,6 @@ private struct DailyForecastRow: View {
 }
 
 private struct SunCycleCard: View {
-    @Environment(\.colorScheme) private var colorScheme
     let sunrise: Date
     let sunset: Date
 
