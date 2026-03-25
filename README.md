@@ -82,8 +82,8 @@ This project follows a feature-branch workflow:
 - Merge into `main`  
 
 Additional notes:
-- SSH authentication is used (no tokens)  
-- One push updates both remotes  
+- Secure authentication is used (no tokens)  
+- Configured to sync with multiple remotes   
 
 ---
 
