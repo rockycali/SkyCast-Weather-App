@@ -14,6 +14,7 @@ final class WeatherViewModel: ObservableObject {
     private let locationManager: LocationManager
     private var cancellables = Set<AnyCancellable>()
     private var hasLoadedDefault = false
+    private var lastObservedLocation: CLLocation?
 
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
@@ -140,7 +141,9 @@ final class WeatherViewModel: ObservableObject {
                 print("⚠️ search cancelled")
                 return
             }
-            errorMessage = error.localizedDescription
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -150,6 +153,7 @@ final class WeatherViewModel: ObservableObject {
 
         if let location = locationManager.lastLocation {
             let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
+            lastObservedLocation = location
             Task {
                 await loadWeather(
                     latitude: location.coordinate.latitude,
@@ -189,23 +193,27 @@ final class WeatherViewModel: ObservableObject {
                 finalDisplayName = requestDisplayName
             }
 
-            weather = result
-            displayName = finalDisplayName
+            DispatchQueue.main.async {
+                self.weather = result
+                self.displayName = finalDisplayName
+            }
         } catch {
             if isCancellationError(error) {
                 print("⚠️ load cancelled")
                 return
             }
-            errorMessage = error.localizedDescription
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+            }
         }
     }
 
     private func observeLocation() {
         locationManager.$lastLocation
             .compactMap { $0 }
+            .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
             .removeDuplicates(by: { lhs, rhs in
-                abs(lhs.coordinate.latitude - rhs.coordinate.latitude) < 0.00005 &&
-                abs(lhs.coordinate.longitude - rhs.coordinate.longitude) < 0.00005
+                lhs.distance(from: rhs) < 50
             })
             .sink { [weak self] location in
                 guard let self else { return }
@@ -228,6 +236,14 @@ final class WeatherViewModel: ObservableObject {
                     return
                 }
 
+                if let previousLocation = self.lastObservedLocation,
+                   previousLocation.distance(from: location) < 50 {
+                    print("🌦 ignored near-duplicate location update")
+                    return
+                }
+
+                self.lastObservedLocation = location
+
                 print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
                 Task {
                     await self.loadWeather(
@@ -246,7 +262,9 @@ final class WeatherViewModel: ObservableObject {
                 guard let self else { return }
                 guard case .myLocation = self.currentSource else { return }
                 print("🌦 cityName updated:", cityName)
-                self.displayName = cityName
+                DispatchQueue.main.async {
+                    self.displayName = cityName
+                }
             }
             .store(in: &cancellables)
 
@@ -254,7 +272,9 @@ final class WeatherViewModel: ObservableObject {
             .compactMap { $0 }
             .sink { [weak self] message in
                 print("🌦 location error from manager:", message)
-                self?.errorMessage = message
+                DispatchQueue.main.async {
+                    self?.errorMessage = message
+                }
             }
             .store(in: &cancellables)
     }

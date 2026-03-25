@@ -121,16 +121,22 @@ struct ContentView: View {
     }
     
     private var headerSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
+            Text("Current Weather")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white.opacity(0.78))
+
             HStack(spacing: 8) {
                 Image(systemName: "location.fill")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.9))
 
                 Text(viewModel.displayName)
-                    .font(.system(size: 34, weight: .bold))
+                    .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
             }
 
             if let current = viewModel.weather?.current {
@@ -140,7 +146,7 @@ struct ContentView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 12)
+        .padding(.top, 8)
     }
 
     private var searchSection: some View {
@@ -187,6 +193,8 @@ struct ContentView: View {
                     }
                     .frame(width: 84, height: 50)
                 }
+                .disabled(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .opacity(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.55 : 1)
             }
 
             Button {
@@ -232,12 +240,7 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-                .shadow(color: .black.opacity(colorScheme == .dark ? 0.18 : 0.08), radius: 16, x: 0, y: 8)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .stroke(.white.opacity(colorScheme == .dark ? 0.18 : 0.28), lineWidth: 1)
-                }
+                .glassCard(cornerRadius: 28)
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
                 loadingCard
@@ -285,6 +288,7 @@ struct ContentView: View {
                                 HourlyForecastCard(hour: hour)
                             }
                         }
+                        .padding(.horizontal, 2)
                     }
                 }
             }
@@ -320,12 +324,7 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.18 : 0.08), radius: 16, x: 0, y: 8)
-        .overlay {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(.white.opacity(colorScheme == .dark ? 0.18 : 0.28), lineWidth: 1)
-        }
+        .glassCard(cornerRadius: 28)
     }
 
     private func sectionTitle(_ title: String) -> some View {
@@ -342,6 +341,9 @@ struct ContentView: View {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         await viewModel.searchCity(named: trimmed)
+        if viewModel.errorMessage == nil {
+            searchText = ""
+        }
     }
 }
 
@@ -406,12 +408,7 @@ private struct WeatherMetricCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
-        }
+        .glassCard(cornerRadius: 22)
     }
 }
 
@@ -434,14 +431,9 @@ private struct HourlyForecastCard: View {
                 .font(.headline)
                 .foregroundStyle(.white)
         }
-        .frame(width: 78)
+        .frame(width: 84)
         .padding(.vertical, 16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
-        }
+        .glassCard(cornerRadius: 22)
     }
 }
 
@@ -473,12 +465,7 @@ private struct DailyForecastRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 10, x: 0, y: 5)
-        .overlay {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
-        }
+        .glassCard(cornerRadius: 20)
     }
 }
 
@@ -561,12 +548,7 @@ private struct SunCycleCard: View {
             }
         }
         .padding(18)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
-        }
+        .glassCard(cornerRadius: 22)
     }
 
     private var daylightProgress: CGFloat {
@@ -583,5 +565,26 @@ private struct SunCycleCard: View {
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
         return "\(hours)h \(minutes)m"
+    }
+}
+
+private struct GlassCardModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    let cornerRadius: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
+            }
+    }
+}
+
+private extension View {
+    func glassCard(cornerRadius: CGFloat = 22) -> some View {
+        modifier(GlassCardModifier(cornerRadius: cornerRadius))
     }
 }
