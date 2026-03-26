@@ -1,0 +1,12 @@
+# Changelog
+
+## Unreleased
+- Added favorite cities with local storage
+- Improved location permission flow
+- Fixed weather refresh edge case
+
+## 1.0.0 - 2026-03-26
+- Initial public release
+- Current weather and forecast
+- Search by city
+- Use current location
