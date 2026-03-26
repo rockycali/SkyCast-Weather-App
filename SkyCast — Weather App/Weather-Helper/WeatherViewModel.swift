@@ -9,19 +9,26 @@ final class WeatherViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var displayName = "Weather"
     @Published var currentSource: WeatherSource = .default
+    @Published var favorites: [FavoriteCity] = []
 
     private let weatherService: WeatherServiceProtocol
     private let locationManager: LocationManager
+    private let favoritesStorage: FavoritesStorage
     private var cancellables = Set<AnyCancellable>()
     private var hasLoadedDefault = false
     private var lastObservedLocation: CLLocation?
+    private var currentLatitude: Double?
+    private var currentLongitude: Double?
 
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
-        locationManager: LocationManager = LocationManager()
+        locationManager: LocationManager = LocationManager(),
+        favoritesStorage: FavoritesStorage = FavoritesStorage()
     ) {
         self.weatherService = weatherService
         self.locationManager = locationManager
+        self.favoritesStorage = favoritesStorage
+        self.favorites = favoritesStorage.loadFavorites()
         observeLocation()
     }
 
@@ -135,15 +142,17 @@ final class WeatherViewModel: ObservableObject {
                 throw WeatherError.noResults
             }
             currentSource = .city(first.displayName)
-            await loadWeather(latitude: first.latitude, longitude: first.longitude, name: first.displayName)
+            await loadWeather(
+                latitude: first.latitude,
+                longitude: first.longitude,
+                name: first.displayName
+            )
         } catch {
             if isCancellationError(error) {
                 print("⚠️ search cancelled")
                 return
             }
-            DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-            }
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -193,18 +202,85 @@ final class WeatherViewModel: ObservableObject {
                 finalDisplayName = requestDisplayName
             }
 
-            DispatchQueue.main.async {
-                self.weather = result
-                self.displayName = finalDisplayName
-            }
+            currentLatitude = latitude
+            currentLongitude = longitude
+            weather = result
+            displayName = finalDisplayName
         } catch {
             if isCancellationError(error) {
                 print("⚠️ load cancelled")
                 return
             }
-            DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-            }
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func addCurrentCityToFavorites() {
+        guard let latitude = currentLatitude,
+              let longitude = currentLongitude else {
+            return
+        }
+
+        let locationName = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !locationName.isEmpty else { return }
+
+        let parts = locationName
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+        let cityName = parts.first ?? locationName
+        let countryName = parts.count > 1 ? (parts.last ?? "") : ""
+
+        let favorite = FavoriteCity(
+            name: cityName,
+            country: countryName,
+            latitude: latitude,
+            longitude: longitude
+        )
+
+        guard !favorites.contains(where: { $0.id == favorite.id }) else {
+            return
+        }
+
+        favorites.append(favorite)
+        favoritesStorage.saveFavorites(favorites)
+    }
+
+    func removeFavorite(at offsets: IndexSet) {
+        favorites.remove(atOffsets: offsets)
+        favoritesStorage.saveFavorites(favorites)
+    }
+
+    func removeFavorite(_ favorite: FavoriteCity) {
+        favorites.removeAll { $0.id == favorite.id }
+        favoritesStorage.saveFavorites(favorites)
+    }
+
+    func loadFavorite(_ favorite: FavoriteCity) async {
+        currentSource = .city(favorite.name)
+
+        let fullName: String
+        if favorite.country.isEmpty {
+            fullName = favorite.name
+        } else {
+            fullName = "\(favorite.name), \(favorite.country)"
+        }
+
+        await loadWeather(
+            latitude: favorite.latitude,
+            longitude: favorite.longitude,
+            name: fullName
+        )
+    }
+
+    func isFavoriteCurrentCity() -> Bool {
+        guard let latitude = currentLatitude,
+              let longitude = currentLongitude else {
+            return false
+        }
+
+        return favorites.contains {
+            $0.latitude == latitude && $0.longitude == longitude
         }
     }
 
@@ -262,9 +338,7 @@ final class WeatherViewModel: ObservableObject {
                 guard let self else { return }
                 guard case .myLocation = self.currentSource else { return }
                 print("🌦 cityName updated:", cityName)
-                DispatchQueue.main.async {
-                    self.displayName = cityName
-                }
+                self.displayName = cityName
             }
             .store(in: &cancellables)
 
@@ -272,9 +346,7 @@ final class WeatherViewModel: ObservableObject {
             .compactMap { $0 }
             .sink { [weak self] message in
                 print("🌦 location error from manager:", message)
-                DispatchQueue.main.async {
-                    self?.errorMessage = message
-                }
+                self?.errorMessage = message
             }
             .store(in: &cancellables)
     }
