@@ -1,14 +1,16 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @StateObject private var viewModel = WeatherViewModel()
+
     var body: some View {
         TabView {
-            HomeView()
+            HomeView(viewModel: viewModel)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
 
-            FavoritesView()
+            FavoritesView(viewModel: viewModel)
                 .tabItem {
                     Label("Favorites", systemImage: "star.fill")
                 }

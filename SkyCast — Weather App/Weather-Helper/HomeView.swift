@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @StateObject private var viewModel = WeatherViewModel()
+    @ObservedObject var viewModel: WeatherViewModel
     @State private var searchText = ""
     @State private var showErrorAlert = false
 
@@ -510,7 +510,7 @@ private struct DailyForecastRow: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(viewModel: WeatherViewModel())
 }
 
 private struct SunCycleCard: View {
