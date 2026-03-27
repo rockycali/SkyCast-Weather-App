@@ -17,7 +17,6 @@ struct HomeView: View {
                     VStack(spacing: 20) {
                         headerSection
                         searchSection
-                        favoritesSection
                         currentWeatherSection
                         metricsSection
                         sunCycleSection
@@ -242,63 +241,6 @@ struct HomeView: View {
         }
     }
 
-    private var favoritesSection: some View {
-        Group {
-            if !viewModel.favorites.isEmpty {
-                VStack(alignment: .leading, spacing: 14) {
-                    sectionTitle("Favorites")
-
-                    VStack(spacing: 10) {
-                        ForEach(viewModel.favorites) { favorite in
-                            HStack(spacing: 12) {
-                                Button {
-                                    Task {
-                                        await viewModel.loadFavorite(favorite)
-                                    }
-                                } label: {
-                                    HStack(spacing: 12) {
-                                        Image(systemName: "star.fill")
-                                            .foregroundStyle(.yellow)
-
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(favorite.name)
-                                                .font(.headline)
-                                                .foregroundStyle(.white)
-
-                                            if !favorite.country.isEmpty {
-                                                Text(favorite.country)
-                                                    .font(.subheadline)
-                                                    .foregroundStyle(.white.opacity(0.78))
-                                            }
-                                        }
-
-                                        Spacer()
-                                    }
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-
-                                Button {
-                                    viewModel.removeFavorite(favorite)
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .font(.headline)
-                                        .foregroundStyle(.white.opacity(0.9))
-                                        .frame(width: 36, height: 36)
-                                        .background(.white.opacity(0.12))
-                                        .clipShape(Circle())
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                            .glassCard(cornerRadius: 20)
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private var currentWeatherSection: some View {
         Group {
