@@ -17,6 +17,7 @@ struct ContentView: View {
                     VStack(spacing: 20) {
                         headerSection
                         searchSection
+                        favoritesSection
                         currentWeatherSection
                         metricsSection
                         sunCycleSection
@@ -214,6 +215,87 @@ struct ContentView: View {
                             .stroke(.white.opacity(0.2), lineWidth: 1)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+
+            if viewModel.weather != nil {
+                Button {
+                    viewModel.addCurrentCityToFavorites()
+                } label: {
+                    Label(
+                        viewModel.isFavoriteCurrentCity() ? "Saved to Favorites" : "Save to Favorites",
+                        systemImage: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star"
+                    )
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(.white.opacity(0.14))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(.white.opacity(0.2), lineWidth: 1)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .disabled(viewModel.isFavoriteCurrentCity())
+                .opacity(viewModel.isFavoriteCurrentCity() ? 0.7 : 1)
+            }
+        }
+    }
+
+    private var favoritesSection: some View {
+        Group {
+            if !viewModel.favorites.isEmpty {
+                VStack(alignment: .leading, spacing: 14) {
+                    sectionTitle("Favorites")
+
+                    VStack(spacing: 10) {
+                        ForEach(viewModel.favorites) { favorite in
+                            HStack(spacing: 12) {
+                                Button {
+                                    Task {
+                                        await viewModel.loadFavorite(favorite)
+                                    }
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: "star.fill")
+                                            .foregroundStyle(.yellow)
+
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(favorite.name)
+                                                .font(.headline)
+                                                .foregroundStyle(.white)
+
+                                            if !favorite.country.isEmpty {
+                                                Text(favorite.country)
+                                                    .font(.subheadline)
+                                                    .foregroundStyle(.white.opacity(0.78))
+                                            }
+                                        }
+
+                                        Spacer()
+                                    }
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    viewModel.removeFavorite(favorite)
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .font(.headline)
+                                        .foregroundStyle(.white.opacity(0.9))
+                                        .frame(width: 36, height: 36)
+                                        .background(.white.opacity(0.12))
+                                        .clipShape(Circle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .glassCard(cornerRadius: 20)
+                        }
+                    }
+                }
             }
         }
     }
