@@ -40,8 +40,10 @@ Coming soon 🚀
 
 - 📍 Real-time location-based weather  
 - 🔍 City search with instant results  
+- ⭐ Save and manage favorite cities (local storage)  
+- 🧭 Tab-based navigation (Home, Favorites, Settings)  
 - 🔄 Pull-to-refresh support  
-- 🌙 Day/Night adaptive UI  
+- 🌙 Dynamic day/night UI with weather-based backgrounds  
 - ⚡ Async/await data fetching  
 - 🧠 Smart state handling with Combine  
 
@@ -49,7 +51,8 @@ Coming soon 🚀
 
 ## 🚀 Roadmap
 
-- ⭐ Persistent favorite locations with local storage  
+- ⚙️ Expand Settings (units, preferences)  
+- 🌍 Multi-language support  
 - 📱 Home screen widgets (WidgetKit integration)  
 - ⌚ Apple Watch companion app (watchOS)  
 - 🌐 Offline-first support with cached data  
@@ -60,10 +63,11 @@ Coming soon 🚀
 
 ## 🏗 Architecture
 
-Built using MVVM (Model-View-ViewModel) with a clear separation of concerns:
+Built using MVVM (Model-View-ViewModel) with a modular, multi-screen structure:
 
-- SwiftUI Views for UI rendering  
-- ViewModels for state and business logic  
+- SwiftUI Views (Home, Favorites, Settings)  
+- Tab-based navigation via MainTabView  
+- Shared ViewModel for app-wide state  
 - Service layer for API communication  
 - Combine for reactive data flow  
 
