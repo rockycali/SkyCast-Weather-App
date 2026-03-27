@@ -1,6 +1,17 @@
 import SwiftUI
 
 struct MainTabView: View {
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+
+        appearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterial)
+        appearance.backgroundColor = UIColor.clear
+        appearance.shadowColor = .clear
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
     @StateObject private var viewModel = WeatherViewModel()
     @State private var selectedTab = 0
 
