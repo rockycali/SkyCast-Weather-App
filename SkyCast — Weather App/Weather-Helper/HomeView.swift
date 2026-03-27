@@ -15,6 +15,11 @@ struct HomeView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
+                        if viewModel.isOffline {
+                            Text("Offline mode - showing last data")
+                                .foregroundColor(.orange)
+                                .font(.caption)
+                        }
                         headerSection
                         searchSection
                         currentWeatherSection

@@ -10,6 +10,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var displayName = "Weather"
     @Published var currentSource: WeatherSource = .default
     @Published var favorites: [FavoriteCity] = []
+    @Published var isOffline = false
 
     private let weatherService: WeatherServiceProtocol
     private let locationManager: LocationManager
@@ -19,6 +20,8 @@ final class WeatherViewModel: ObservableObject {
     private var lastObservedLocation: CLLocation?
     private var currentLatitude: Double?
     private var currentLongitude: Double?
+    private let cache = WeatherCacheManager()
+  
 
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
@@ -206,12 +209,25 @@ final class WeatherViewModel: ObservableObject {
             currentLongitude = longitude
             weather = result
             displayName = finalDisplayName
+
+       
+            cache.save(result)
+            isOffline = false
+
         } catch {
             if isCancellationError(error) {
                 print("⚠️ load cancelled")
                 return
             }
-            errorMessage = error.localizedDescription
+
+            print("API failed, trying cache...")
+
+            if let cached = cache.load() {
+                weather = cached
+                isOffline = true
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 
