@@ -12,10 +12,12 @@ Defines structured weather data
 
 ---
 
-## 🔁 Repository Mirroring
+## 🧪 Future Improvements
 
-→ `LocationManager.swift`
+- ✨ Enhanced animations and transitions  
 
 ---
 
-- ✨ Enhanced animations and transitions  
+## 🔁 Repository Mirroring
+
+This project is mirrored on GitLab as a backup and for future DevOps workflows.
