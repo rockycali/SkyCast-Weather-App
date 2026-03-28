@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var viewModel: WeatherViewModel
+    @AppStorage("temperatureUnit") private var temperatureUnit = "C"
 
     var body: some View {
         NavigationStack {
@@ -30,13 +31,48 @@ struct SettingsView: View {
                             ]
                         )
 
-                        settingsCard(
-                            title: "Preferences",
-                            rows: [
-                                SettingRowData(title: "Temperature Units", value: "Coming Soon", systemImage: "thermometer"),
-                                SettingRowData(title: "Language", value: "Coming Soon", systemImage: "globe")
-                            ]
-                        )
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Preferences")
+                                .font(.title3.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.92))
+                                .padding(.horizontal, 4)
+
+                            VStack(spacing: 0) {
+                                HStack(spacing: 14) {
+                                    Image(systemName: "thermometer")
+                                        .foregroundStyle(.white)
+                                        .font(.title3)
+                                        .frame(width: 30)
+
+                                    Text("Temperature Units")
+                                        .foregroundStyle(.white)
+                                        .font(.headline)
+
+                                    Spacer()
+
+                                    Picker("Temperature Units", selection: $temperatureUnit) {
+                                        Text("°C").tag("C")
+                                        Text("°F").tag("F")
+                                    }
+                                    .pickerStyle(.segmented)
+                                    .frame(width: 120)
+                                }
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 16)
+
+                                Divider()
+                                    .overlay(.white.opacity(0.10))
+                                    .padding(.leading, 56)
+
+                                settingsRow(
+                                    title: "Language",
+                                    value: "Coming Soon",
+                                    systemImage: "globe"
+                                )
+                            }
+                            .padding(.vertical, 6)
+                            .glassCard(cornerRadius: 24)
+                        }
 
                         settingsCard(
                             title: "About",
