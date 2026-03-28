@@ -18,14 +18,14 @@ struct LocationResult: Decodable, Identifiable {
     }
 }
 
-struct ForecastResponse: Decodable {
+struct ForecastResponse: Codable {
     let timezone: String
     let current: CurrentWeatherDTO
     let hourly: HourlyWeatherDTO
     let daily: DailyWeatherDTO
 }
 
-struct CurrentWeatherDTO: Decodable {
+struct CurrentWeatherDTO: Codable {
     let temperature2m: Double
     let weatherCode: Int
     let apparentTemperature: Double
@@ -43,7 +43,7 @@ struct CurrentWeatherDTO: Decodable {
     }
 }
 
-struct HourlyWeatherDTO: Decodable {
+struct HourlyWeatherDTO: Codable {
     let time: [String]
     let temperature2m: [Double]
     let weatherCode: [Int]
@@ -55,7 +55,7 @@ struct HourlyWeatherDTO: Decodable {
     }
 }
 
-struct DailyWeatherDTO: Decodable {
+struct DailyWeatherDTO: Codable {
     let time: [String]
     let weatherCode: [Int]
     let temperature2mMax: [Double]
@@ -73,7 +73,7 @@ struct DailyWeatherDTO: Decodable {
     }
 }
 
-struct WeatherData {
+struct WeatherData: Codable {
     let locationName: String
     let current: CurrentWeather
     let hourly: [HourlyForecastItem]
@@ -88,7 +88,7 @@ struct WeatherData {
     }
 }
 
-struct CurrentWeather {
+struct CurrentWeather: Codable {
     let temperature: Double
     let weatherCode: Int
     let apparentTemperature: Double
@@ -110,8 +110,8 @@ struct CurrentWeather {
     }
 }
 
-struct HourlyForecastItem: Identifiable {
-    let id = UUID()
+struct HourlyForecastItem: Identifiable, Codable {
+    let id: UUID
     let date: Date
     let temperature: Double
     let weatherCode: Int
@@ -134,8 +134,8 @@ struct HourlyForecastItem: Identifiable {
     }
 }
 
-struct DailyForecastItem: Identifiable {
-    let id = UUID()
+struct DailyForecastItem: Identifiable, Codable {
+    let id: UUID
     let date: Date
     let minTemperature: Double
     let maxTemperature: Double

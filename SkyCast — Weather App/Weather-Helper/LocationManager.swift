@@ -102,6 +102,12 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // While offline, Core Location often fails with a network error; don't surface it as a blocking alert.
+        if let clError = error as? CLError, clError.code == .network {
+            print("📍 location failed (offline / network):", error.localizedDescription)
+            return
+        }
+
         DispatchQueue.main.async {
             self.errorMessage = error.localizedDescription
         }
