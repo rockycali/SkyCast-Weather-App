@@ -29,7 +29,7 @@ struct MainTabView: View {
                 }
                 .tag(1)
 
-            SettingsView()
+            SettingsView(viewModel: viewModel)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }

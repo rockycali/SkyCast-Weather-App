@@ -3,6 +3,7 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var viewModel: WeatherViewModel
     @Binding var selectedTab: Int
+    @AppStorage("temperatureUnit") private var temperatureUnit = "C"
 
     var body: some View {
         NavigationStack {
@@ -99,6 +100,7 @@ struct FavoritesView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 12)
                             .padding(.bottom, 28)
+                            .id(temperatureUnit)
                         }
                     }
                 }

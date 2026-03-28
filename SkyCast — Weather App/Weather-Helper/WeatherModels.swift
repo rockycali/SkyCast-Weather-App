@@ -80,11 +80,13 @@ struct WeatherData: Codable {
     let daily: [DailyForecastItem]
 
     var todayHighText: String {
-        daily.first?.maxText ?? "--°"
+        let unit = UserDefaults.standard.string(forKey: "temperatureUnit") ?? "C"
+        return daily.first?.maxText ?? (unit == "F" ? "--°F" : "--°C")
     }
 
     var todayLowText: String {
-        daily.first?.minText ?? "--°"
+        let unit = UserDefaults.standard.string(forKey: "temperatureUnit") ?? "C"
+        return daily.first?.minText ?? (unit == "F" ? "--°F" : "--°C")
     }
 }
 
@@ -99,14 +101,32 @@ struct CurrentWeather: Codable {
     var temperatureText: String { Self.formatTemperature(temperature) }
     var apparentTemperatureText: String { Self.formatTemperature(apparentTemperature) }
     var humidityText: String { "\(humidity)%" }
-    var windSpeedText: String { "\(Int(windSpeed.rounded())) km/h" }
+    var windSpeedText: String { Self.formatWindSpeed(windSpeed) }
     var precipitationChanceText: String { "\(precipitationProbability)%" }
     var summary: String { WeatherCodeMapper.description(for: weatherCode) }
     var symbolName: String { WeatherCodeMapper.symbolName(for: weatherCode) }
     var nightSymbolName: String { WeatherCodeMapper.nightSymbolName(for: weatherCode) }
     
     static func formatTemperature(_ value: Double) -> String {
-        "\(Int(value.rounded()))°"
+        let unit = UserDefaults.standard.string(forKey: "temperatureUnit") ?? "C"
+
+        if unit == "F" {
+            let fahrenheit = (value * 9 / 5) + 32
+            return "\(Int(fahrenheit.rounded()))°F"
+        }
+
+        return "\(Int(value.rounded()))°C"
+    }
+
+    static func formatWindSpeed(_ value: Double) -> String {
+        let unit = UserDefaults.standard.string(forKey: "temperatureUnit") ?? "C"
+
+        if unit == "F" {
+            let mph = value * 0.621371
+            return "\(Int(mph.rounded())) mph"
+        }
+
+        return "\(Int(value.rounded())) km/h"
     }
 }
 
@@ -119,7 +139,7 @@ struct HourlyForecastItem: Identifiable, Codable {
 
     var timeLabel: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+        formatter.timeStyle = .short
         return formatter.string(from: date)
     }
     
