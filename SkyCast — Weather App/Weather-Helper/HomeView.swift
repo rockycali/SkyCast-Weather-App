@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("temperatureUnit") private var temperatureUnit = "C"
     @ObservedObject var viewModel: WeatherViewModel
     @State private var searchText = ""
     @State private var showErrorAlert = false
@@ -31,6 +32,7 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
+                    .id(temperatureUnit)
                 }
                 .refreshable {
                     print("🔄 Pull-to-refresh triggered")
