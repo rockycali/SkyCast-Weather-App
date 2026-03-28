@@ -10,6 +10,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var displayName = "Weather"
     @Published var currentSource: WeatherSource = .default
     @Published var favorites: [FavoriteCity] = []
+    @Published var isOffline = false
 
     private let weatherService: WeatherServiceProtocol
     private let locationManager: LocationManager
@@ -19,6 +20,8 @@ final class WeatherViewModel: ObservableObject {
     private var lastObservedLocation: CLLocation?
     private var currentLatitude: Double?
     private var currentLongitude: Double?
+    private let cache = WeatherCacheManager()
+  
 
     init(
         weatherService: WeatherServiceProtocol = WeatherService(),
@@ -63,6 +66,33 @@ final class WeatherViewModel: ObservableObject {
 
         let nsError = error as NSError
         return nsError.domain == NSURLErrorDomain && nsError.code == URLError.cancelled.rawValue
+    }
+
+    /// True when the failure is due to no connectivity (vs validation, no results, etc.).
+    private func isLikelyNetworkFailure(_ error: Error) -> Bool {
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost, .cannotFindHost, .timedOut,
+                 .dnsLookupFailed, .dataNotAllowed, .internationalRoamingOff:
+                return true
+            default:
+                break
+            }
+        }
+        if let clError = error as? CLError, clError.code == .network {
+            return true
+        }
+        let ns = error as NSError
+        if ns.domain == NSURLErrorDomain {
+            switch ns.code {
+            case NSURLErrorNotConnectedToInternet, NSURLErrorNetworkConnectionLost, NSURLErrorCannotFindHost,
+                 NSURLErrorTimedOut, NSURLErrorDNSLookupFailed, NSURLErrorDataNotAllowed:
+                return true
+            default:
+                break
+            }
+        }
+        return false
     }
 
     func loadInitialWeatherIfNeeded() async {
@@ -152,6 +182,11 @@ final class WeatherViewModel: ObservableObject {
                 print("⚠️ search cancelled")
                 return
             }
+            // Keep showing cached weather without a blocking alert when search can't reach the network.
+            if weather != nil, isLikelyNetworkFailure(error) {
+                isOffline = true
+                return
+            }
             errorMessage = error.localizedDescription
         }
     }
@@ -206,12 +241,28 @@ final class WeatherViewModel: ObservableObject {
             currentLongitude = longitude
             weather = result
             displayName = finalDisplayName
+
+            cache.save(result, latitude: latitude, longitude: longitude)
+            isOffline = false
+
         } catch {
             if isCancellationError(error) {
                 print("⚠️ load cancelled")
                 return
             }
-            errorMessage = error.localizedDescription
+
+            print("API failed, trying cache...")
+
+            if let cached = cache.load(latitude: latitude, longitude: longitude) {
+                currentLatitude = latitude
+                currentLongitude = longitude
+                weather = cached
+                displayName = cached.locationName
+                errorMessage = nil
+                isOffline = true
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -345,8 +396,12 @@ final class WeatherViewModel: ObservableObject {
         locationManager.$errorMessage
             .compactMap { $0 }
             .sink { [weak self] message in
+                guard let self else { return }
                 print("🌦 location error from manager:", message)
-                self?.errorMessage = message
+                if self.isOffline, self.weather != nil {
+                    return
+                }
+                self.errorMessage = message
             }
             .store(in: &cancellables)
     }

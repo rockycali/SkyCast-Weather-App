@@ -103,6 +103,7 @@ final class WeatherService: WeatherServiceProtocol {
             }
 
             return DailyForecastItem(
+                id: UUID(),
                 date: date,
                 minTemperature: minTemp,
                 maxTemperature: maxTemp,
@@ -134,6 +135,7 @@ final class WeatherService: WeatherServiceProtocol {
                 }
 
                 return HourlyForecastItem(
+                    id: UUID(), 
                     date: date,
                     temperature: temperature,
                     weatherCode: code,

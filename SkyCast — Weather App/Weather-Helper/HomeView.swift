@@ -16,6 +16,11 @@ struct HomeView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
+                        if viewModel.isOffline {
+                            Text("Offline mode - showing last data")
+                                .foregroundColor(.orange)
+                                .font(.caption)
+                        }
                         headerSection
                         searchSection
                         currentWeatherSection
@@ -46,7 +51,14 @@ struct HomeView: View {
                 Text(viewModel.errorMessage ?? "Unknown error")
             }
             .onChange(of: viewModel.errorMessage) { _, newValue in
-                showErrorAlert = newValue != nil
+                // Avoid alert over cached offline data (location/search may still report network errors).
+                let hasCachedOfflineWeather = viewModel.isOffline && viewModel.weather != nil
+                showErrorAlert = newValue != nil && !hasCachedOfflineWeather
+            }
+            .onChange(of: viewModel.isOffline) { _, _ in
+                if viewModel.isOffline, viewModel.weather != nil, viewModel.errorMessage != nil {
+                    showErrorAlert = false
+                }
             }
         }
     }
