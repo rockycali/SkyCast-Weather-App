@@ -8,19 +8,26 @@
 import Foundation
 
 class WeatherCacheManager {
-    private let key = "cached_weather_data"
+    private let keyPrefix = "cached_weather_data"
 
-    func save(_ weather: WeatherData) {
+    /// Stable key per geographic point (~11 m precision) so cached weather matches the requested location.
+    private func storageKey(latitude: Double, longitude: Double) -> String {
+        let lat = (latitude * 10_000).rounded() / 10_000
+        let lon = (longitude * 10_000).rounded() / 10_000
+        return "\(keyPrefix)_\(lat)_\(lon)"
+    }
+
+    func save(_ weather: WeatherData, latitude: Double, longitude: Double) {
         do {
             let data = try JSONEncoder().encode(weather)
-            UserDefaults.standard.set(data, forKey: key)
+            UserDefaults.standard.set(data, forKey: storageKey(latitude: latitude, longitude: longitude))
         } catch {
             print("Cache save failed:", error)
         }
     }
 
-    func load() -> WeatherData? {
-        guard let data = UserDefaults.standard.data(forKey: key) else {
+    func load(latitude: Double, longitude: Double) -> WeatherData? {
+        guard let data = UserDefaults.standard.data(forKey: storageKey(latitude: latitude, longitude: longitude)) else {
             return nil
         }
 
