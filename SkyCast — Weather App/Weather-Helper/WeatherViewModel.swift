@@ -343,36 +343,36 @@ final class WeatherViewModel: ObservableObject {
                 lhs.distance(from: rhs) < 50
             })
             .sink { [weak self] location in
-                guard let self else { return }
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
 
-                let shouldUseLocationUpdate: Bool
-                switch self.currentSource {
-                case .myLocation:
-                    shouldUseLocationUpdate = true
-                case .default:
-                    shouldUseLocationUpdate = self.locationManager.authorizationStatus == .authorizedWhenInUse || self.locationManager.authorizationStatus == .authorizedAlways
-                    if shouldUseLocationUpdate {
-                        self.currentSource = .myLocation
+                    let shouldUseLocationUpdate: Bool
+                    switch self.currentSource {
+                    case .myLocation:
+                        shouldUseLocationUpdate = true
+                    case .default:
+                        shouldUseLocationUpdate = self.locationManager.authorizationStatus == .authorizedWhenInUse || self.locationManager.authorizationStatus == .authorizedAlways
+                        if shouldUseLocationUpdate {
+                            self.currentSource = .myLocation
+                        }
+                    case .city:
+                        shouldUseLocationUpdate = false
                     }
-                case .city:
-                    shouldUseLocationUpdate = false
-                }
 
-                guard shouldUseLocationUpdate else {
-                    print("🌦 ignored location update while viewing non-location source")
-                    return
-                }
+                    guard shouldUseLocationUpdate else {
+                        print("🌦 ignored location update while viewing non-location source")
+                        return
+                    }
 
-                if let previousLocation = self.lastObservedLocation,
-                   previousLocation.distance(from: location) < 50 {
-                    print("🌦 ignored near-duplicate location update")
-                    return
-                }
+                    if let previousLocation = self.lastObservedLocation,
+                       previousLocation.distance(from: location) < 50 {
+                        print("🌦 ignored near-duplicate location update")
+                        return
+                    }
 
-                self.lastObservedLocation = location
+                    self.lastObservedLocation = location
 
-                print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
-                Task {
+                    print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
                     await self.loadWeather(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
@@ -386,22 +386,26 @@ final class WeatherViewModel: ObservableObject {
             .removeDuplicates()
             .filter { !$0.isEmpty }
             .sink { [weak self] cityName in
-                guard let self else { return }
-                guard case .myLocation = self.currentSource else { return }
-                print("🌦 cityName updated:", cityName)
-                self.displayName = cityName
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    guard case .myLocation = self.currentSource else { return }
+                    print("🌦 cityName updated:", cityName)
+                    self.displayName = cityName
+                }
             }
             .store(in: &cancellables)
 
         locationManager.$errorMessage
             .compactMap { $0 }
             .sink { [weak self] message in
-                guard let self else { return }
-                print("🌦 location error from manager:", message)
-                if self.isOffline, self.weather != nil {
-                    return
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    print("🌦 location error from manager:", message)
+                    if self.isOffline, self.weather != nil {
+                        return
+                    }
+                    self.errorMessage = message
                 }
-                self.errorMessage = message
             }
             .store(in: &cancellables)
     }
