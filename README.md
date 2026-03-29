@@ -1,10 +1,10 @@
 # 🌦 ClimaFlow
 
-![iOS](https://img.shields.io/badge/iOS-17+-blue)
-![Swift](https://img.shields.io/badge/Swift-5-orange)
-![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-green)
+[![iOS](https://img.shields.io/badge/iOS-17+-blue)](https://developer.apple.com/ios/)
+[![Swift](https://img.shields.io/badge/Swift-5-orange)](https://www.swift.org)
+[![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-green)](https://developer.apple.com/swiftui/)
 ![Status](https://img.shields.io/badge/status-active-success)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
 > ⚡ A modern iOS weather app built with SwiftUI, MVVM, and a focus on clean architecture and polished UI.
 
