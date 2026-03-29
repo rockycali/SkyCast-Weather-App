@@ -163,7 +163,7 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func settingsCard(title: String, rows: [SettingRowData]) -> some View {
+    private func settingsCard(title: LocalizedStringKey, rows: [SettingRowData]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.title3.weight(.semibold))
@@ -187,7 +187,7 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func settingsRow(title: String, value: String, systemImage: String) -> some View {
+    private func settingsRow(title: LocalizedStringKey, value: String, systemImage: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: systemImage)
                 .foregroundStyle(.white)
@@ -211,7 +211,7 @@ struct SettingsView: View {
 }
 
 private struct SettingRowData {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
     let systemImage: String
 }

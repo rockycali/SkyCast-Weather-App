@@ -24,6 +24,7 @@
 		5F5B44A92F767DC40028AE5B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5B44A82F767DBF0028AE5B /* ContentView.swift */; };
 		5F88900B2F7549A200151C5D /* FavoriteCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F88900A2F75499400151C5D /* FavoriteCity.swift */; };
 		5F88900D2F754A5D00151C5D /* FavoritesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F88900C2F754A5600151C5D /* FavoritesStorage.swift */; };
+		5FE2208E2F795FB300D570FF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 5FE2208D2F795FB300D570FF /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		5F5B44A82F767DBF0028AE5B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5F88900A2F75499400151C5D /* FavoriteCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCity.swift; sourceTree = "<group>"; };
 		5F88900C2F754A5600151C5D /* FavoritesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStorage.swift; sourceTree = "<group>"; };
+		5FE2208D2F795FB300D570FF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 		5CDB602B2AE554A700033E64 = {
 			isa = PBXGroup;
 			children = (
+				5FE2208D2F795FB300D570FF /* Localizable.xcstrings */,
 				5CDB60362AE554A700033E64 /* SkyCast — Weather App */,
 				5CDB60352AE554A700033E64 /* Products */,
 			);
@@ -235,6 +238,9 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				de,
+				it,
 			);
 			mainGroup = 5CDB602B2AE554A700033E64;
 			productRefGroup = 5CDB60352AE554A700033E64 /* Products */;
@@ -255,6 +261,7 @@
 			files = (
 				5F09A5A12F6C05C10027CE17 /* DEV_NOTES.md in Resources */,
 				5CDB603F2AE554A800033E64 /* Preview Assets.xcassets in Resources */,
+				5FE2208E2F795FB300D570FF /* Localizable.xcstrings in Resources */,
 				5CDB603C2AE554A800033E64 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,6 +395,7 @@
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -446,6 +454,7 @@
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

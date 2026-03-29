@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct FavoritesView: View {
+    private enum L10n {
+        static let noFavoritesYet: LocalizedStringKey = "No Favorites Yet"
+        static let savedCitiesWillAppearHere: LocalizedStringKey = "Saved cities will appear here."
+        static let yourFavoriteCities: LocalizedStringKey = "Your Favorite Cities"
+        static let tapCityToOpenHome: LocalizedStringKey = "Tap a city to open it on Home."
+    }
     @ObservedObject var viewModel: WeatherViewModel
     @Binding var selectedTab: Int
     @AppStorage("temperatureUnit") private var temperatureUnit = "C"
@@ -19,11 +25,11 @@ struct FavoritesView: View {
                                 .font(.system(size: 44))
                                 .foregroundStyle(.white.opacity(0.85))
 
-                            Text("No Favorites Yet")
+                            Text(L10n.noFavoritesYet)
                                 .font(.title3.weight(.semibold))
                                 .foregroundStyle(.white)
 
-                            Text("Saved cities will appear here.")
+                            Text(L10n.savedCitiesWillAppearHere)
                                 .foregroundStyle(.white.opacity(0.78))
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -32,11 +38,11 @@ struct FavoritesView: View {
                         ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 18) {
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text("Your Favorite Cities")
+                                    Text(L10n.yourFavoriteCities)
                                         .font(.title2.weight(.bold))
                                         .foregroundStyle(.white)
 
-                                    Text("Tap a city to open it on Home.")
+                                    Text(L10n.tapCityToOpenHome)
                                         .font(.subheadline)
                                         .foregroundStyle(.white.opacity(0.78))
                                 }
