@@ -3,6 +3,12 @@
   "strings" : {
     "" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13,6 +19,12 @@
     },
     "°C" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "°C"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23,6 +35,12 @@
     },
     "°F" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "°F"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33,6 +51,12 @@
     },
     "5-Day Forecast" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5-Tage-Vorhersage"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43,6 +67,12 @@
     },
     "About" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -53,6 +83,12 @@
     },
     "App" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -63,6 +99,12 @@
     },
     "App Name" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Name"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -73,6 +115,12 @@
     },
     "Built With" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entwickelt mit"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -83,6 +131,12 @@
     },
     "Clear Sky" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klarer Himmel"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -93,6 +147,12 @@
     },
     "ClimaFlow" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ClimaFlow"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -103,6 +163,12 @@
     },
     "Current Weather" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuelles Wetter"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -113,6 +179,12 @@
     },
     "Customize app preferences and information." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe die Einstellungen und Informationen der App an."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -123,6 +195,12 @@
     },
     "Daylight" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tageslicht"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -133,6 +211,12 @@
     },
     "Drizzle" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieselregen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -143,6 +227,12 @@
     },
     "Favorites" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favoriten"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -153,6 +243,12 @@
     },
     "Feels Like" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gefühlte Temperatur"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -163,6 +259,12 @@
     },
     "Fog" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nebel"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -173,6 +275,12 @@
     },
     "Freezing Drizzle" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gefrierender Nieselregen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -183,6 +291,12 @@
     },
     "Freezing Rain" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gefrierender Regen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -196,6 +310,12 @@
     },
     "H: %@   L: %@" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "H: %1$@  T: %2$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -212,6 +332,12 @@
     },
     "Heavy Rain" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starker Regen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -222,6 +348,12 @@
     },
     "Heavy Snow" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starker Schneefall"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -232,6 +364,12 @@
     },
     "Heavy Snow Showers" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starke Schneeschauer"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -242,6 +380,12 @@
     },
     "Home" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -252,6 +396,12 @@
     },
     "Hourly Forecast" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stundenvorhersage"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -262,6 +412,12 @@
     },
     "Humidity" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luftfeuchtigkeit"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -272,6 +428,12 @@
     },
     "Language" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -282,6 +444,12 @@
     },
     "Light Rain" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leichter Regen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -292,6 +460,12 @@
     },
     "Light Snow" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leichter Schneefall"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -302,6 +476,12 @@
     },
     "Loading weather..." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wetter wird geladen..."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -312,6 +492,12 @@
     },
     "Mostly Clear" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meist klar"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -322,6 +508,12 @@
     },
     "No Favorites Yet" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Favoriten"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -332,6 +524,12 @@
     },
     "Offline mode - showing last data" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline-Modus – letzte Daten werden angezeigt"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -342,6 +540,12 @@
     },
     "OK" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -352,6 +556,12 @@
     },
     "Overcast" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bedeckt"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -362,6 +572,12 @@
     },
     "Partly Cloudy" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilweise bewölkt"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -372,6 +588,12 @@
     },
     "Preferences" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -382,6 +604,12 @@
     },
     "Rain" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -392,6 +620,12 @@
     },
     "Rain Showers" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenschauer"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -402,6 +636,12 @@
     },
     "Save to Favorites" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Favoriten hinzufügen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -412,6 +652,12 @@
     },
     "Saved cities will appear here." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Städte erscheinen hier."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -422,6 +668,12 @@
     },
     "Saved to Favorites" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Favoriten hinzugefügt"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -432,6 +684,12 @@
     },
     "Search city" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stadt suchen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -442,6 +700,12 @@
     },
     "Settings" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -452,6 +716,12 @@
     },
     "Snow" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schnee"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -462,6 +732,12 @@
     },
     "Snow Grains" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schneekörner"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -472,6 +748,12 @@
     },
     "Snow Showers" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schneeschauer"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -482,6 +764,12 @@
     },
     "Strong Rain Showers" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starke Regenschauer"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -492,6 +780,12 @@
     },
     "Sunrise" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonnenaufgang"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -502,6 +796,12 @@
     },
     "Sunrise & Sunset" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonnenaufgang & Sonnenuntergang"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -512,6 +812,12 @@
     },
     "Sunset" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonnenuntergang"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -522,6 +828,12 @@
     },
     "Tap a city to open it on Home." : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf eine Stadt, um sie auf der Startseite zu öffnen."
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -532,6 +844,12 @@
     },
     "Temperature Units" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temperatureinheiten"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -542,6 +860,12 @@
     },
     "Thunderstorm" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewitter"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -552,6 +876,12 @@
     },
     "Thunderstorm with Hail" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewitter mit Hagel"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -562,6 +892,12 @@
     },
     "Today" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -572,6 +908,12 @@
     },
     "Unknown" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unbekannt"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -582,6 +924,12 @@
     },
     "Unknown error" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unbekannter Fehler"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -592,6 +940,12 @@
     },
     "Use My Location" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Standort nutzen"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -602,6 +956,12 @@
     },
     "Version" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -612,6 +972,12 @@
     },
     "Violent Rain Showers" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heftige Regenschauer"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -622,6 +988,12 @@
     },
     "Weather API" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wetter-API"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -632,6 +1004,12 @@
     },
     "Wind" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wind"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -642,6 +1020,12 @@
     },
     "Your Favorite Cities" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lieblingsstädte"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
