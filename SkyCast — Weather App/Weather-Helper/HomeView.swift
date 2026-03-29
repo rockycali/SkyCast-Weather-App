@@ -48,7 +48,7 @@ struct HomeView: View {
                     viewModel.errorMessage = nil
                 }
             } message: {
-                Text(viewModel.errorMessage ?? "Unknown error")
+                Text(viewModel.errorMessage ?? String(localized: "Unknown error"))
             }
             .onChange(of: viewModel.errorMessage) { _, newValue in
                 // Avoid alert over cached offline data (location/search may still report network errors).
@@ -369,7 +369,7 @@ struct HomeView: View {
         .glassCard(cornerRadius: 28)
     }
 
-    private func sectionTitle(_ title: String) -> some View {
+    private func sectionTitle(_ title: LocalizedStringKey) -> some View {
         HStack {
             Text(title)
                 .font(.title3.weight(.semibold))
@@ -390,7 +390,7 @@ struct HomeView: View {
 }
 
 private struct WeatherMetricCard: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
     let systemImage: String
 
