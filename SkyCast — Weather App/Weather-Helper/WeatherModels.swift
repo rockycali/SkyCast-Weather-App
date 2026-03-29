@@ -165,11 +165,12 @@ struct DailyForecastItem: Identifiable, Codable {
 
     var dayLabel: String {
         if Calendar.current.isDateInToday(date) {
-            return "Today"
+            return String(localized: "Today")
         }
 
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
+        formatter.locale = .autoupdatingCurrent
+        formatter.setLocalizedDateFormatFromTemplate("EEE")
         return formatter.string(from: date)
     }
 
@@ -235,29 +236,29 @@ enum WeatherCodeMapper {
 
     static func description(for code: Int) -> String {
         switch code {
-        case 0: return "Clear Sky"
-        case 1: return "Mostly Clear"
-        case 2: return "Partly Cloudy"
-        case 3: return "Overcast"
-        case 45, 48: return "Fog"
-        case 51, 53, 55: return "Drizzle"
-        case 56, 57: return "Freezing Drizzle"
-        case 61: return "Light Rain"
-        case 63: return "Rain"
-        case 65: return "Heavy Rain"
-        case 66, 67: return "Freezing Rain"
-        case 71: return "Light Snow"
-        case 73: return "Snow"
-        case 75: return "Heavy Snow"
-        case 77: return "Snow Grains"
-        case 80: return "Rain Showers"
-        case 81: return "Strong Rain Showers"
-        case 82: return "Violent Rain Showers"
-        case 85: return "Snow Showers"
-        case 86: return "Heavy Snow Showers"
-        case 95: return "Thunderstorm"
-        case 96, 99: return "Thunderstorm with Hail"
-        default: return "Unknown"
+        case 0: return String(localized: "Clear Sky")
+        case 1: return String(localized: "Mostly Clear")
+        case 2: return String(localized: "Partly Cloudy")
+        case 3: return String(localized: "Overcast")
+        case 45, 48: return String(localized: "Fog")
+        case 51, 53, 55: return String(localized: "Drizzle")
+        case 56, 57: return String(localized: "Freezing Drizzle")
+        case 61: return String(localized: "Light Rain")
+        case 63: return String(localized: "Rain")
+        case 65: return String(localized: "Heavy Rain")
+        case 66, 67: return String(localized: "Freezing Rain")
+        case 71: return String(localized: "Light Snow")
+        case 73: return String(localized: "Snow")
+        case 75: return String(localized: "Heavy Snow")
+        case 77: return String(localized: "Snow Grains")
+        case 80: return String(localized: "Rain Showers")
+        case 81: return String(localized: "Strong Rain Showers")
+        case 82: return String(localized: "Violent Rain Showers")
+        case 85: return String(localized: "Snow Showers")
+        case 86: return String(localized: "Heavy Snow Showers")
+        case 95: return String(localized: "Thunderstorm")
+        case 96, 99: return String(localized: "Thunderstorm with Hail")
+        default: return String(localized: "Unknown")
         }
     }
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct WeatherButton: View {
-    let title: String
+    let title: LocalizedStringKey
     let textColor: Color
     let backgroundColor: Color
 

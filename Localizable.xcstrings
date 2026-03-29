@@ -81,6 +81,16 @@
         }
       }
     },
+    "Clear Sky" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciel dégagé"
+          }
+        }
+      }
+    },
     "ClimaFlow" : {
       "localizations" : {
         "fr" : {
@@ -121,6 +131,16 @@
         }
       }
     },
+    "Drizzle" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruine"
+          }
+        }
+      }
+    },
     "Favorites" : {
       "localizations" : {
         "fr" : {
@@ -141,6 +161,39 @@
         }
       }
     },
+    "Fog" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brouillard"
+          }
+        }
+      }
+    },
+    "Freezing Drizzle" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruine verglaçante"
+          }
+        }
+      }
+    },
+    "Freezing Rain" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pluie verglaçante"
+          }
+        }
+      }
+    },
+    "Go" : {
+
+    },
     "H: %@   L: %@" : {
       "localizations" : {
         "en" : {
@@ -153,6 +206,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "H: %1$@   L: %2$@"
+          }
+        }
+      }
+    },
+    "Heavy Rain" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forte pluie"
+          }
+        }
+      }
+    },
+    "Heavy Snow" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neige légère"
+          }
+        }
+      }
+    },
+    "Heavy Snow Showers" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortes averses de neige"
           }
         }
       }
@@ -197,12 +280,42 @@
         }
       }
     },
+    "Light Rain" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pluie légère"
+          }
+        }
+      }
+    },
+    "Light Snow" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neige légère"
+          }
+        }
+      }
+    },
     "Loading weather..." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chargement de la météo..."
+          }
+        }
+      }
+    },
+    "Mostly Clear" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plutôt dégagé"
           }
         }
       }
@@ -237,6 +350,26 @@
         }
       }
     },
+    "Overcast" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couvert"
+          }
+        }
+      }
+    },
+    "Partly Cloudy" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partiellement nuageux"
+          }
+        }
+      }
+    },
     "Preferences" : {
       "localizations" : {
         "fr" : {
@@ -253,6 +386,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pluie"
+          }
+        }
+      }
+    },
+    "Rain Showers" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Averses de pluie"
           }
         }
       }
@@ -307,6 +450,46 @@
         }
       }
     },
+    "Snow" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neige légère"
+          }
+        }
+      }
+    },
+    "Snow Grains" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grains de neige"
+          }
+        }
+      }
+    },
+    "Snow Showers" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Averses de neige"
+          }
+        }
+      }
+    },
+    "Strong Rain Showers" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortes averses de pluie"
+          }
+        }
+      }
+    },
     "Sunrise" : {
       "localizations" : {
         "fr" : {
@@ -357,6 +540,46 @@
         }
       }
     },
+    "Thunderstorm" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orage"
+          }
+        }
+      }
+    },
+    "Thunderstorm with Hail" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orage avec grêle"
+          }
+        }
+      }
+    },
+    "Today" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        }
+      }
+    },
+    "Unknown" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inconnu"
+          }
+        }
+      }
+    },
     "Unknown error" : {
       "localizations" : {
         "fr" : {
@@ -383,6 +606,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
+          }
+        }
+      }
+    },
+    "Violent Rain Showers" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Averses de pluie violentes"
           }
         }
       }
