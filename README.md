@@ -21,7 +21,7 @@ It is designed to showcase scalable architecture, responsive UI design, and a cl
 
 ## 📜 Changelog
 
-👉 [CHANGELOG](./CHANGELOG.md)
+👉 [CHANGELOG](./CHANGELOG)
 
 ---
 
