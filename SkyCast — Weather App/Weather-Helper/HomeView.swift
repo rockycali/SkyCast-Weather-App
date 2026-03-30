@@ -6,7 +6,7 @@ struct HomeView: View {
     @ObservedObject var viewModel: WeatherViewModel
     @State private var searchText = ""
     @State private var showErrorAlert = false
-    @State private var animateBackgroundGradient = true
+    @State private var animateBackgroundGradient = false
 
     enum UI {
         static let pageSpacing: CGFloat = 20
@@ -34,26 +34,36 @@ struct HomeView: View {
         static let fieldBorderOpacityDark: CGFloat = 0.22
         static let fieldBorderOpacityLight: CGFloat = 0.12
         static let buttonBorderOpacity: CGFloat = 0.2
-        static let backgroundAnimationDuration: Double = 26
-        static let backgroundStartPointX: CGFloat = 0.12
-        static let backgroundEndPointX: CGFloat = 0.88
-        static let backgroundAnimatedOffset: CGFloat = 0.08
+        static let backgroundAnimationDuration: Double = 24
+        static let backgroundStartPointX: CGFloat = 0.14
+        static let backgroundEndPointX: CGFloat = 0.86
+        static let backgroundAnimatedOffset: CGFloat = 0.10
+        static let backgroundSecondaryLayerOpacity: CGFloat = 0.22
+        static let backgroundSecondaryAnimationDuration: Double = 32
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                backgroundGradient
-                    .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
-                    .phaseAnimator([false, true], trigger: animateBackgroundGradient) { content, phase in
-                        content
-                            .animation(
-                                .easeInOut(duration: UI.backgroundAnimationDuration)
-                                .repeatForever(autoreverses: true),
-                                value: phase
-                            )
+                ZStack {
+                    backgroundGradient
+                        .ignoresSafeArea()
+
+                    backgroundAccentGradient
+                        .opacity(UI.backgroundSecondaryLayerOpacity)
+                        .blur(radius: 60)
+                        .ignoresSafeArea()
+                }
+                .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
+                .onAppear {
+                    guard !animateBackgroundGradient else { return }
+                    withAnimation(
+                        .easeInOut(duration: UI.backgroundAnimationDuration)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        animateBackgroundGradient = true
                     }
+                }
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: UI.pageSpacing) {
@@ -111,57 +121,74 @@ struct HomeView: View {
                 x: animateBackgroundGradient
                     ? UI.backgroundStartPointX + UI.backgroundAnimatedOffset
                     : UI.backgroundStartPointX,
-                y: animateBackgroundGradient ? 0.08 : 0
+                y: animateBackgroundGradient ? 0.10 : 0
             ),
             endPoint: UnitPoint(
                 x: animateBackgroundGradient
                     ? UI.backgroundEndPointX - UI.backgroundAnimatedOffset
                     : UI.backgroundEndPointX,
-                y: animateBackgroundGradient ? 0.92 : 1
+                y: animateBackgroundGradient ? 0.90 : 1
+            )
+        )
+    }
+
+    private var backgroundAccentGradient: LinearGradient {
+        LinearGradient(
+            colors: backgroundAccentColors,
+            startPoint: UnitPoint(
+                x: animateBackgroundGradient ? 0.88 : 0.18,
+                y: animateBackgroundGradient ? 0.18 : 0.82
+            ),
+            endPoint: UnitPoint(
+                x: animateBackgroundGradient ? 0.12 : 0.82,
+                y: animateBackgroundGradient ? 0.82 : 0.18
             )
         )
     }
 
     private var backgroundGradientColors: [Color] {
         guard let weather = viewModel.weather else {
-            return [Color.blue, Color.purple]
+            return [
+                Color(red: 0.18, green: 0.30, blue: 0.70),
+                Color(red: 0.32, green: 0.20, blue: 0.58)
+            ]
         }
 
         if viewModel.isNight {
             switch weather.current.weatherCode {
             case 0:
                 return [
-                    Color(red: 0.03, green: 0.05, blue: 0.15),
-                    Color(red: 0.10, green: 0.16, blue: 0.32)
+                    Color(red: 0.03, green: 0.06, blue: 0.16),
+                    Color(red: 0.09, green: 0.15, blue: 0.30)
                 ]
             case 1...3:
                 return [
-                    Color(red: 0.06, green: 0.08, blue: 0.18),
-                    Color(red: 0.14, green: 0.18, blue: 0.30)
+                    Color(red: 0.05, green: 0.08, blue: 0.18),
+                    Color(red: 0.11, green: 0.15, blue: 0.28)
                 ]
             case 45, 48:
                 return [
-                    Color(red: 0.08, green: 0.08, blue: 0.10),
-                    Color(red: 0.18, green: 0.18, blue: 0.22)
+                    Color(red: 0.07, green: 0.08, blue: 0.11),
+                    Color(red: 0.15, green: 0.17, blue: 0.21)
                 ]
             case 51...67:
                 return [
-                    Color(red: 0.05, green: 0.08, blue: 0.16),
-                    Color(red: 0.11, green: 0.16, blue: 0.26)
+                    Color(red: 0.04, green: 0.08, blue: 0.18),
+                    Color(red: 0.09, green: 0.14, blue: 0.24)
                 ]
             case 71...77:
                 return [
-                    Color(red: 0.08, green: 0.12, blue: 0.22),
-                    Color(red: 0.18, green: 0.20, blue: 0.32)
+                    Color(red: 0.07, green: 0.11, blue: 0.20),
+                    Color(red: 0.15, green: 0.18, blue: 0.28)
                 ]
             case 95...99:
                 return [
-                    Color.black,
-                    Color(red: 0.20, green: 0.10, blue: 0.30)
+                    Color(red: 0.03, green: 0.03, blue: 0.08),
+                    Color(red: 0.12, green: 0.08, blue: 0.20)
                 ]
             default:
                 return [
-                    Color(red: 0.04, green: 0.06, blue: 0.14),
+                    Color(red: 0.04, green: 0.07, blue: 0.16),
                     Color(red: 0.10, green: 0.14, blue: 0.24)
                 ]
             }
@@ -169,19 +196,99 @@ struct HomeView: View {
 
         switch weather.current.weatherCode {
         case 0:
-            return [.blue, .yellow]
+            return [
+                Color(red: 0.22, green: 0.52, blue: 0.96),
+                Color(red: 0.96, green: 0.78, blue: 0.36)
+            ]
         case 1...3:
-            return [.gray, .blue]
+            return [
+                Color(red: 0.36, green: 0.50, blue: 0.72),
+                Color(red: 0.20, green: 0.36, blue: 0.62)
+            ]
         case 45, 48:
-            return [.gray.opacity(0.8), .black]
+            return [
+                Color(red: 0.38, green: 0.42, blue: 0.50),
+                Color(red: 0.18, green: 0.22, blue: 0.30)
+            ]
         case 51...67:
-            return [.blue, .gray]
+            return [
+                Color(red: 0.20, green: 0.42, blue: 0.76),
+                Color(red: 0.32, green: 0.38, blue: 0.50)
+            ]
         case 71...77:
-            return [.white, .blue]
+            return [
+                Color(red: 0.68, green: 0.80, blue: 0.96),
+                Color(red: 0.36, green: 0.52, blue: 0.82)
+            ]
         case 95...99:
-            return [.black, .purple]
+            return [
+                Color(red: 0.12, green: 0.10, blue: 0.18),
+                Color(red: 0.26, green: 0.14, blue: 0.36)
+            ]
         default:
-            return [.blue, .purple]
+            return [
+                Color(red: 0.22, green: 0.42, blue: 0.82),
+                Color(red: 0.30, green: 0.22, blue: 0.58)
+            ]
+        }
+    }
+
+    private var backgroundAccentColors: [Color] {
+        guard let weather = viewModel.weather else {
+            return [Color.white.opacity(0.45), Color.clear]
+        }
+
+        if viewModel.isNight {
+            switch weather.current.weatherCode {
+            case 0:
+                return [
+                    Color(red: 0.30, green: 0.40, blue: 0.70).opacity(0.40),
+                    Color.clear
+                ]
+            case 51...67, 71...77, 95...99:
+                return [
+                    Color(red: 0.18, green: 0.26, blue: 0.48).opacity(0.34),
+                    Color.clear
+                ]
+            default:
+                return [
+                    Color(red: 0.24, green: 0.30, blue: 0.50).opacity(0.32),
+                    Color.clear
+                ]
+            }
+        }
+
+        switch weather.current.weatherCode {
+        case 0:
+            return [
+                Color(red: 1.00, green: 0.96, blue: 0.72).opacity(0.55),
+                Color.clear
+            ]
+        case 1...3:
+            return [
+                Color.white.opacity(0.30),
+                Color.clear
+            ]
+        case 51...67:
+            return [
+                Color(red: 0.70, green: 0.82, blue: 0.98).opacity(0.26),
+                Color.clear
+            ]
+        case 71...77:
+            return [
+                Color.white.opacity(0.34),
+                Color.clear
+            ]
+        case 95...99:
+            return [
+                Color(red: 0.56, green: 0.42, blue: 0.80).opacity(0.22),
+                Color.clear
+            ]
+        default:
+            return [
+                Color.white.opacity(0.22),
+                Color.clear
+            ]
         }
     }
 
