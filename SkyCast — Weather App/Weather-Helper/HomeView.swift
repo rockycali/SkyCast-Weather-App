@@ -6,6 +6,7 @@ struct HomeView: View {
     @ObservedObject var viewModel: WeatherViewModel
     @State private var searchText = ""
     @State private var showErrorAlert = false
+    @State private var animateBackgroundGradient = false
 
     enum UI {
         static let pageSpacing: CGFloat = 20
@@ -33,14 +34,28 @@ struct HomeView: View {
         static let fieldBorderOpacityDark: CGFloat = 0.22
         static let fieldBorderOpacityLight: CGFloat = 0.12
         static let buttonBorderOpacity: CGFloat = 0.2
+        static let backgroundAnimationDuration: Double = 22
+        static let backgroundStartPointX: CGFloat = 0.18
+        static let backgroundEndPointX: CGFloat = 0.82
+        static let backgroundAnimatedOffset: CGFloat = 0.12
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 backgroundGradient
+                    .opacity(animateBackgroundGradient ? 1 : 0.96)
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
+                    .onAppear {
+                        guard !animateBackgroundGradient else { return }
+                        withAnimation(
+                            .easeInOut(duration: UI.backgroundAnimationDuration)
+                            .repeatForever(autoreverses: true)
+                        ) {
+                            animateBackgroundGradient = true
+                        }
+                    }
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: UI.pageSpacing) {
@@ -92,76 +107,83 @@ struct HomeView: View {
     }
 
     private var backgroundGradient: LinearGradient {
-        guard let weather = viewModel.weather else {
-            return LinearGradient(
-                colors: [Color.blue, Color.purple],
-                startPoint: .top,
-                endPoint: .bottom
+        LinearGradient(
+            colors: backgroundGradientColors,
+            startPoint: UnitPoint(
+                x: animateBackgroundGradient
+                    ? UI.backgroundStartPointX + UI.backgroundAnimatedOffset
+                    : UI.backgroundStartPointX,
+                y: 0
+            ),
+            endPoint: UnitPoint(
+                x: animateBackgroundGradient
+                    ? UI.backgroundEndPointX - UI.backgroundAnimatedOffset
+                    : UI.backgroundEndPointX,
+                y: 1
             )
+        )
+    }
+
+    private var backgroundGradientColors: [Color] {
+        guard let weather = viewModel.weather else {
+            return [Color.blue, Color.purple]
         }
 
         if viewModel.isNight {
             switch weather.current.weatherCode {
             case 0:
-                return LinearGradient(
-                    colors: [Color(red: 0.03, green: 0.05, blue: 0.15), Color(red: 0.10, green: 0.16, blue: 0.32)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.03, green: 0.05, blue: 0.15),
+                    Color(red: 0.10, green: 0.16, blue: 0.32)
+                ]
             case 1...3:
-                return LinearGradient(
-                    colors: [Color(red: 0.06, green: 0.08, blue: 0.18), Color(red: 0.14, green: 0.18, blue: 0.30)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.06, green: 0.08, blue: 0.18),
+                    Color(red: 0.14, green: 0.18, blue: 0.30)
+                ]
             case 45, 48:
-                return LinearGradient(
-                    colors: [Color(red: 0.08, green: 0.08, blue: 0.10), Color(red: 0.18, green: 0.18, blue: 0.22)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.08, green: 0.08, blue: 0.10),
+                    Color(red: 0.18, green: 0.18, blue: 0.22)
+                ]
             case 51...67:
-                return LinearGradient(
-                    colors: [Color(red: 0.05, green: 0.08, blue: 0.16), Color(red: 0.11, green: 0.16, blue: 0.26)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.05, green: 0.08, blue: 0.16),
+                    Color(red: 0.11, green: 0.16, blue: 0.26)
+                ]
             case 71...77:
-                return LinearGradient(
-                    colors: [Color(red: 0.08, green: 0.12, blue: 0.22), Color(red: 0.18, green: 0.20, blue: 0.32)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.08, green: 0.12, blue: 0.22),
+                    Color(red: 0.18, green: 0.20, blue: 0.32)
+                ]
             case 95...99:
-                return LinearGradient(
-                    colors: [Color.black, Color(red: 0.20, green: 0.10, blue: 0.30)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color.black,
+                    Color(red: 0.20, green: 0.10, blue: 0.30)
+                ]
             default:
-                return LinearGradient(
-                    colors: [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.10, green: 0.14, blue: 0.24)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.04, green: 0.06, blue: 0.14),
+                    Color(red: 0.10, green: 0.14, blue: 0.24)
+                ]
             }
         }
 
         switch weather.current.weatherCode {
         case 0:
-            return LinearGradient(colors: [.blue, .yellow], startPoint: .top, endPoint: .bottom)
+            return [.blue, .yellow]
         case 1...3:
-            return LinearGradient(colors: [.gray, .blue], startPoint: .top, endPoint: .bottom)
+            return [.gray, .blue]
         case 45, 48:
-            return LinearGradient(colors: [.gray.opacity(0.8), .black], startPoint: .top, endPoint: .bottom)
+            return [.gray.opacity(0.8), .black]
         case 51...67:
-            return LinearGradient(colors: [.blue, .gray], startPoint: .top, endPoint: .bottom)
+            return [.blue, .gray]
         case 71...77:
-            return LinearGradient(colors: [.white, .blue], startPoint: .top, endPoint: .bottom)
+            return [.white, .blue]
         case 95...99:
-            return LinearGradient(colors: [.black, .purple], startPoint: .top, endPoint: .bottom)
+            return [.black, .purple]
         default:
-            return LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom)
+            return [.blue, .purple]
         }
     }
 
@@ -253,7 +275,7 @@ struct HomeView: View {
 
                 if viewModel.weather != nil {
                     Divider()
-                        .overlay(.white.opacity(0.18))
+                        .overlay(.white.opacity(0.10))
                         .padding(.horizontal, UI.fieldHorizontalPadding)
 
                     Button {
