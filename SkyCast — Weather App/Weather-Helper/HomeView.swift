@@ -196,90 +196,92 @@ struct HomeView: View {
 
     private var searchSection: some View {
         VStack(spacing: UI.gridSpacing) {
-            HStack(spacing: UI.rowSpacing) {
-                HStack(spacing: UI.rowSpacing - 2) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.75 : 0.8))
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.75 : 0.8))
 
-                    TextField("Search city", text: $searchText)
-                        .textInputAutocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .submitLabel(.search)
-                        .foregroundStyle(.white)
-                        .tint(.white)
-                        .onSubmit {
-                            Task {
-                                await searchCity()
-                            }
+                TextField("Search city", text: $searchText)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .submitLabel(.search)
+                    .foregroundStyle(.white)
+                    .tint(.white)
+                    .onSubmit {
+                        Task {
+                            await searchCity()
                         }
-                }
-                .padding(.horizontal, UI.fieldHorizontalPadding)
-                .frame(height: UI.buttonHeight)
-                .background(.white.opacity(UI.textFieldBackgroundOpacity))
-                .overlay {
-                    RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                        .stroke(.white.opacity(UI.fieldBorderOpacityDark), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
+                    }
 
                 Button {
                     Task {
                         await searchCity()
                     }
                 } label: {
-                    WeatherButton(
-                        title: "Go",
-                        textColor: colorScheme == .dark ? .white : .black,
-                        backgroundColor: colorScheme == .dark ? Color.white.opacity(UI.textFieldBackgroundOpacity) : .white
-                    )
-                    .overlay {
-                        RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                            .stroke(.white.opacity(colorScheme == .dark ? UI.fieldBorderOpacityDark : UI.fieldBorderOpacityLight), lineWidth: 1)
-                    }
-                    .frame(width: 84, height: UI.buttonHeight)
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.white)
                 }
                 .disabled(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .opacity(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.55 : 1)
             }
-
-            Button {
-                viewModel.requestLocation()
-            } label: {
-                Label("Use My Location", systemImage: "location.fill")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: UI.buttonHeight)
-                    .background(.white.opacity(UI.secondaryButtonBackgroundOpacity))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                            .stroke(.white.opacity(UI.buttonBorderOpacity), lineWidth: 1)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
+            .padding(.horizontal, UI.fieldHorizontalPadding)
+            .frame(height: UI.buttonHeight)
+            .background(.white.opacity(UI.textFieldBackgroundOpacity))
+            .overlay {
+                RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
+                    .stroke(.white.opacity(UI.fieldBorderOpacityDark), lineWidth: 1)
             }
+            .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
 
-            if viewModel.weather != nil {
+            VStack(spacing: 0) {
                 Button {
-                    viewModel.addCurrentCityToFavorites()
+                    viewModel.requestLocation()
                 } label: {
-                    Label(
-                        viewModel.isFavoriteCurrentCity() ? "Saved to Favorites" : "Save to Favorites",
-                        systemImage: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star"
-                    )
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: UI.buttonHeight)
-                    .background(.white.opacity(UI.secondaryButtonBackgroundOpacity))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                            .stroke(.white.opacity(UI.buttonBorderOpacity), lineWidth: 1)
+                    HStack(spacing: 10) {
+                        Image(systemName: "location.fill")
+                            .frame(width: 18)
+                            .foregroundStyle(.white.opacity(0.85))
+
+                        Text("Use My Location")
+                            .foregroundStyle(.white)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
+                    .font(.headline.weight(.medium))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(height: UI.buttonHeight)
+                    .padding(.horizontal, UI.fieldHorizontalPadding)
                 }
-                .disabled(viewModel.isFavoriteCurrentCity())
-                .opacity(viewModel.isFavoriteCurrentCity() ? 0.7 : 1)
+
+                if viewModel.weather != nil {
+                    Divider()
+                        .overlay(.white.opacity(0.18))
+                        .padding(.horizontal, UI.fieldHorizontalPadding)
+
+                    Button {
+                        viewModel.addCurrentCityToFavorites()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star")
+                                .frame(width: 18)
+                                .foregroundStyle(.white.opacity(0.85))
+
+                            Text(viewModel.isFavoriteCurrentCity() ? "Saved to Favorites" : "Save to Favorites")
+                                .foregroundStyle(.white)
+                        }
+                        .font(.headline.weight(.medium))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(height: UI.buttonHeight)
+                        .padding(.horizontal, UI.fieldHorizontalPadding)
+                    }
+                    .disabled(viewModel.isFavoriteCurrentCity())
+                    .opacity(viewModel.isFavoriteCurrentCity() ? 0.7 : 1)
+                }
             }
+            .background(.white.opacity(UI.secondaryButtonBackgroundOpacity))
+            .overlay {
+                RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
+                    .stroke(.white.opacity(UI.buttonBorderOpacity), lineWidth: 1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
         }
     }
 
@@ -439,14 +441,14 @@ private struct WeatherMetricCard: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(minHeight: 50, alignment: .topLeading)
+            .frame(minHeight: 40, alignment: .topLeading)
 
             Text(value)
-                .font(.title2.weight(.bold))
+                .font(.title.weight(.bold))
                 .foregroundStyle(.white)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
+        .padding(14)
         .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
