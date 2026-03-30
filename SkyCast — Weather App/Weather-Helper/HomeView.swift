@@ -168,8 +168,8 @@ struct HomeView: View {
                 ]
             case 45, 48:
                 return [
-                    Color(red: 0.07, green: 0.08, blue: 0.11),
-                    Color(red: 0.15, green: 0.17, blue: 0.21)
+                    Color(red: 0.10, green: 0.12, blue: 0.18),
+                    Color(red: 0.18, green: 0.20, blue: 0.26)
                 ]
             case 51...67:
                 return [
@@ -207,8 +207,8 @@ struct HomeView: View {
             ]
         case 45, 48:
             return [
-                Color(red: 0.38, green: 0.42, blue: 0.50),
-                Color(red: 0.18, green: 0.22, blue: 0.30)
+                Color(red: 0.70, green: 0.75, blue: 0.82),
+                Color(red: 0.48, green: 0.54, blue: 0.62)
             ]
         case 51...67:
             return [
