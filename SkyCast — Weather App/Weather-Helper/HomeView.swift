@@ -6,7 +6,7 @@ struct HomeView: View {
     @ObservedObject var viewModel: WeatherViewModel
     @State private var searchText = ""
     @State private var showErrorAlert = false
-    @State private var animateBackgroundGradient = false
+    @State private var animateBackgroundGradient = true
 
     enum UI {
         static let pageSpacing: CGFloat = 20
@@ -34,27 +34,25 @@ struct HomeView: View {
         static let fieldBorderOpacityDark: CGFloat = 0.22
         static let fieldBorderOpacityLight: CGFloat = 0.12
         static let buttonBorderOpacity: CGFloat = 0.2
-        static let backgroundAnimationDuration: Double = 22
-        static let backgroundStartPointX: CGFloat = 0.18
-        static let backgroundEndPointX: CGFloat = 0.82
-        static let backgroundAnimatedOffset: CGFloat = 0.12
+        static let backgroundAnimationDuration: Double = 26
+        static let backgroundStartPointX: CGFloat = 0.12
+        static let backgroundEndPointX: CGFloat = 0.88
+        static let backgroundAnimatedOffset: CGFloat = 0.08
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 backgroundGradient
-                    .opacity(animateBackgroundGradient ? 1 : 0.96)
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
-                    .onAppear {
-                        guard !animateBackgroundGradient else { return }
-                        withAnimation(
-                            .easeInOut(duration: UI.backgroundAnimationDuration)
-                            .repeatForever(autoreverses: true)
-                        ) {
-                            animateBackgroundGradient = true
-                        }
+                    .phaseAnimator([false, true], trigger: animateBackgroundGradient) { content, phase in
+                        content
+                            .animation(
+                                .easeInOut(duration: UI.backgroundAnimationDuration)
+                                .repeatForever(autoreverses: true),
+                                value: phase
+                            )
                     }
 
                 ScrollView(showsIndicators: false) {
@@ -113,13 +111,13 @@ struct HomeView: View {
                 x: animateBackgroundGradient
                     ? UI.backgroundStartPointX + UI.backgroundAnimatedOffset
                     : UI.backgroundStartPointX,
-                y: 0
+                y: animateBackgroundGradient ? 0.08 : 0
             ),
             endPoint: UnitPoint(
                 x: animateBackgroundGradient
                     ? UI.backgroundEndPointX - UI.backgroundAnimatedOffset
                     : UI.backgroundEndPointX,
-                y: 1
+                y: animateBackgroundGradient ? 0.92 : 1
             )
         )
     }
