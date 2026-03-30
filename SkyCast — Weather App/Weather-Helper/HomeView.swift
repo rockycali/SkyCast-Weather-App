@@ -163,8 +163,8 @@ struct HomeView: View {
                 ]
             case 1...3:
                 return [
-                    Color(red: 0.05, green: 0.08, blue: 0.18),
-                    Color(red: 0.11, green: 0.15, blue: 0.28)
+                    Color(red: 0.10, green: 0.14, blue: 0.26),
+                    Color(red: 0.18, green: 0.22, blue: 0.38)
                 ]
             case 45, 48:
                 return [
@@ -202,8 +202,8 @@ struct HomeView: View {
             ]
         case 1...3:
             return [
-                Color(red: 0.36, green: 0.50, blue: 0.72),
-                Color(red: 0.20, green: 0.36, blue: 0.62)
+                Color(red: 0.52, green: 0.64, blue: 0.82),
+                Color(red: 0.26, green: 0.40, blue: 0.68)
             ]
         case 45, 48:
             return [
@@ -303,7 +303,7 @@ struct HomeView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
 
-                Text(viewModel.displayName)
+                Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -327,7 +327,11 @@ struct HomeView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.75 : 0.8))
 
-                TextField("Search city", text: $searchText)
+                TextField(
+                    "",
+                    text: $searchText,
+                    prompt: Text("Search city").foregroundStyle(.white.opacity(0.6))
+                )
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
                     .submitLabel(.search)
@@ -380,7 +384,7 @@ struct HomeView: View {
 
                 if viewModel.weather != nil {
                     Divider()
-                        .overlay(.white.opacity(0.10))
+                        .overlay(.white.opacity(0.06))
                         .padding(.horizontal, UI.fieldHorizontalPadding)
 
                     Button {
