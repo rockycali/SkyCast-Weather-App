@@ -8,7 +8,7 @@ struct HomeView: View {
     @State private var animateBackgroundGradient = false
 
     enum UI {
-        static let pageSpacing: CGFloat = 20
+        static let pageSpacing: CGFloat = 16
         static let sectionSpacing: CGFloat = 14
         static let gridSpacing: CGFloat = 10
         static let rowSpacing: CGFloat = 10
@@ -79,7 +79,8 @@ struct HomeView: View {
                         dailySection
                     }
                     .padding(.horizontal, UI.contentHorizontalPadding)
-                    .padding(.vertical, UI.contentVerticalPadding)
+                    .padding(.top, UI.contentVerticalPadding)
+                    .padding(.bottom, 170)
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                     .id(temperatureUnit)
                 }
@@ -87,6 +88,23 @@ struct HomeView: View {
                     print("🔄 Pull-to-refresh triggered")
                     await viewModel.refreshCurrentSource()
                 }
+
+                VStack {
+                    Spacer()
+
+                    LinearGradient(
+                        colors: [
+                            Color.clear,
+                            backgroundGradientColors.last?.opacity(0.45) ?? Color.clear,
+                            backgroundGradientColors.last?.opacity(0.85) ?? Color.clear
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 120)
+                    .allowsHitTesting(false)
+                }
+                .ignoresSafeArea(edges: .bottom)
 
             }
             .navigationBarHidden(true)
@@ -349,7 +367,7 @@ struct HomeView: View {
                         .foregroundStyle(.white.opacity(0.92))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                .padding(.vertical, 18)
                 .glassCard(cornerRadius: UI.heroCardCornerRadius)
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
@@ -382,6 +400,7 @@ struct HomeView: View {
                         sunset: today.sunset
                     )
                 }
+                .padding(.top, 12)
             }
         }
     }
@@ -477,8 +496,8 @@ private struct WeatherMetricCard: View {
                 .font(.title.weight(.bold))
                 .foregroundStyle(.white)
         }
-        .frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
-        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+        .padding(12)
         .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
