@@ -164,6 +164,9 @@
         }
       }
     },
+    "Current Location" : {
+
+    },
     "Current Weather" : {
       "localizations" : {
         "de" : {
@@ -957,6 +960,9 @@
           }
         }
       }
+    },
+    "Use device location" : {
+
     },
     "Use My Location" : {
       "extractionState" : "stale",

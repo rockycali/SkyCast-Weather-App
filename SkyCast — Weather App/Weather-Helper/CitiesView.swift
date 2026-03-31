@@ -6,6 +6,7 @@ struct CitiesView: View {
         static let savedCitiesWillAppearHere: LocalizedStringKey = "Saved cities will appear here."
         static let yourCities: LocalizedStringKey = "Your Cities"
         static let tapCityToOpenHome: LocalizedStringKey = "Tap a city to open it on Home."
+        static let currentLocation: LocalizedStringKey = "Current Location"
         static let searchCities: LocalizedStringKey = "Search cities"
         static let searchResults: LocalizedStringKey = "Search Results"
         static let noMatchingCities: LocalizedStringKey = "No matching cities"
@@ -38,10 +39,12 @@ struct CitiesView: View {
                         }
 
                         searchBar
+                        currentLocationRow
 
                         if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             searchResultsSection
                         }
+
 
                         if viewModel.favorites.isEmpty {
                             VStack(spacing: 12) {
@@ -371,6 +374,42 @@ struct CitiesView: View {
             return LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom)
         }
     }
+    private var currentLocationRow: some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            viewModel.requestLocation()
+            selectedTab = 0
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "location.fill")
+                    .foregroundStyle(.white.opacity(0.92))
+                    .font(.headline)
+                    .frame(width: 38, height: 38)
+                    .background(.white.opacity(0.10))
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.currentLocation)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+
+                    Text("Use device location")
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.72))
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.55))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
+            .glassCard(cornerRadius: 22)
+        }
+        .buttonStyle(.plain)
+    }
 }
 
 #Preview {
@@ -397,3 +436,4 @@ private extension View {
         modifier(GlassCardModifier(cornerRadius: cornerRadius))
     }
 }
+

@@ -87,6 +87,7 @@ struct HomeView: View {
                     print("🔄 Pull-to-refresh triggered")
                     await viewModel.refreshCurrentSource()
                 }
+
             }
             .navigationBarHidden(true)
             .task {
@@ -291,79 +292,35 @@ struct HomeView: View {
     }
 
     private var headerSection: some View {
-        VStack(spacing: 10) {
-            HStack {
-                favoriteHeaderButton
+        VStack(spacing: 6) {
+            Text("Current Weather")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
 
-                Spacer()
+            HStack(spacing: 8) {
+                Image(systemName: "location.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
 
-                locationHeaderButton
+                Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
             }
 
-            VStack(spacing: 6) {
-                Text("Current Weather")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
-
-                HStack(spacing: 8) {
-                    Image(systemName: "location.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
-
-                    Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
-                        .font(.system(size: 30, weight: .bold))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
-                }
-
-                if let current = viewModel.weather?.current {
-                    Text(current.summary)
-                        .font(.headline)
-                        .foregroundStyle(.white.opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight))
-                }
+            if let current = viewModel.weather?.current {
+                Text(current.summary)
+                    .font(.headline)
+                    .foregroundStyle(.white.opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight))
             }
-            .frame(maxWidth: .infinity)
         }
+        .frame(maxWidth: .infinity)
         .padding(.top, 8)
     }
 
-    private var favoriteHeaderButton: some View {
-        Button {
-            if viewModel.weather != nil {
-                viewModel.addCurrentCityToFavorites()
-            }
-        } label: {
-            Image(systemName: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white.opacity(viewModel.weather != nil ? 0.92 : 0.45))
-                .frame(width: 44, height: 44)
-                .background(.white.opacity(0.10), in: Circle())
-                .overlay {
-                    Circle()
-                        .stroke(.white.opacity(0.16), lineWidth: 1)
-                }
-        }
-        .disabled(viewModel.weather == nil || viewModel.isFavoriteCurrentCity())
-        .opacity(viewModel.weather == nil ? 0.45 : 1)
-    }
 
-    private var locationHeaderButton: some View {
-        Button {
-            viewModel.requestLocation()
-        } label: {
-            Image(systemName: "location.fill")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.92))
-                .frame(width: 44, height: 44)
-                .background(.white.opacity(0.10), in: Circle())
-                .overlay {
-                    Circle()
-                        .stroke(.white.opacity(0.16), lineWidth: 1)
-                }
-        }
-    }
 
 
 
