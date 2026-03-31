@@ -11,6 +11,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var currentSource: WeatherSource = .default
     @Published var favorites: [FavoriteCity] = []
     @Published var isOffline = false
+    @Published var citySearchResults: [LocationResult] = []
 
     private let weatherService: WeatherServiceProtocol
     private let locationManager: LocationManager
@@ -168,6 +169,7 @@ final class WeatherViewModel: ObservableObject {
 
         do {
             let results = try await weatherService.searchLocations(query: query)
+            citySearchResults = results
             guard let first = results.first else {
                 throw WeatherError.noResults
             }
@@ -187,8 +189,42 @@ final class WeatherViewModel: ObservableObject {
                 isOffline = true
                 return
             }
+            citySearchResults = []
             errorMessage = error.localizedDescription
         }
+    }
+
+    func searchCities(for query: String) async {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmed.isEmpty else {
+            citySearchResults = []
+            errorMessage = nil
+            return
+        }
+
+        do {
+            let results = try await weatherService.searchLocations(query: trimmed)
+            citySearchResults = results
+            errorMessage = nil
+        } catch {
+            if isCancellationError(error) {
+                return
+            }
+            citySearchResults = []
+        }
+    }
+
+    func loadLocationResult(_ result: LocationResult) async {
+        errorMessage = nil
+        currentSource = .city(result.displayName)
+        citySearchResults = []
+
+        await loadWeather(
+            latitude: result.latitude,
+            longitude: result.longitude,
+            name: result.displayName
+        )
     }
 
     func requestLocation() {

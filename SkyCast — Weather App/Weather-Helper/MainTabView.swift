@@ -23,9 +23,9 @@ struct MainTabView: View {
                 }
                 .tag(0)
 
-            FavoritesView(viewModel: viewModel, selectedTab: $selectedTab)
+            CitiesView(viewModel: viewModel, selectedTab: $selectedTab)
                 .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
+                    Label("Cities", systemImage: "star.fill")
                 }
                 .tag(1)
 

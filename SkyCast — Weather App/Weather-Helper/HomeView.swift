@@ -4,7 +4,6 @@ struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("temperatureUnit") private var temperatureUnit = "C"
     @ObservedObject var viewModel: WeatherViewModel
-    @State private var searchText = ""
     @State private var showErrorAlert = false
     @State private var animateBackgroundGradient = false
 
@@ -73,7 +72,6 @@ struct HomeView: View {
                                 .font(.caption)
                         }
                         headerSection
-                        searchSection
                         currentWeatherSection
                         metricsSection
                         sunCycleSection
@@ -293,128 +291,80 @@ struct HomeView: View {
     }
 
     private var headerSection: some View {
-        VStack(spacing: 6) {
-            Text("Current Weather")
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
+        VStack(spacing: 10) {
+            HStack {
+                favoriteHeaderButton
 
-            HStack(spacing: 8) {
-                Image(systemName: "location.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
+                Spacer()
 
-                Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
+                locationHeaderButton
             }
 
-            if let current = viewModel.weather?.current {
-                Text(current.summary)
-                    .font(.headline)
-                    .foregroundStyle(.white.opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight))
+            VStack(spacing: 6) {
+                Text("Current Weather")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
+
+                HStack(spacing: 8) {
+                    Image(systemName: "location.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
+
+                    Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                }
+
+                if let current = viewModel.weather?.current {
+                    Text(current.summary)
+                        .font(.headline)
+                        .foregroundStyle(.white.opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight))
+                }
             }
+            .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
         .padding(.top, 8)
     }
 
-    private var searchSection: some View {
-        VStack(spacing: UI.gridSpacing) {
-            HStack(spacing: 12) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.75 : 0.8))
-
-                TextField(
-                    "",
-                    text: $searchText,
-                    prompt: Text("Search city").foregroundStyle(.white.opacity(0.6))
-                )
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled()
-                    .submitLabel(.search)
-                    .foregroundStyle(.white)
-                    .tint(.white)
-                    .onSubmit {
-                        Task {
-                            await searchCity()
-                        }
-                    }
-
-                Button {
-                    Task {
-                        await searchCity()
-                    }
-                } label: {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.white)
+    private var favoriteHeaderButton: some View {
+        Button {
+            if viewModel.weather != nil {
+                viewModel.addCurrentCityToFavorites()
+            }
+        } label: {
+            Image(systemName: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white.opacity(viewModel.weather != nil ? 0.92 : 0.45))
+                .frame(width: 44, height: 44)
+                .background(.white.opacity(0.10), in: Circle())
+                .overlay {
+                    Circle()
+                        .stroke(.white.opacity(0.16), lineWidth: 1)
                 }
-                .disabled(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .opacity(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.55 : 1)
-            }
-            .padding(.horizontal, UI.fieldHorizontalPadding)
-            .frame(height: UI.buttonHeight)
-            .background(.white.opacity(UI.textFieldBackgroundOpacity))
-            .overlay {
-                RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                    .stroke(.white.opacity(UI.fieldBorderOpacityDark), lineWidth: 1)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
+        }
+        .disabled(viewModel.weather == nil || viewModel.isFavoriteCurrentCity())
+        .opacity(viewModel.weather == nil ? 0.45 : 1)
+    }
 
-            VStack(spacing: 0) {
-                Button {
-                    viewModel.requestLocation()
-                } label: {
-                    HStack(spacing: 10) {
-                        Image(systemName: "location.fill")
-                            .frame(width: 18)
-                            .foregroundStyle(.white.opacity(0.85))
-
-                        Text("Use My Location")
-                            .foregroundStyle(.white)
-                    }
-                    .font(.headline.weight(.medium))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(height: UI.buttonHeight)
-                    .padding(.horizontal, UI.fieldHorizontalPadding)
+    private var locationHeaderButton: some View {
+        Button {
+            viewModel.requestLocation()
+        } label: {
+            Image(systemName: "location.fill")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.92))
+                .frame(width: 44, height: 44)
+                .background(.white.opacity(0.10), in: Circle())
+                .overlay {
+                    Circle()
+                        .stroke(.white.opacity(0.16), lineWidth: 1)
                 }
-
-                if viewModel.weather != nil {
-                    Divider()
-                        .overlay(.white.opacity(0.06))
-                        .padding(.horizontal, UI.fieldHorizontalPadding)
-
-                    Button {
-                        viewModel.addCurrentCityToFavorites()
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star")
-                                .frame(width: 18)
-                                .foregroundStyle(.white.opacity(0.85))
-
-                            Text(viewModel.isFavoriteCurrentCity() ? "Saved to Favorites" : "Save to Favorites")
-                                .foregroundStyle(.white)
-                        }
-                        .font(.headline.weight(.medium))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .frame(height: UI.buttonHeight)
-                        .padding(.horizontal, UI.fieldHorizontalPadding)
-                    }
-                    .disabled(viewModel.isFavoriteCurrentCity())
-                    .opacity(viewModel.isFavoriteCurrentCity() ? 0.7 : 1)
-                }
-            }
-            .background(.white.opacity(UI.secondaryButtonBackgroundOpacity))
-            .overlay {
-                RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous)
-                    .stroke(.white.opacity(UI.buttonBorderOpacity), lineWidth: 1)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: UI.inputCornerRadius, style: .continuous))
         }
     }
+
 
 
     private var currentWeatherSection: some View {
@@ -542,14 +492,6 @@ struct HomeView: View {
         }
     }
 
-    private func searchCity() async {
-        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        await viewModel.searchCity(named: trimmed)
-        if viewModel.errorMessage == nil {
-            searchText = ""
-        }
-    }
 }
 
 private struct WeatherMetricCard: View {

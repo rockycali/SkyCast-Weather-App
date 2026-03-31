@@ -129,6 +129,9 @@
         }
       }
     },
+    "Cities" : {
+
+    },
     "Clear Sky" : {
       "localizations" : {
         "de" : {
@@ -226,6 +229,7 @@
       }
     },
     "Favorites" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -503,7 +507,11 @@
         }
       }
     },
+    "No Cities Yet" : {
+
+    },
     "No Favorites Yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -518,6 +526,9 @@
           }
         }
       }
+    },
+    "No matching cities" : {
+
     },
     "Offline mode - showing last data" : {
       "localizations" : {
@@ -632,6 +643,7 @@
       }
     },
     "Save to Favorites" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -664,6 +676,7 @@
       }
     },
     "Saved to Favorites" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -679,7 +692,11 @@
         }
       }
     },
+    "Search cities" : {
+
+    },
     "Search city" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -694,6 +711,9 @@
           }
         }
       }
+    },
+    "Search Results" : {
+
     },
     "Settings" : {
       "localizations" : {
@@ -903,6 +923,9 @@
         }
       }
     },
+    "Try a different city or country name." : {
+
+    },
     "Unknown" : {
       "localizations" : {
         "de" : {
@@ -936,6 +959,7 @@
       }
     },
     "Use My Location" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1015,7 +1039,11 @@
         }
       }
     },
+    "Your Cities" : {
+
+    },
     "Your Favorite Cities" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
