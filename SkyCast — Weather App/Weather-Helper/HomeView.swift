@@ -4,33 +4,83 @@ struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("temperatureUnit") private var temperatureUnit = "C"
     @ObservedObject var viewModel: WeatherViewModel
-    @State private var searchText = ""
     @State private var showErrorAlert = false
+    @State private var animateBackgroundGradient = false
+
+    enum UI {
+        static let pageSpacing: CGFloat = 16
+        static let sectionSpacing: CGFloat = 14
+        static let gridSpacing: CGFloat = 10
+        static let rowSpacing: CGFloat = 10
+        static let contentHorizontalPadding: CGFloat = 20
+        static let contentVerticalPadding: CGFloat = 16
+        static let fieldHorizontalPadding: CGFloat = 14
+        static let buttonHeight: CGFloat = 50
+        static let hourlyCardWidth: CGFloat = 84
+        static let hourlyCardHeight: CGFloat = 0
+        static let hourlyCardSpacing: CGFloat = 12
+        static let hourlySectionSideInset: CGFloat = 0
+        static let hourlySectionHorizontalBreakout: CGFloat = -8
+        static let inputCornerRadius: CGFloat = 16
+        static let secondaryCardCornerRadius: CGFloat = 20
+        static let cardCornerRadius: CGFloat = 22
+        static let heroCardCornerRadius: CGFloat = 28
+        static let subtleTextOpacity: CGFloat = 0.78
+        static let secondaryTextOpacityDark: CGFloat = 0.9
+        static let secondaryTextOpacityLight: CGFloat = 0.96
+        static let textFieldBackgroundOpacity: CGFloat = 0.16
+        static let secondaryButtonBackgroundOpacity: CGFloat = 0.14
+        static let fieldBorderOpacityDark: CGFloat = 0.22
+        static let fieldBorderOpacityLight: CGFloat = 0.12
+        static let buttonBorderOpacity: CGFloat = 0.2
+        static let backgroundAnimationDuration: Double = 24
+        static let backgroundStartPointX: CGFloat = 0.14
+        static let backgroundEndPointX: CGFloat = 0.86
+        static let backgroundAnimatedOffset: CGFloat = 0.10
+        static let backgroundSecondaryLayerOpacity: CGFloat = 0.22
+        static let backgroundSecondaryAnimationDuration: Double = 32
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                backgroundGradient
-                    .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
+                ZStack {
+                    backgroundGradient
+                        .ignoresSafeArea()
+
+                    backgroundAccentGradient
+                        .opacity(UI.backgroundSecondaryLayerOpacity)
+                        .blur(radius: 60)
+                        .ignoresSafeArea()
+                }
+                .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
+                .onAppear {
+                    guard !animateBackgroundGradient else { return }
+                    withAnimation(
+                        .easeInOut(duration: UI.backgroundAnimationDuration)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        animateBackgroundGradient = true
+                    }
+                }
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: UI.pageSpacing) {
                         if viewModel.isOffline {
                             Text("Offline mode - showing last data")
                                 .foregroundColor(.orange)
                                 .font(.caption)
                         }
                         headerSection
-                        searchSection
                         currentWeatherSection
                         metricsSection
                         sunCycleSection
                         hourlySection
                         dailySection
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, UI.contentHorizontalPadding)
+                    .padding(.top, UI.contentVerticalPadding)
+                    .padding(.bottom, 170)
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                     .id(temperatureUnit)
                 }
@@ -38,6 +88,24 @@ struct HomeView: View {
                     print("🔄 Pull-to-refresh triggered")
                     await viewModel.refreshCurrentSource()
                 }
+
+                VStack {
+                    Spacer()
+
+                    LinearGradient(
+                        colors: [
+                            Color.clear,
+                            backgroundGradientColors.last?.opacity(0.45) ?? Color.clear,
+                            backgroundGradientColors.last?.opacity(0.85) ?? Color.clear
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 120)
+                    .allowsHitTesting(false)
+                }
+                .ignoresSafeArea(edges: .bottom)
+
             }
             .navigationBarHidden(true)
             .task {
@@ -64,76 +132,180 @@ struct HomeView: View {
     }
 
     private var backgroundGradient: LinearGradient {
-        guard let weather = viewModel.weather else {
-            return LinearGradient(
-                colors: [Color.blue, Color.purple],
-                startPoint: .top,
-                endPoint: .bottom
+        LinearGradient(
+            colors: backgroundGradientColors,
+            startPoint: UnitPoint(
+                x: animateBackgroundGradient
+                    ? UI.backgroundStartPointX + UI.backgroundAnimatedOffset
+                    : UI.backgroundStartPointX,
+                y: animateBackgroundGradient ? 0.10 : 0
+            ),
+            endPoint: UnitPoint(
+                x: animateBackgroundGradient
+                    ? UI.backgroundEndPointX - UI.backgroundAnimatedOffset
+                    : UI.backgroundEndPointX,
+                y: animateBackgroundGradient ? 0.90 : 1
             )
+        )
+    }
+
+    private var backgroundAccentGradient: LinearGradient {
+        LinearGradient(
+            colors: backgroundAccentColors,
+            startPoint: UnitPoint(
+                x: animateBackgroundGradient ? 0.88 : 0.18,
+                y: animateBackgroundGradient ? 0.18 : 0.82
+            ),
+            endPoint: UnitPoint(
+                x: animateBackgroundGradient ? 0.12 : 0.82,
+                y: animateBackgroundGradient ? 0.82 : 0.18
+            )
+        )
+    }
+
+    private var backgroundGradientColors: [Color] {
+        guard let weather = viewModel.weather else {
+            return [
+                Color(red: 0.18, green: 0.30, blue: 0.70),
+                Color(red: 0.32, green: 0.20, blue: 0.58)
+            ]
         }
 
         if viewModel.isNight {
             switch weather.current.weatherCode {
             case 0:
-                return LinearGradient(
-                    colors: [Color(red: 0.03, green: 0.05, blue: 0.15), Color(red: 0.10, green: 0.16, blue: 0.32)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.03, green: 0.06, blue: 0.16),
+                    Color(red: 0.09, green: 0.15, blue: 0.30)
+                ]
             case 1...3:
-                return LinearGradient(
-                    colors: [Color(red: 0.06, green: 0.08, blue: 0.18), Color(red: 0.14, green: 0.18, blue: 0.30)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.10, green: 0.14, blue: 0.26),
+                    Color(red: 0.18, green: 0.22, blue: 0.38)
+                ]
             case 45, 48:
-                return LinearGradient(
-                    colors: [Color(red: 0.08, green: 0.08, blue: 0.10), Color(red: 0.18, green: 0.18, blue: 0.22)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.10, green: 0.12, blue: 0.18),
+                    Color(red: 0.18, green: 0.20, blue: 0.26)
+                ]
             case 51...67:
-                return LinearGradient(
-                    colors: [Color(red: 0.05, green: 0.08, blue: 0.16), Color(red: 0.11, green: 0.16, blue: 0.26)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.04, green: 0.08, blue: 0.18),
+                    Color(red: 0.09, green: 0.14, blue: 0.24)
+                ]
             case 71...77:
-                return LinearGradient(
-                    colors: [Color(red: 0.08, green: 0.12, blue: 0.22), Color(red: 0.18, green: 0.20, blue: 0.32)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.07, green: 0.11, blue: 0.20),
+                    Color(red: 0.15, green: 0.18, blue: 0.28)
+                ]
             case 95...99:
-                return LinearGradient(
-                    colors: [Color.black, Color(red: 0.20, green: 0.10, blue: 0.30)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.03, green: 0.03, blue: 0.08),
+                    Color(red: 0.12, green: 0.08, blue: 0.20)
+                ]
             default:
-                return LinearGradient(
-                    colors: [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.10, green: 0.14, blue: 0.24)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                return [
+                    Color(red: 0.04, green: 0.07, blue: 0.16),
+                    Color(red: 0.10, green: 0.14, blue: 0.24)
+                ]
             }
         }
 
         switch weather.current.weatherCode {
         case 0:
-            return LinearGradient(colors: [.blue, .yellow], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.22, green: 0.52, blue: 0.96),
+                Color(red: 0.96, green: 0.78, blue: 0.36)
+            ]
         case 1...3:
-            return LinearGradient(colors: [.gray, .blue], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.52, green: 0.64, blue: 0.82),
+                Color(red: 0.26, green: 0.40, blue: 0.68)
+            ]
         case 45, 48:
-            return LinearGradient(colors: [.gray.opacity(0.8), .black], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.70, green: 0.75, blue: 0.82),
+                Color(red: 0.48, green: 0.54, blue: 0.62)
+            ]
         case 51...67:
-            return LinearGradient(colors: [.blue, .gray], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.20, green: 0.42, blue: 0.76),
+                Color(red: 0.32, green: 0.38, blue: 0.50)
+            ]
         case 71...77:
-            return LinearGradient(colors: [.white, .blue], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.68, green: 0.80, blue: 0.96),
+                Color(red: 0.36, green: 0.52, blue: 0.82)
+            ]
         case 95...99:
-            return LinearGradient(colors: [.black, .purple], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.12, green: 0.10, blue: 0.18),
+                Color(red: 0.26, green: 0.14, blue: 0.36)
+            ]
         default:
-            return LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom)
+            return [
+                Color(red: 0.22, green: 0.42, blue: 0.82),
+                Color(red: 0.30, green: 0.22, blue: 0.58)
+            ]
+        }
+    }
+
+    private var backgroundAccentColors: [Color] {
+        guard let weather = viewModel.weather else {
+            return [Color.white.opacity(0.45), Color.clear]
+        }
+
+        if viewModel.isNight {
+            switch weather.current.weatherCode {
+            case 0:
+                return [
+                    Color(red: 0.30, green: 0.40, blue: 0.70).opacity(0.40),
+                    Color.clear
+                ]
+            case 51...67, 71...77, 95...99:
+                return [
+                    Color(red: 0.18, green: 0.26, blue: 0.48).opacity(0.34),
+                    Color.clear
+                ]
+            default:
+                return [
+                    Color(red: 0.24, green: 0.30, blue: 0.50).opacity(0.32),
+                    Color.clear
+                ]
+            }
+        }
+
+        switch weather.current.weatherCode {
+        case 0:
+            return [
+                Color(red: 1.00, green: 0.96, blue: 0.72).opacity(0.55),
+                Color.clear
+            ]
+        case 1...3:
+            return [
+                Color.white.opacity(0.30),
+                Color.clear
+            ]
+        case 51...67:
+            return [
+                Color(red: 0.70, green: 0.82, blue: 0.98).opacity(0.26),
+                Color.clear
+            ]
+        case 71...77:
+            return [
+                Color.white.opacity(0.34),
+                Color.clear
+            ]
+        case 95...99:
+            return [
+                Color(red: 0.56, green: 0.42, blue: 0.80).opacity(0.22),
+                Color.clear
+            ]
+        default:
+            return [
+                Color.white.opacity(0.22),
+                Color.clear
+            ]
         }
     }
 
@@ -141,14 +313,14 @@ struct HomeView: View {
         VStack(spacing: 6) {
             Text("Current Weather")
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.78))
+                .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
 
             HStack(spacing: 8) {
                 Image(systemName: "location.fill")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(.white.opacity(UI.secondaryTextOpacityDark))
 
-                Text(viewModel.displayName)
+                Text(viewModel.displayName.split(separator: ",").first.map(String.init) ?? viewModel.displayName)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -159,107 +331,21 @@ struct HomeView: View {
             if let current = viewModel.weather?.current {
                 Text(current.summary)
                     .font(.headline)
-                    .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.9 : 0.96))
+                    .foregroundStyle(.white.opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight))
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)
     }
 
-    private var searchSection: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 10) {
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.75 : 0.8))
 
-                    TextField("Search city", text: $searchText)
-                        .textInputAutocapitalization(.words)
-                        .autocorrectionDisabled()
-                        .submitLabel(.search)
-                        .foregroundStyle(.white)
-                        .tint(.white)
-                        .onSubmit {
-                            Task {
-                                await searchCity()
-                            }
-                        }
-                }
-                .padding(.horizontal, 14)
-                .frame(height: 50)
-                .background(.white.opacity(0.16))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(.white.opacity(0.22), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                Button {
-                    Task {
-                        await searchCity()
-                    }
-                } label: {
-                    WeatherButton(
-                        title: "Go",
-                        textColor: colorScheme == .dark ? .white : .black,
-                        backgroundColor: colorScheme == .dark ? Color.white.opacity(0.16) : .white
-                    )
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(.white.opacity(colorScheme == .dark ? 0.22 : 0.12), lineWidth: 1)
-                    }
-                    .frame(width: 84, height: 50)
-                }
-                .disabled(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .opacity(searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.55 : 1)
-            }
-
-            Button {
-                viewModel.requestLocation()
-            } label: {
-                Label("Use My Location", systemImage: "location.fill")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(.white.opacity(0.14))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-
-            if viewModel.weather != nil {
-                Button {
-                    viewModel.addCurrentCityToFavorites()
-                } label: {
-                    Label(
-                        viewModel.isFavoriteCurrentCity() ? "Saved to Favorites" : "Save to Favorites",
-                        systemImage: viewModel.isFavoriteCurrentCity() ? "star.fill" : "star"
-                    )
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(.white.opacity(0.14))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .disabled(viewModel.isFavoriteCurrentCity())
-                .opacity(viewModel.isFavoriteCurrentCity() ? 0.7 : 1)
-            }
-        }
-    }
 
 
     private var currentWeatherSection: some View {
         Group {
             if let weather = viewModel.weather {
-                VStack(spacing: 12) {
+                VStack(spacing: UI.gridSpacing) {
                     Image(systemName: viewModel.isNight ? weather.current.nightSymbolName : weather.current.symbolName)
                         .symbolRenderingMode(.multicolor)
                         .resizable()
@@ -274,15 +360,15 @@ struct HomeView: View {
                     Text(weather.current.summary)
                         .font(.title3.weight(.semibold))
                         .foregroundColor(.white)
-                        .opacity(colorScheme == .dark ? 0.9 : 0.96)
+                        .opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight)
 
                     Text("H: \(weather.todayHighText)   L: \(weather.todayLowText)")
                         .font(.headline.weight(.medium))
                         .foregroundStyle(.white.opacity(0.92))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
-                .glassCard(cornerRadius: 28)
+                .padding(.vertical, 18)
+                .glassCard(cornerRadius: UI.heroCardCornerRadius)
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
                 loadingCard
@@ -293,7 +379,7 @@ struct HomeView: View {
     private var metricsSection: some View {
         Group {
             if let weather = viewModel.weather {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.gridSpacing) {
                     WeatherMetricCard(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
                     WeatherMetricCard(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
                     WeatherMetricCard(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
@@ -306,7 +392,7 @@ struct HomeView: View {
     private var sunCycleSection: some View {
         Group {
             if let today = viewModel.dailyForecast.first {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: UI.sectionSpacing) {
                     sectionTitle("Sunrise & Sunset")
 
                     SunCycleCard(
@@ -314,6 +400,7 @@ struct HomeView: View {
                         sunset: today.sunset
                     )
                 }
+                .padding(.top, 12)
             }
         }
     }
@@ -321,17 +408,19 @@ struct HomeView: View {
     private var hourlySection: some View {
         Group {
             if !viewModel.hourlyForecast.isEmpty {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: UI.sectionSpacing) {
                     sectionTitle("Hourly Forecast")
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: UI.hourlyCardSpacing) {
                             ForEach(viewModel.hourlyForecast) { hour in
                                 HourlyForecastCard(hour: hour)
                             }
                         }
-                        .padding(.horizontal, 2)
+                        .padding(.leading, UI.hourlySectionSideInset)
+                        .padding(.trailing, UI.hourlySectionSideInset)
                     }
+                    .padding(.horizontal, UI.hourlySectionHorizontalBreakout)
                 }
             }
         }
@@ -340,22 +429,22 @@ struct HomeView: View {
     private var dailySection: some View {
         Group {
             if !viewModel.dailyForecast.isEmpty {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: UI.sectionSpacing) {
                     sectionTitle("5-Day Forecast")
 
-                    VStack(spacing: 10) {
+                    VStack(spacing: UI.rowSpacing) {
                         ForEach(viewModel.dailyForecast) { day in
                             DailyForecastRow(day: day)
                         }
                     }
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, UI.pageSpacing)
             }
         }
     }
 
     private var loadingCard: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: UI.gridSpacing) {
             ProgressView()
                 .tint(.white)
                 .scaleEffect(1.2)
@@ -366,7 +455,7 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .glassCard(cornerRadius: 28)
+        .glassCard(cornerRadius: UI.heroCardCornerRadius)
     }
 
     private func sectionTitle(_ title: LocalizedStringKey) -> some View {
@@ -379,14 +468,6 @@ struct HomeView: View {
         }
     }
 
-    private func searchCity() async {
-        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        await viewModel.searchCity(named: trimmed)
-        if viewModel.errorMessage == nil {
-            searchText = ""
-        }
-    }
 }
 
 private struct WeatherMetricCard: View {
@@ -396,17 +477,28 @@ private struct WeatherMetricCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label(title, systemImage: systemImage)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.96))
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: systemImage)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.96))
+                    .frame(width: 18, alignment: .leading)
+
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.96))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(minHeight: 40, alignment: .topLeading)
 
             Text(value)
-                .font(.title2.weight(.bold))
+                .font(.title.weight(.bold))
                 .foregroundStyle(.white)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .glassCard(cornerRadius: 22)
+        .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+        .padding(12)
+        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
 
@@ -428,9 +520,9 @@ private struct HourlyForecastCard: View {
                 .font(.headline)
                 .foregroundStyle(.white)
         }
-        .frame(width: 84)
+        .frame(width: HomeView.UI.hourlyCardWidth)
         .padding(.vertical, 16)
-        .glassCard(cornerRadius: 22)
+        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
 
@@ -461,7 +553,7 @@ private struct DailyForecastRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .glassCard(cornerRadius: 20)
+        .glassCard(cornerRadius: HomeView.UI.secondaryCardCornerRadius)
     }
 }
 
@@ -543,7 +635,7 @@ private struct SunCycleCard: View {
             }
         }
         .padding(18)
-        .glassCard(cornerRadius: 22)
+        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 
     private var daylightProgress: CGFloat {

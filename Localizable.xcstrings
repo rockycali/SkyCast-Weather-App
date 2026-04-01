@@ -17,6 +17,22 @@
         }
       }
     },
+    "%lld°" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld°"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld°"
+          }
+        }
+      }
+    },
     "°C" : {
       "localizations" : {
         "de" : {
@@ -129,6 +145,22 @@
         }
       }
     },
+    "Cities" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Städte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Villes"
+          }
+        }
+      }
+    },
     "Clear Sky" : {
       "localizations" : {
         "de" : {
@@ -157,6 +189,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ClimaFlow"
+          }
+        }
+      }
+    },
+    "Current Location" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktueller Standort"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position actuelle"
           }
         }
       }
@@ -209,6 +257,22 @@
         }
       }
     },
+    "Delete" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Löschen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer"
+          }
+        }
+      }
+    },
     "Drizzle" : {
       "localizations" : {
         "de" : {
@@ -221,22 +285,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bruine"
-          }
-        }
-      }
-    },
-    "Favorites" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favoriten"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favoris"
           }
         }
       }
@@ -304,9 +352,6 @@
           }
         }
       }
-    },
-    "Go" : {
-
     },
     "H: %@   L: %@" : {
       "localizations" : {
@@ -506,18 +551,34 @@
         }
       }
     },
-    "No Favorites Yet" : {
+    "No Cities Yet" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch keine Favoriten"
+            "value" : "Noch keine Städte gespeichert "
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun favori pour le moment"
+            "value" : "Aucune ville pour le moment"
+          }
+        }
+      }
+    },
+    "No matching cities" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine passenden Städte gefunden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune ville correspondante"
           }
         }
       }
@@ -550,6 +611,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Open weather for your location" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wetter für deinen Standort anzeigen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher la météo pour votre position"
           }
         }
       }
@@ -634,18 +711,18 @@
         }
       }
     },
-    "Save to Favorites" : {
+    "Saved Cities" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu Favoriten hinzufügen"
+            "value" : "Gespeicherte Städte"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter aux favoris"
+            "value" : "Villes enregistrées"
           }
         }
       }
@@ -666,34 +743,67 @@
         }
       }
     },
-    "Saved to Favorites" : {
+    "Search cities" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu Favoriten hinzugefügt"
+            "value" : "Städte suchen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter aux favoris"
+            "value" : "Rechercher des villes"
           }
         }
       }
     },
     "Search city" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stadt suchen"
+            "value" : "Stadt oder Land suchen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rechercher une ville"
+          }
+        }
+      }
+    },
+    "Search Results" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchergebnisse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultats de recherche"
+          }
+        }
+      }
+    },
+    "Searching..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche en cours…"
           }
         }
       }
@@ -906,6 +1016,38 @@
         }
       }
     },
+    "Top Result" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestes Ergebnis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meilleur résultat"
+          }
+        }
+      }
+    },
+    "Try a different city or country name." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuche einen anderen Stadt- oder Ländernamen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essayez un autre nom de ville ou de pays."
+          }
+        }
+      }
+    },
     "Unknown" : {
       "localizations" : {
         "de" : {
@@ -939,6 +1081,7 @@
       }
     },
     "Use My Location" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1018,18 +1161,18 @@
         }
       }
     },
-    "Your Favorite Cities" : {
+    "Your Cities" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Lieblingsstädte"
+            "value" : "Deine Städte "
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vos villes préférées"
+            "value" : "Vos villes"
           }
         }
       }
