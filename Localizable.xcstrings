@@ -793,7 +793,20 @@
       }
     },
     "Searching..." : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche en cours…"
+          }
+        }
+      }
     },
     "Settings" : {
       "localizations" : {
@@ -1004,7 +1017,20 @@
       }
     },
     "Top Result" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestes Ergebnis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meilleur résultat"
+          }
+        }
+      }
     },
     "Try a different city or country name." : {
       "localizations" : {
