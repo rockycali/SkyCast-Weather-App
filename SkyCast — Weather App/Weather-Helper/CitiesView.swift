@@ -7,6 +7,7 @@ struct CitiesView: View {
         static let yourCities: LocalizedStringKey = "Your Cities"
         static let tapCityToOpenHome: LocalizedStringKey = "Tap a city to open it on Home."
         static let currentLocation: LocalizedStringKey = "Current Location"
+        static let savedCities: LocalizedStringKey = "Saved Cities"
         static let searchCities: LocalizedStringKey = "Search cities"
         static let searchResults: LocalizedStringKey = "Search Results"
         static let noMatchingCities: LocalizedStringKey = "No matching cities"
@@ -40,11 +41,18 @@ struct CitiesView: View {
 
                         searchBar
                         currentLocationRow
+                            .padding(.bottom, 6)
 
                         if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             searchResultsSection
                         }
 
+                        if !viewModel.favorites.isEmpty {
+                            Text(L10n.savedCities)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.78))
+                                .padding(.top, 2)
+                        }
 
                         if viewModel.favorites.isEmpty {
                             VStack(spacing: 12) {
@@ -94,6 +102,20 @@ struct CitiesView: View {
 
                                             Spacer()
 
+                                            if let snapshot = viewModel.favoriteWeatherSnapshots[favorite.id] {
+                                                HStack(spacing: 10) {
+                                                    Image(systemName: weatherSymbolName(for: snapshot.weatherCode))
+                                                        .font(.system(size: 17, weight: .medium))
+                                                        .foregroundStyle(.white.opacity(0.88))
+                                                        .frame(width: 18)
+
+                                                    Text("\(snapshot.temperature)°")
+                                                        .font(.subheadline.weight(.semibold))
+                                                        .foregroundStyle(.white.opacity(0.84))
+                                                        .frame(minWidth: 34, alignment: .leading)
+                                                }
+                                            }
+
                                             Image(systemName: "chevron.right")
                                                 .font(.subheadline.weight(.semibold))
                                                 .foregroundStyle(.white.opacity(0.55))
@@ -102,21 +124,17 @@ struct CitiesView: View {
                                     }
                                     .buttonStyle(.plain)
 
-                                    Button {
-                                        viewModel.removeFavorite(favorite)
-                                    } label: {
-                                        Image(systemName: "trash")
-                                            .font(.headline)
-                                            .foregroundStyle(.white.opacity(0.9))
-                                            .frame(width: 36, height: 36)
-                                            .background(.white.opacity(0.12))
-                                            .clipShape(Circle())
-                                    }
-                                    .buttonStyle(.plain)
                                 }
                                 .padding(.horizontal, 16)
-                                .padding(.vertical, 16)
+                                .padding(.vertical, 14)
                                 .glassCard(cornerRadius: 22)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.removeFavorite(favorite)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                             }
                         }
                     }
@@ -124,9 +142,12 @@ struct CitiesView: View {
                     .padding(.top, 12)
                     .padding(.bottom, 28)
                     .id(temperatureUnit)
-                }
-            }
-            .navigationTitle("")
+                    }
+                    .task {
+                        await viewModel.refreshFavoriteWeatherSnapshots()
+                    }
+                    }
+                    .navigationTitle("")
             .toolbarTitleDisplayMode(.inline)
         }
     }
@@ -301,6 +322,27 @@ struct CitiesView: View {
         }
     }
 
+    private func weatherSymbolName(for weatherCode: Int) -> String {
+        switch weatherCode {
+        case 0:
+            return viewModel.isNight ? "moon.stars.fill" : "sun.max.fill"
+        case 1, 2:
+            return viewModel.isNight ? "cloud.moon.fill" : "cloud.sun.fill"
+        case 3:
+            return "cloud.fill"
+        case 45, 48:
+            return "cloud.fog.fill"
+        case 51...67:
+            return "cloud.rain.fill"
+        case 71...77:
+            return "cloud.snow.fill"
+        case 95...99:
+            return "cloud.bolt.rain.fill"
+        default:
+            return "cloud.fill"
+        }
+    }
+    
     private var backgroundGradient: LinearGradient {
         guard let weather = viewModel.weather else {
             return LinearGradient(
@@ -382,10 +424,14 @@ struct CitiesView: View {
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "location.fill")
-                    .foregroundStyle(.white.opacity(0.92))
+                    .foregroundStyle(.white)
                     .font(.headline)
-                    .frame(width: 38, height: 38)
-                    .background(.white.opacity(0.10))
+                    .frame(width: 42, height: 42)
+                    .background(.white.opacity(0.16))
+                    .overlay {
+                        Circle()
+                            .stroke(.white.opacity(0.22), lineWidth: 1)
+                    }
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -393,9 +439,11 @@ struct CitiesView: View {
                         .font(.headline)
                         .foregroundStyle(.white)
 
-                    Text("Use device location")
+                    Text("Open weather for your location")
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.72))
+                        .foregroundStyle(.white.opacity(0.76))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
                 }
 
                 Spacer()
@@ -405,8 +453,12 @@ struct CitiesView: View {
                     .foregroundStyle(.white.opacity(0.55))
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .glassCard(cornerRadius: 22)
+            .padding(.vertical, 15)
+            .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(.white.opacity(0.20), lineWidth: 1)
+            }
         }
         .buttonStyle(.plain)
     }

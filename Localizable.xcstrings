@@ -17,6 +17,9 @@
         }
       }
     },
+    "%lld°" : {
+
+    },
     "°C" : {
       "localizations" : {
         "de" : {
@@ -214,6 +217,9 @@
           }
         }
       }
+    },
+    "Delete" : {
+
     },
     "Drizzle" : {
       "localizations" : {
@@ -565,6 +571,9 @@
         }
       }
     },
+    "Open weather for your location" : {
+
+    },
     "Overcast" : {
       "localizations" : {
         "de" : {
@@ -661,6 +670,9 @@
           }
         }
       }
+    },
+    "Saved Cities" : {
+
     },
     "Saved cities will appear here." : {
       "localizations" : {
@@ -960,9 +972,6 @@
           }
         }
       }
-    },
-    "Use device location" : {
-
     },
     "Use My Location" : {
       "extractionState" : "stale",

@@ -1,6 +1,7 @@
 import Combine
 import CoreLocation
 import Foundation
+import SwiftUI
 
 @MainActor
 final class WeatherViewModel: ObservableObject {
@@ -12,6 +13,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var favorites: [FavoriteCity] = []
     @Published var isOffline = false
     @Published var citySearchResults: [LocationResult] = []
+    @Published var favoriteWeatherSnapshots: [String: FavoriteWeatherSnapshot] = [:]
 
     private let weatherService: WeatherServiceProtocol
     private let locationManager: LocationManager
@@ -34,12 +36,21 @@ final class WeatherViewModel: ObservableObject {
         self.favoritesStorage = favoritesStorage
         self.favorites = favoritesStorage.loadFavorites()
         observeLocation()
+        Task { @MainActor in
+            await refreshFavoriteWeatherSnapshots()
+            await refreshCurrentSource()
+        }
     }
 
     enum WeatherSource {
         case myLocation
         case city(String)
         case `default`
+    }
+    
+    struct FavoriteWeatherSnapshot {
+        let temperature: Int
+        let weatherCode: Int
     }
 
     var hourlyForecast: [HourlyForecastItem] {
@@ -331,15 +342,22 @@ final class WeatherViewModel: ObservableObject {
 
         favorites.append(favorite)
         favoritesStorage.saveFavorites(favorites)
+
+        Task { @MainActor in
+            await refreshFavoriteWeatherSnapshots()
+        }
     }
 
     func removeFavorite(at offsets: IndexSet) {
+        let idsToRemove = offsets.map { favorites[$0].id }
         favorites.remove(atOffsets: offsets)
+        idsToRemove.forEach { favoriteWeatherSnapshots.removeValue(forKey: $0) }
         favoritesStorage.saveFavorites(favorites)
     }
 
     func removeFavorite(_ favorite: FavoriteCity) {
         favorites.removeAll { $0.id == favorite.id }
+        favoriteWeatherSnapshots.removeValue(forKey: favorite.id)
         favoritesStorage.saveFavorites(favorites)
     }
 
@@ -358,6 +376,40 @@ final class WeatherViewModel: ObservableObject {
             longitude: favorite.longitude,
             name: fullName
         )
+    }
+
+    func refreshFavoriteWeatherSnapshots() async {
+        guard !favorites.isEmpty else {
+            favoriteWeatherSnapshots = [:]
+            return
+        }
+
+        var snapshots: [String: FavoriteWeatherSnapshot] = [:]
+
+        for favorite in favorites {
+            do {
+                let locationName = favorite.country.isEmpty
+                    ? favorite.name
+                    : "\(favorite.name), \(favorite.country)"
+
+                let weather = try await weatherService.fetchWeather(
+                    latitude: favorite.latitude,
+                    longitude: favorite.longitude,
+                    locationName: locationName
+                )
+
+                snapshots[favorite.id] = FavoriteWeatherSnapshot(
+                    temperature: Int(weather.current.temperature.rounded()),
+                    weatherCode: weather.current.weatherCode
+                )
+            } catch {
+                continue
+            }
+        }
+
+        withAnimation(.easeInOut(duration: 0.3)) {
+            favoriteWeatherSnapshots = snapshots
+        }
     }
 
     func isFavoriteCurrentCity() -> Bool {
