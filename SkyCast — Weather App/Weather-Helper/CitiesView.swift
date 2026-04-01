@@ -254,6 +254,7 @@ struct CitiesView: View {
         guard !trimmed.isEmpty else { return }
 
         await viewModel.searchCity(named: trimmed)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 
         if viewModel.errorMessage == nil {
             searchText = ""
@@ -301,7 +302,9 @@ struct CitiesView: View {
             } else if !viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
                     ForEach(visibleSearchResults, id: \.id) { result in
-                        let isTopResult = result.id == visibleSearchResults.first?.id
+                        let trimmedQuery = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let isStrongTopMatch = result.name.lowercased().hasPrefix(trimmedQuery.lowercased())
+                        let isTopResult = result.id == visibleSearchResults.first?.id && isStrongTopMatch
                         HStack(spacing: 12) {
                             Button {
                                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -329,9 +332,13 @@ struct CitiesView: View {
                                             if isTopResult {
                                                 Text("Top Result")
                                                     .font(.caption2.bold())
-                                                    .padding(.horizontal, 6)
-                                                    .padding(.vertical, 2)
-                                                    .background(.white.opacity(0.2))
+                                                    .padding(.horizontal, 8)
+                                                    .padding(.vertical, 3)
+                                                    .background(.ultraThinMaterial)
+                                                    .overlay(
+                                                        Capsule()
+                                                            .stroke(.white.opacity(0.2), lineWidth: 0.5)
+                                                    )
                                                     .clipShape(Capsule())
                                             }
                                         }
