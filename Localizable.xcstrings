@@ -792,6 +792,9 @@
         }
       }
     },
+    "Searching..." : {
+
+    },
     "Settings" : {
       "localizations" : {
         "de" : {
@@ -999,6 +1002,9 @@
           }
         }
       }
+    },
+    "Top Result" : {
+
     },
     "Try a different city or country name." : {
       "localizations" : {

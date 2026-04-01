@@ -169,6 +169,14 @@ struct CitiesView: View {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    private var visibleSearchResults: [LocationResult] {
+        Array(viewModel.citySearchResults.prefix(6))
+    }
+
+    private var isSearchLoading: Bool {
+        isSearching && liveSearchTask != nil && viewModel.citySearchResults.isEmpty
+    }
+
     private var searchBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
@@ -191,10 +199,31 @@ struct CitiesView: View {
             }
             .onChange(of: searchText) { _, newValue in
                 liveSearchTask?.cancel()
+
+                let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard trimmed.count >= 2 else {
+                    Task { @MainActor in
+                        viewModel.citySearchResults = []
+                    }
+                    return
+                }
+
                 liveSearchTask = Task {
                     try? await Task.sleep(nanoseconds: 300_000_000)
                     guard !Task.isCancelled else { return }
-                    await viewModel.searchCities(for: newValue)
+                    await viewModel.searchCities(for: trimmed)
+                }
+            }
+
+            // Insert clear button if searchText is not empty
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                    liveSearchTask?.cancel()
+                    viewModel.citySearchResults = []
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.white.opacity(0.7))
                 }
             }
 
@@ -239,7 +268,20 @@ struct CitiesView: View {
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.92))
 
-            if viewModel.citySearchResults.isEmpty {
+            // Insert loading state at the top of results section
+            if isSearchLoading {
+                HStack {
+                    ProgressView()
+                        .tint(.white)
+                    Text("Searching...")
+                        .foregroundStyle(.white.opacity(0.8))
+                        .font(.subheadline)
+                }
+                .padding()
+            }
+
+            // Show empty state only if not searching and results are empty
+            if !isSearchLoading && viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 28))
@@ -256,9 +298,10 @@ struct CitiesView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
                 .glassCard(cornerRadius: 22)
-            } else {
+            } else if !viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
-                    ForEach(viewModel.citySearchResults, id: \.id) { result in
+                    ForEach(visibleSearchResults, id: \.id) { result in
+                        let isTopResult = result.id == visibleSearchResults.first?.id
                         HStack(spacing: 12) {
                             Button {
                                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -278,14 +321,26 @@ struct CitiesView: View {
                                         .clipShape(Circle())
 
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text(result.name)
-                                            .font(.headline)
-                                            .foregroundStyle(.white)
+                                        HStack(spacing: 6) {
+                                            Text(result.name)
+                                                .font(.headline)
+                                                .foregroundStyle(.white)
+
+                                            if isTopResult {
+                                                Text("Top Result")
+                                                    .font(.caption2.bold())
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(.white.opacity(0.2))
+                                                    .clipShape(Capsule())
+                                            }
+                                        }
 
                                         Text(result.displayName)
                                             .font(.subheadline)
                                             .foregroundStyle(.white.opacity(0.72))
                                             .lineLimit(1)
+                                            .truncationMode(.tail)
                                     }
 
                                     Spacer()
@@ -304,11 +359,12 @@ struct CitiesView: View {
 
                             Button {
                                 guard !isSaved else { return }
-                                viewModel.favorites.append(favorite)
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                viewModel.addFavorite(favorite)
                             } label: {
-                                Image(systemName: isSaved ? "star.fill" : "star")
-                                    .font(.headline)
-                                    .foregroundStyle(isSaved ? .yellow : .white.opacity(0.9))
+                                Image(systemName: isSaved ? "star.fill" : "plus")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundStyle(isSaved ? .yellow : .white.opacity(0.92))
                                     .frame(width: 36, height: 36)
                                     .background(.white.opacity(0.12))
                                     .clipShape(Circle())
@@ -318,7 +374,7 @@ struct CitiesView: View {
                             .opacity(isSaved ? 0.9 : 1)
                         }
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 14)
                         .glassCard(cornerRadius: 22)
                     }
                 }

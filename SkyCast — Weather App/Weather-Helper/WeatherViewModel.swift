@@ -348,6 +348,19 @@ final class WeatherViewModel: ObservableObject {
         }
     }
 
+    func addFavorite(_ favorite: FavoriteCity) {
+        guard !favorites.contains(where: { $0.id == favorite.id }) else {
+            return
+        }
+
+        favorites.append(favorite)
+        favoritesStorage.saveFavorites(favorites)
+
+        Task { @MainActor in
+            await refreshFavoriteWeatherSnapshots()
+        }
+    }
+
     func removeFavorite(at offsets: IndexSet) {
         let idsToRemove = offsets.map { favorites[$0].id }
         favorites.remove(atOffsets: offsets)
