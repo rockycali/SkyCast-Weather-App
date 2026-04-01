@@ -56,6 +56,7 @@ struct SettingsView: View {
                                     }
                                     .pickerStyle(.segmented)
                                     .frame(width: 120)
+                                    .tint(.white.opacity(0.9))
                                 }
                                 .padding(.horizontal, 18)
                                 .padding(.vertical, 16)
@@ -69,6 +70,7 @@ struct SettingsView: View {
                                     value: "Coming Soon",
                                     systemImage: "globe"
                                 )
+                                .opacity(0.85)
                             }
                             .padding(.vertical, 6)
                             .glassCard(cornerRadius: 24)
@@ -201,8 +203,8 @@ struct SettingsView: View {
             Spacer()
 
             Text(value)
-                .foregroundStyle(.white.opacity(0.72))
-                .font(.headline.weight(.medium))
+                .foregroundStyle(.white.opacity(0.60))
+                .font(.subheadline.weight(.medium))
                 .multilineTextAlignment(.trailing)
         }
         .padding(.horizontal, 18)
