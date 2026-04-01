@@ -759,23 +759,6 @@
         }
       }
     },
-    "Search city" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stadt oder Land suchen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher une ville"
-          }
-        }
-      }
-    },
     "Search Results" : {
       "localizations" : {
         "de" : {
@@ -1076,23 +1059,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erreur inconnue"
-          }
-        }
-      }
-    },
-    "Use My Location" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meinen Standort nutzen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utiliser ma position"
           }
         }
       }
