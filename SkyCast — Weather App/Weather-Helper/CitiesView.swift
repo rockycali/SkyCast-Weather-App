@@ -40,99 +40,99 @@ struct CitiesView: View {
                         }
 
                         searchBar
-                        currentLocationRow
-                            .padding(.bottom, 6)
 
-                        if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if isSearching {
                             searchResultsSection
-                        }
-
-                        if !viewModel.favorites.isEmpty {
-                            Text(L10n.savedCities)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.78))
-                                .padding(.top, 2)
-                        }
-
-                        if viewModel.favorites.isEmpty {
-                            VStack(spacing: 12) {
-                                Image(systemName: "star.slash")
-                                    .font(.system(size: 44))
-                                    .foregroundStyle(.white.opacity(0.85))
-
-                                Text(L10n.noCitiesYet)
-                                    .font(.title3.weight(.semibold))
-                                    .foregroundStyle(.white)
-
-                                Text(L10n.savedCitiesWillAppearHere)
-                                    .foregroundStyle(.white.opacity(0.78))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 28)
-                            .glassCard(cornerRadius: 22)
                         } else {
-                            ForEach(filteredFavorites) { favorite in
-                                HStack(spacing: 12) {
-                                    Button {
-                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                        Task {
-                                            await viewModel.loadFavorite(favorite)
-                                            selectedTab = 0
-                                        }
-                                    } label: {
-                                        HStack(spacing: 12) {
-                                            Image(systemName: "star.fill")
-                                                .foregroundStyle(.yellow)
-                                                .font(.headline)
-                                                .frame(width: 38, height: 38)
-                                                .background(.white.opacity(0.10))
-                                                .clipShape(Circle())
+                            currentLocationRow
+                                .padding(.bottom, 6)
 
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text(favorite.name)
-                                                    .font(.headline)
-                                                    .foregroundStyle(.white)
+                            if !viewModel.favorites.isEmpty {
+                                Text(L10n.savedCities)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.white.opacity(0.78))
+                                    .padding(.top, 2)
+                            }
 
-                                                if !favorite.country.isEmpty {
-                                                    Text(favorite.country)
-                                                        .font(.subheadline)
-                                                        .foregroundStyle(.white.opacity(0.78))
-                                                }
-                                            }
+                            if viewModel.favorites.isEmpty {
+                                VStack(spacing: 12) {
+                                    Image(systemName: "star.slash")
+                                        .font(.system(size: 44))
+                                        .foregroundStyle(.white.opacity(0.85))
 
-                                            Spacer()
+                                    Text(L10n.noCitiesYet)
+                                        .font(.title3.weight(.semibold))
+                                        .foregroundStyle(.white)
 
-                                            if let snapshot = viewModel.favoriteWeatherSnapshots[favorite.id] {
-                                                HStack(spacing: 10) {
-                                                    Image(systemName: weatherSymbolName(for: snapshot.weatherCode))
-                                                        .font(.system(size: 17, weight: .medium))
-                                                        .foregroundStyle(.white.opacity(0.88))
-                                                        .frame(width: 18)
-
-                                                    Text("\(snapshot.temperature)°")
-                                                        .font(.subheadline.weight(.semibold))
-                                                        .foregroundStyle(.white.opacity(0.84))
-                                                        .frame(minWidth: 34, alignment: .leading)
-                                                }
-                                            }
-
-                                            Image(systemName: "chevron.right")
-                                                .font(.subheadline.weight(.semibold))
-                                                .foregroundStyle(.white.opacity(0.55))
-                                        }
-                                        .contentShape(Rectangle())
-                                    }
-                                    .buttonStyle(.plain)
-
+                                    Text(L10n.savedCitiesWillAppearHere)
+                                        .foregroundStyle(.white.opacity(0.78))
                                 }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 14)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 28)
                                 .glassCard(cornerRadius: 22)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        viewModel.removeFavorite(favorite)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
+                            } else {
+                                ForEach(filteredFavorites) { favorite in
+                                    HStack(spacing: 12) {
+                                        Button {
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                            Task {
+                                                await viewModel.loadFavorite(favorite)
+                                                selectedTab = 0
+                                            }
+                                        } label: {
+                                            HStack(spacing: 12) {
+                                                Image(systemName: "star.fill")
+                                                    .foregroundStyle(.yellow)
+                                                    .font(.headline)
+                                                    .frame(width: 38, height: 38)
+                                                    .background(.white.opacity(0.10))
+                                                    .clipShape(Circle())
+
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text(favorite.name)
+                                                        .font(.headline)
+                                                        .foregroundStyle(.white)
+
+                                                    if !favorite.country.isEmpty {
+                                                        Text(favorite.country)
+                                                            .font(.subheadline)
+                                                            .foregroundStyle(.white.opacity(0.78))
+                                                    }
+                                                }
+
+                                                Spacer()
+
+                                                if let snapshot = viewModel.favoriteWeatherSnapshots[favorite.id] {
+                                                    HStack(spacing: 10) {
+                                                        Image(systemName: weatherSymbolName(for: snapshot.weatherCode))
+                                                            .font(.system(size: 17, weight: .medium))
+                                                            .foregroundStyle(.white.opacity(0.88))
+                                                            .frame(width: 18)
+
+                                                        Text("\(snapshot.temperature)°")
+                                                            .font(.subheadline.weight(.semibold))
+                                                            .foregroundStyle(.white.opacity(0.84))
+                                                            .frame(minWidth: 34, alignment: .leading)
+                                                    }
+                                                }
+
+                                                Image(systemName: "chevron.right")
+                                                    .font(.subheadline.weight(.semibold))
+                                                    .foregroundStyle(.white.opacity(0.55))
+                                            }
+                                            .contentShape(Rectangle())
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 14)
+                                    .glassCard(cornerRadius: 22)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                        Button(role: .destructive) {
+                                            viewModel.removeFavorite(favorite)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
                                     }
                                 }
                             }
@@ -142,12 +142,12 @@ struct CitiesView: View {
                     .padding(.top, 12)
                     .padding(.bottom, 28)
                     .id(temperatureUnit)
-                    }
-                    .task {
-                        await viewModel.refreshFavoriteWeatherSnapshots()
-                    }
-                    }
-                    .navigationTitle("")
+                }
+                .task {
+                    await viewModel.refreshFavoriteWeatherSnapshots()
+                }
+            }
+            .navigationTitle("")
             .toolbarTitleDisplayMode(.inline)
         }
     }
@@ -163,6 +163,10 @@ struct CitiesView: View {
             favorite.name.localizedCaseInsensitiveContains(query) ||
             favorite.country.localizedCaseInsensitiveContains(query)
         }
+    }
+
+    private var isSearching: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var searchBar: some View {
@@ -342,7 +346,7 @@ struct CitiesView: View {
             return "cloud.fill"
         }
     }
-    
+
     private var backgroundGradient: LinearGradient {
         guard let weather = viewModel.weather else {
             return LinearGradient(
@@ -416,6 +420,7 @@ struct CitiesView: View {
             return LinearGradient(colors: [.blue, .purple], startPoint: .top, endPoint: .bottom)
         }
     }
+
     private var currentLocationRow: some View {
         Button {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
