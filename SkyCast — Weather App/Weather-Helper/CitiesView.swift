@@ -1,6 +1,20 @@
 import SwiftUI
 
 struct CitiesView: View {
+    private enum UI {
+        static let pageSpacing: CGFloat = 16
+        static let sectionSpacing: CGFloat = 16
+        static let headerSpacing: CGFloat = 8
+        static let contentHorizontalPadding: CGFloat = 20
+        static let contentTopPadding: CGFloat = 22
+        static let contentBottomPadding: CGFloat = 32
+        static let safeAreaTopPadding: CGFloat = 6
+        static let cardCornerRadius: CGFloat = 22
+        static let rowHorizontalPadding: CGFloat = 18
+        static let rowVerticalPadding: CGFloat = 15
+        static let subtitleOpacity: CGFloat = 0.78
+        static let secondaryIconOpacity: CGFloat = 0.55
+    }
     private enum L10n {
         static let noCitiesYet: LocalizedStringKey = "No Cities Yet"
         static let savedCitiesWillAppearHere: LocalizedStringKey = "Saved cities will appear here."
@@ -27,15 +41,15 @@ struct CitiesView: View {
                     .ignoresSafeArea()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: UI.pageSpacing) {
+                        VStack(alignment: .leading, spacing: UI.headerSpacing) {
                             Text(L10n.yourCities)
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(.white)
 
                             Text(L10n.tapCityToOpenHome)
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.78))
+                                .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                         }
 
                         searchBar
@@ -49,26 +63,27 @@ struct CitiesView: View {
                             if !viewModel.favorites.isEmpty {
                                 Text(L10n.savedCities)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(.white.opacity(0.78))
+                                    .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                                     .padding(.top, 2)
+                                    .padding(.leading, 2)
                             }
 
                             if viewModel.favorites.isEmpty {
                                 VStack(spacing: 12) {
                                     Image(systemName: "star.slash")
                                         .font(.system(size: 44))
-                                        .foregroundStyle(.white.opacity(0.85))
+                                        .foregroundStyle(.white.opacity(0.88))
 
                                     Text(L10n.noCitiesYet)
                                         .font(.title3.weight(.semibold))
                                         .foregroundStyle(.white)
 
                                     Text(L10n.savedCitiesWillAppearHere)
-                                        .foregroundStyle(.white.opacity(0.78))
+                                        .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 28)
-                                .glassCard(cornerRadius: 22)
+                                .glassCard(cornerRadius: UI.cardCornerRadius)
                             } else {
                                 ForEach(filteredFavorites.indices, id: \.self) { index in
                                     let favorite = filteredFavorites[index]
@@ -96,7 +111,7 @@ struct CitiesView: View {
                                                     if !favorite.country.isEmpty {
                                                         Text(favorite.country)
                                                             .font(.subheadline)
-                                                            .foregroundStyle(.white.opacity(0.78))
+                                                            .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                                                     }
                                                 }
 
@@ -118,15 +133,15 @@ struct CitiesView: View {
 
                                                 Image(systemName: "chevron.right")
                                                     .font(.subheadline.weight(.semibold))
-                                                    .foregroundStyle(.white.opacity(0.55))
+                                                    .foregroundStyle(.white.opacity(UI.secondaryIconOpacity))
                                             }
                                             .contentShape(Rectangle())
                                         }
                                         .buttonStyle(.plain)
                                     }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 14)
-                                    .glassCard(cornerRadius: 22)
+                                    .padding(.horizontal, UI.rowHorizontalPadding)
+                                    .padding(.vertical, UI.rowVerticalPadding)
+                                    .glassCard(cornerRadius: UI.cardCornerRadius)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                         Button(role: .destructive) {
                                             viewModel.removeFavorite(favorite)
@@ -138,12 +153,12 @@ struct CitiesView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
-                    .padding(.bottom, 28)
+                    .padding(.horizontal, UI.contentHorizontalPadding)
+                    .padding(.top, UI.contentTopPadding)
+                    .padding(.bottom, UI.contentBottomPadding)
                     .id(temperatureUnit)
                 }
-                .safeAreaPadding(.top, 20)
+                .safeAreaPadding(.top, UI.safeAreaTopPadding)
                 .task {
                     await viewModel.refreshFavoriteWeatherSnapshots()
                 }
@@ -268,7 +283,8 @@ struct CitiesView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L10n.searchResults)
                 .font(.headline.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.92))
+                .foregroundStyle(.white.opacity(0.96))
+                .padding(.leading, 2)
 
             // Insert loading state at the top of results section
             if isSearchLoading {
@@ -287,7 +303,7 @@ struct CitiesView: View {
                 VStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 28))
-                        .foregroundStyle(.white.opacity(0.78))
+                        .foregroundStyle(.white.opacity(UI.subtitleOpacity))
 
                     Text(L10n.noMatchingCities)
                         .font(.headline.weight(.semibold))
@@ -295,11 +311,11 @@ struct CitiesView: View {
 
                     Text(L10n.tryDifferentSearch)
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.72))
+                        .foregroundStyle(.white.opacity(0.74))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
-                .glassCard(cornerRadius: 22)
+                .glassCard(cornerRadius: UI.cardCornerRadius)
             } else if !viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
                     ForEach(visibleSearchResults, id: \.id) { result in
@@ -381,9 +397,9 @@ struct CitiesView: View {
                             .disabled(isSaved)
                             .opacity(isSaved ? 0.9 : 1)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .glassCard(cornerRadius: 22)
+                        .padding(.horizontal, UI.rowHorizontalPadding)
+                        .padding(.vertical, UI.rowVerticalPadding)
+                        .glassCard(cornerRadius: UI.cardCornerRadius)
                     }
                 }
             }
@@ -510,7 +526,7 @@ struct CitiesView: View {
 
                     Text("Open weather for your location")
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.76))
+                        .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                         .lineLimit(1)
                         .minimumScaleFactor(0.9)
                 }
@@ -519,13 +535,13 @@ struct CitiesView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.55))
+                    .foregroundStyle(.white.opacity(UI.secondaryIconOpacity))
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 15)
-            .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .padding(.horizontal, UI.rowHorizontalPadding)
+            .padding(.vertical, UI.rowVerticalPadding)
+            .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: UI.cardCornerRadius, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: UI.cardCornerRadius, style: .continuous)
                     .stroke(.white.opacity(0.20), lineWidth: 1)
             }
         }

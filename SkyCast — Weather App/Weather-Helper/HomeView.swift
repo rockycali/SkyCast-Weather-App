@@ -80,7 +80,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, UI.contentHorizontalPadding)
                     .padding(.top, UI.contentVerticalPadding)
-                    .padding(.bottom, 170)
+                    .padding(.bottom, 236)
                     .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                     .id(temperatureUnit)
                 }
@@ -101,7 +101,7 @@ struct HomeView: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: 120)
+                    .frame(height: 72)
                     .allowsHitTesting(false)
                 }
                 .ignoresSafeArea(edges: .bottom)
