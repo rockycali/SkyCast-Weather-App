@@ -1,6 +1,24 @@
 import SwiftUI
 
 struct SettingsView: View {
+    private enum UI {
+        static let pageSpacing: CGFloat = 18
+        static let sectionSpacing: CGFloat = 16
+        static let headerSpacing: CGFloat = 8
+        static let contentHorizontalPadding: CGFloat = 20
+        static let contentTopPadding: CGFloat = 22
+        static let contentBottomPadding: CGFloat = 32
+        static let safeAreaTopPadding: CGFloat = 6
+        static let sectionTitleLeadingInset: CGFloat = 2
+        static let cardCornerRadius: CGFloat = 22
+        static let rowHorizontalPadding: CGFloat = 18
+        static let rowVerticalPadding: CGFloat = 15
+        static let subtitleOpacity: CGFloat = 0.78
+        static let sectionTitleOpacity: CGFloat = 0.96
+        static let valueOpacity: CGFloat = 0.64
+        static let dividerOpacity: CGFloat = 0.10
+    }
+
     @ObservedObject var viewModel: WeatherViewModel
     @AppStorage("temperatureUnit") private var temperatureUnit = "C"
 
@@ -12,15 +30,15 @@ struct SettingsView: View {
                     .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: UI.pageSpacing) {
+                        VStack(alignment: .leading, spacing: UI.headerSpacing) {
                             Text("Settings")
                                 .font(.system(size: 34, weight: .bold))
                                 .foregroundStyle(.white)
 
                             Text("Customize app preferences and information.")
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.78))
+                                .foregroundStyle(.white.opacity(UI.subtitleOpacity))
                         }
 
                         settingsCard(
@@ -34,8 +52,8 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Preferences")
                                 .font(.title3.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.92))
-                                .padding(.horizontal, 4)
+                                .foregroundStyle(.white.opacity(UI.sectionTitleOpacity))
+                                .padding(.leading, UI.sectionTitleLeadingInset)
 
                             VStack(spacing: 0) {
                                 HStack(spacing: 14) {
@@ -56,13 +74,13 @@ struct SettingsView: View {
                                     }
                                     .pickerStyle(.segmented)
                                     .frame(width: 120)
-                                    .tint(.white.opacity(0.9))
+                                    .tint(.white)
                                 }
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 16)
+                                .padding(.horizontal, UI.rowHorizontalPadding)
+                                .padding(.vertical, UI.rowVerticalPadding)
 
                                 Divider()
-                                    .overlay(.white.opacity(0.10))
+                                    .overlay(.white.opacity(UI.dividerOpacity))
                                     .padding(.leading, 56)
 
                                 settingsRow(
@@ -73,7 +91,7 @@ struct SettingsView: View {
                                 .opacity(0.85)
                             }
                             .padding(.vertical, 6)
-                            .glassCard(cornerRadius: 24)
+                            .glassCard(cornerRadius: UI.cardCornerRadius)
                         }
 
                         settingsCard(
@@ -84,10 +102,11 @@ struct SettingsView: View {
                             ]
                         )
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
-                    .padding(.bottom, 28)
+                    .padding(.horizontal, UI.contentHorizontalPadding)
+                    .padding(.top, UI.contentTopPadding)
+                    .padding(.bottom, UI.contentBottomPadding)
                 }
+                .safeAreaPadding(.top, UI.safeAreaTopPadding)
             }
             .navigationTitle("")
             .toolbarTitleDisplayMode(.inline)
@@ -166,11 +185,11 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func settingsCard(title: LocalizedStringKey, rows: [SettingRowData]) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: UI.sectionSpacing) {
             Text(title)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.92))
-                .padding(.horizontal, 4)
+                .foregroundStyle(.white.opacity(UI.sectionTitleOpacity))
+                .padding(.leading, UI.sectionTitleLeadingInset)
 
             VStack(spacing: 0) {
                 ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
@@ -178,13 +197,13 @@ struct SettingsView: View {
 
                     if index < rows.count - 1 {
                         Divider()
-                            .overlay(.white.opacity(0.10))
+                            .overlay(.white.opacity(UI.dividerOpacity))
                             .padding(.leading, 56)
                     }
                 }
             }
             .padding(.vertical, 6)
-            .glassCard(cornerRadius: 24)
+            .glassCard(cornerRadius: UI.cardCornerRadius)
         }
     }
 
@@ -203,12 +222,12 @@ struct SettingsView: View {
             Spacer()
 
             Text(value)
-                .foregroundStyle(.white.opacity(0.60))
+                .foregroundStyle(.white.opacity(UI.valueOpacity))
                 .font(.subheadline.weight(.medium))
                 .multilineTextAlignment(.trailing)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
+        .padding(.horizontal, UI.rowHorizontalPadding)
+        .padding(.vertical, UI.rowVerticalPadding)
     }
 }
 
@@ -225,7 +244,7 @@ private struct SettingsGlassCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 14, x: 0, y: 6)
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
