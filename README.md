@@ -15,8 +15,9 @@ It is designed to showcase scalable architecture, responsive UI design, and a cl
 
 ## 🎬 Demo
 
-[▶️ Watch Demo](https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e)
+A quick walkthrough of ClimaFlow showcasing real-time weather, search, and dynamic UI.
 
+▶️ [Watch Demo Video](https://github.com/user-attachments/assets/fb113f07-3271-4d89-8b5c-cff7b82ff859)
 ---
 
 ## 🚀 Release
@@ -34,9 +35,9 @@ It is designed to showcase scalable architecture, responsive UI design, and a cl
 
 ## 📸 Screenshots
 
-| Home | Cities | Settings |
-|------|--------|----------|
-| <img src="screenshots/climaflow-home-light.png" width="240"> | <img src="screenshots/climaflow-cities.png" width="240"> | <img src="screenshots/climaflow-settings.png" width="240"> |
+| Home (Light) | Home (Night) | Cities | Settings |
+|--------------|--------------|--------|----------|
+| <img src="screenshots/climaflow-home-light.png" width="240"> | <img src="screenshots/climaflow-home-night.png" width="240"> | <img src="screenshots/climaflow-cities.png" width="240"> | <img src="screenshots/climaflow-settings.png" width="240"> |
 
 ---
 

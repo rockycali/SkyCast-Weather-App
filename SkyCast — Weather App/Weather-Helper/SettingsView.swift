@@ -189,7 +189,7 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private func settingsRow(title: LocalizedStringKey, value: String, systemImage: String) -> some View {
+    private func settingsRow(title: LocalizedStringKey, value: LocalizedStringKey, systemImage: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: systemImage)
                 .foregroundStyle(.white)
@@ -214,7 +214,7 @@ struct SettingsView: View {
 
 private struct SettingRowData {
     let title: LocalizedStringKey
-    let value: String
+    let value: LocalizedStringKey
     let systemImage: String
 }
 
