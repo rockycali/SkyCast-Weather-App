@@ -65,6 +65,22 @@
         }
       }
     },
+    "1.0" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.0"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.0"
+          }
+        }
+      }
+    },
     "5-Day Forecast" : {
       "localizations" : {
         "de" : {
@@ -189,6 +205,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ClimaFlow"
+          }
+        }
+      }
+    },
+    "Coming Soon" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bald verfügbar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available Soon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bientôt disponible"
           }
         }
       }
@@ -631,6 +669,22 @@
         }
       }
     },
+    "Open-Meteo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open-Meteo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open-Meteo"
+          }
+        }
+      }
+    },
     "Overcast" : {
       "localizations" : {
         "de" : {
@@ -915,6 +969,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coucher du soleil"
+          }
+        }
+      }
+    },
+    "SwiftUI + MVVM" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SwiftUI + MVVM"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SwiftUI + MVVM"
           }
         }
       }
