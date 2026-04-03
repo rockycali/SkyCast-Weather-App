@@ -15,8 +15,9 @@ It is designed to showcase scalable architecture, responsive UI design, and a cl
 
 ## 🎬 Demo
 
-[▶️ Watch Demo](https://github.com/user-attachments/assets/583d8562-467a-4a96-b62c-3af04f4f276e)
+A quick walkthrough of ClimaFlow showcasing real-time weather, search, and dynamic UI.
 
+▶️ [Watch Demo Video](https://github.com/user-attachments/assets/fb113f07-3271-4d89-8b5c-cff7b82ff859)
 ---
 
 ## 🚀 Release
