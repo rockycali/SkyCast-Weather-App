@@ -25,7 +25,6 @@ struct CitiesView: View {
             ZStack {
                 backgroundGradient
                     .ignoresSafeArea()
-                    .animation(.easeInOut(duration: 0.6), value: viewModel.weather?.current.weatherCode ?? -1)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 18) {
@@ -71,7 +70,8 @@ struct CitiesView: View {
                                 .padding(.vertical, 28)
                                 .glassCard(cornerRadius: 22)
                             } else {
-                                ForEach(filteredFavorites) { favorite in
+                                ForEach(filteredFavorites.indices, id: \.self) { index in
+                                    let favorite = filteredFavorites[index]
                                     HStack(spacing: 12) {
                                         Button {
                                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -104,7 +104,7 @@ struct CitiesView: View {
 
                                                 if let snapshot = viewModel.favoriteWeatherSnapshots[favorite.id] {
                                                     HStack(spacing: 10) {
-                                                        Image(systemName: weatherSymbolName(for: snapshot.weatherCode))
+                                                        Image(systemName: weatherSymbolName(for: snapshot.weatherCode, isNight: snapshot.isNight))
                                                             .font(.system(size: 17, weight: .medium))
                                                             .foregroundStyle(.white.opacity(0.88))
                                                             .frame(width: 18)
@@ -143,6 +143,7 @@ struct CitiesView: View {
                     .padding(.bottom, 28)
                     .id(temperatureUnit)
                 }
+                .safeAreaPadding(.top, 20)
                 .task {
                     await viewModel.refreshFavoriteWeatherSnapshots()
                 }
@@ -389,12 +390,12 @@ struct CitiesView: View {
         }
     }
 
-    private func weatherSymbolName(for weatherCode: Int) -> String {
+    private func weatherSymbolName(for weatherCode: Int, isNight: Bool) -> String {
         switch weatherCode {
         case 0:
-            return viewModel.isNight ? "moon.stars.fill" : "sun.max.fill"
+            return isNight ? "moon.stars.fill" : "sun.max.fill"
         case 1, 2:
-            return viewModel.isNight ? "cloud.moon.fill" : "cloud.sun.fill"
+            return isNight ? "cloud.moon.fill" : "cloud.sun.fill"
         case 3:
             return "cloud.fill"
         case 45, 48:

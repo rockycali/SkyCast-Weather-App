@@ -51,6 +51,7 @@ final class WeatherViewModel: ObservableObject {
     struct FavoriteWeatherSnapshot {
         let temperature: Int
         let weatherCode: Int
+        let isNight: Bool
     }
 
     var hourlyForecast: [HourlyForecastItem] {
@@ -63,6 +64,12 @@ final class WeatherViewModel: ObservableObject {
 
     var isNight: Bool {
         guard let today = dailyForecast.first else { return false }
+        let now = Date()
+        return now < today.sunrise || now > today.sunset
+    }
+
+    private func isNight(for weather: WeatherData) -> Bool {
+        guard let today = weather.daily.first else { return false }
         let now = Date()
         return now < today.sunrise || now > today.sunset
     }
@@ -413,7 +420,8 @@ final class WeatherViewModel: ObservableObject {
 
                 snapshots[favorite.id] = FavoriteWeatherSnapshot(
                     temperature: Int(weather.current.temperature.rounded()),
-                    weatherCode: weather.current.weatherCode
+                    weatherCode: weather.current.weatherCode,
+                    isNight: isNight(for: weather)
                 )
             } catch {
                 continue
