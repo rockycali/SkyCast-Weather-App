@@ -5,7 +5,7 @@ Defines structured weather data
 
 ## 🎨 UI Design
 
-- Tab-based navigation (Home, Favorites, Settings)  
+- Tab-based navigation (Home, Cities, Settings)  
 - Glass-style UI using `.ultraThinMaterial`  
 - Dynamic backgrounds based on weather conditions  
 - Smooth transitions and animations  
