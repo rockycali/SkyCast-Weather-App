@@ -6,7 +6,13 @@ struct MainTabView: View {
         appearance.configureWithTransparentBackground()
 
         appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        appearance.backgroundColor = UIColor.white.withAlphaComponent(0.08)
+        appearance.backgroundColor = UIColor { trait in
+            if trait.userInterfaceStyle == .dark {
+                return UIColor.white.withAlphaComponent(0.06)
+            } else {
+                return UIColor.white.withAlphaComponent(0.12)
+            }
+        }
         appearance.shadowColor = .clear
 
         let normalIconColor = UIColor.white.withAlphaComponent(0.56)

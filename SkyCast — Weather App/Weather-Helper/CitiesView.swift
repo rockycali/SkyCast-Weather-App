@@ -12,8 +12,8 @@ struct CitiesView: View {
         static let cardCornerRadius: CGFloat = 22
         static let rowHorizontalPadding: CGFloat = 18
         static let rowVerticalPadding: CGFloat = 15
-        static let subtitleOpacity: CGFloat = 0.78
-        static let secondaryIconOpacity: CGFloat = 0.55
+        static let subtitleOpacity: CGFloat = 0.82
+        static let secondaryIconOpacity: CGFloat = 0.58
     }
     private enum L10n {
         static let noCitiesYet: LocalizedStringKey = "No Cities Yet"
@@ -45,11 +45,11 @@ struct CitiesView: View {
                         VStack(alignment: .leading, spacing: UI.headerSpacing) {
                             Text(L10n.yourCities)
                                 .font(.title2.weight(.bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.96 : 1.0))
 
                             Text(L10n.tapCityToOpenHome)
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(UI.subtitleOpacity))
+                                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.82 : UI.subtitleOpacity))
                         }
 
                         searchBar
@@ -63,7 +63,7 @@ struct CitiesView: View {
                             if !viewModel.favorites.isEmpty {
                                 Text(L10n.savedCities)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(.white.opacity(UI.subtitleOpacity))
+                                    .foregroundStyle(.white.opacity(viewModel.isNight ? 0.86 : UI.subtitleOpacity))
                                     .padding(.top, 2)
                                     .padding(.leading, 2)
                             }
@@ -196,12 +196,13 @@ struct CitiesView: View {
     private var searchBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(.white.opacity(0.78))
+                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.82 : 0.78))
 
             TextField(
                 "",
                 text: $searchText,
-                prompt: Text(L10n.searchCities).foregroundStyle(.white.opacity(0.6))
+                prompt: Text(L10n.searchCities)
+                    .foregroundStyle(.white.opacity(viewModel.isNight ? 0.66 : 0.6))
             )
             .textInputAutocapitalization(.words)
             .autocorrectionDisabled()
@@ -257,10 +258,18 @@ struct CitiesView: View {
         }
         .padding(.horizontal, 14)
         .frame(height: 50)
-        .background(.white.opacity(0.14))
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial)
+
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(viewModel.isNight ? Color.black.opacity(0.22) : Color.white.opacity(0.12))
+            }
+        }
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.white.opacity(0.18), lineWidth: 1)
+                .stroke(.white.opacity(viewModel.isNight ? 0.14 : 0.22), lineWidth: 1)
         }
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -440,13 +449,13 @@ struct CitiesView: View {
             switch weather.current.weatherCode {
             case 0:
                 return LinearGradient(
-                    colors: [Color(red: 0.03, green: 0.05, blue: 0.15), Color(red: 0.10, green: 0.16, blue: 0.32)],
+                    colors: [Color(red: 0.02, green: 0.05, blue: 0.14), Color(red: 0.08, green: 0.13, blue: 0.28)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
             case 1...3:
                 return LinearGradient(
-                    colors: [Color(red: 0.06, green: 0.08, blue: 0.18), Color(red: 0.14, green: 0.18, blue: 0.30)],
+                    colors: [Color(red: 0.05, green: 0.09, blue: 0.18), Color(red: 0.11, green: 0.16, blue: 0.30)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -476,7 +485,7 @@ struct CitiesView: View {
                 )
             default:
                 return LinearGradient(
-                    colors: [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.10, green: 0.14, blue: 0.24)],
+                    colors: [Color(red: 0.02, green: 0.06, blue: 0.14), Color(red: 0.08, green: 0.13, blue: 0.25)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -539,11 +548,7 @@ struct CitiesView: View {
             }
             .padding(.horizontal, UI.rowHorizontalPadding)
             .padding(.vertical, UI.rowVerticalPadding)
-            .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: UI.cardCornerRadius, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: UI.cardCornerRadius, style: .continuous)
-                    .stroke(.white.opacity(0.20), lineWidth: 1)
-            }
+            .glassCard(cornerRadius: UI.cardCornerRadius)
         }
         .buttonStyle(.plain)
     }
@@ -558,12 +563,22 @@ private struct GlassCardModifier: ViewModifier {
     let cornerRadius: CGFloat
 
     func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
         content
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
+            .background {
+                ZStack {
+                    shape
+                        .fill(.ultraThinMaterial)
+
+                    shape
+                        .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.10))
+                }
+            }
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
             .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
+                shape
+                    .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0.28), lineWidth: 1)
             }
     }
 }
