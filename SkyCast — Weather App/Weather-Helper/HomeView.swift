@@ -19,14 +19,14 @@ struct HomeView: View {
         static let hourlyCardWidth: CGFloat = 84
         static let hourlyCardHeight: CGFloat = 0
         static let hourlyCardSpacing: CGFloat = 12
-        static let hourlySectionSideInset: CGFloat = 0
+        static let hourlySectionSideInset: CGFloat = 6
         static let hourlySectionHorizontalBreakout: CGFloat = -8
         static let inputCornerRadius: CGFloat = 16
         static let secondaryCardCornerRadius: CGFloat = 20
         static let cardCornerRadius: CGFloat = 22
         static let heroCardCornerRadius: CGFloat = 28
-        static let subtleTextOpacity: CGFloat = 0.78
-        static let secondaryTextOpacityDark: CGFloat = 0.9
+        static let subtleTextOpacity: CGFloat = 0.82
+        static let secondaryTextOpacityDark: CGFloat = 0.94
         static let secondaryTextOpacityLight: CGFloat = 0.96
         static let textFieldBackgroundOpacity: CGFloat = 0.16
         static let secondaryButtonBackgroundOpacity: CGFloat = 0.14
@@ -37,7 +37,7 @@ struct HomeView: View {
         static let backgroundStartPointX: CGFloat = 0.14
         static let backgroundEndPointX: CGFloat = 0.86
         static let backgroundAnimatedOffset: CGFloat = 0.10
-        static let backgroundSecondaryLayerOpacity: CGFloat = 0.22
+        static let backgroundSecondaryLayerOpacity: CGFloat = 0.18
         static let backgroundSecondaryAnimationDuration: Double = 32
     }
 
@@ -95,8 +95,8 @@ struct HomeView: View {
                     LinearGradient(
                         colors: [
                             Color.clear,
-                            backgroundGradientColors.last?.opacity(0.45) ?? Color.clear,
-                            backgroundGradientColors.last?.opacity(0.85) ?? Color.clear
+                            backgroundGradientColors.last?.opacity(0.35) ?? Color.clear,
+                            backgroundGradientColors.last?.opacity(0.55) ?? Color.clear
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -175,13 +175,13 @@ struct HomeView: View {
             switch weather.current.weatherCode {
             case 0:
                 return [
-                    Color(red: 0.03, green: 0.06, blue: 0.16),
-                    Color(red: 0.09, green: 0.15, blue: 0.30)
+                    Color(red: 0.02, green: 0.05, blue: 0.14),
+                    Color(red: 0.08, green: 0.13, blue: 0.28)
                 ]
             case 1...3:
                 return [
-                    Color(red: 0.10, green: 0.14, blue: 0.26),
-                    Color(red: 0.18, green: 0.22, blue: 0.38)
+                    Color(red: 0.05, green: 0.09, blue: 0.18),
+                    Color(red: 0.11, green: 0.16, blue: 0.30)
                 ]
             case 45, 48:
                 return [
@@ -205,8 +205,8 @@ struct HomeView: View {
                 ]
             default:
                 return [
-                    Color(red: 0.04, green: 0.07, blue: 0.16),
-                    Color(red: 0.10, green: 0.14, blue: 0.24)
+                    Color(red: 0.03, green: 0.07, blue: 0.15),
+                    Color(red: 0.09, green: 0.14, blue: 0.26)
                 ]
             }
         }
@@ -259,7 +259,7 @@ struct HomeView: View {
             switch weather.current.weatherCode {
             case 0:
                 return [
-                    Color(red: 0.30, green: 0.40, blue: 0.70).opacity(0.40),
+                    Color(red: 0.28, green: 0.40, blue: 0.78).opacity(0.46),
                     Color.clear
                 ]
             case 51...67, 71...77, 95...99:
@@ -269,7 +269,7 @@ struct HomeView: View {
                 ]
             default:
                 return [
-                    Color(red: 0.24, green: 0.30, blue: 0.50).opacity(0.32),
+                    Color(red: 0.22, green: 0.32, blue: 0.58).opacity(0.36),
                     Color.clear
                 ]
             }
@@ -462,7 +462,7 @@ struct HomeView: View {
         HStack {
             Text(title)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.white.opacity(colorScheme == .dark ? 0.88 : 1.0))
 
             Spacer()
         }
@@ -544,7 +544,7 @@ private struct DailyForecastRow: View {
             Spacer(minLength: 10)
 
             Text(day.minText)
-                .foregroundStyle(.white.opacity(0.75))
+                .foregroundStyle(.white.opacity(0.78))
                 .frame(width: 42, alignment: .trailing)
 
             Text(day.maxText)
@@ -586,7 +586,7 @@ private struct SunCycleCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Divider()
-                    .overlay(.white.opacity(0.32))
+                    .overlay(.white.opacity(0.18))
                     .frame(maxHeight: 42)
 
                 VStack(alignment: .trailing, spacing: 8) {
@@ -660,12 +660,22 @@ private struct GlassCardModifier: ViewModifier {
     let cornerRadius: CGFloat
 
     func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
         content
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 12, x: 0, y: 6)
+            .background {
+                ZStack {
+                    shape
+                        .fill(.ultraThinMaterial)
+
+                    shape
+                        .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.10))
+                }
+            }
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
             .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
+                shape
+                    .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0.28), lineWidth: 1)
             }
     }
 }

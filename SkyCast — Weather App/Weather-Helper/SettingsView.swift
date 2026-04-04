@@ -13,9 +13,10 @@ struct SettingsView: View {
         static let cardCornerRadius: CGFloat = 22
         static let rowHorizontalPadding: CGFloat = 18
         static let rowVerticalPadding: CGFloat = 15
-        static let subtitleOpacity: CGFloat = 0.78
-        static let sectionTitleOpacity: CGFloat = 0.96
-        static let valueOpacity: CGFloat = 0.64
+        static let subtitleOpacity: CGFloat = 0.82
+        static let sectionTitleOpacity: CGFloat = 0.90
+        static let valueOpacity: CGFloat = 0.65
+        static let valueNightOpacity: CGFloat = 0.72
         static let dividerOpacity: CGFloat = 0.10
     }
 
@@ -34,11 +35,11 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: UI.headerSpacing) {
                             Text("Settings")
                                 .font(.system(size: 34, weight: .bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.96 : 1.0))
 
                             Text("Customize app preferences and information.")
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(UI.subtitleOpacity))
+                                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.86 : UI.subtitleOpacity))
                         }
 
                         settingsCard(
@@ -52,18 +53,18 @@ struct SettingsView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Preferences")
                                 .font(.title3.weight(.semibold))
-                                .foregroundStyle(.white.opacity(UI.sectionTitleOpacity))
+                                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.82 : UI.sectionTitleOpacity))
                                 .padding(.leading, UI.sectionTitleLeadingInset)
 
                             VStack(spacing: 0) {
                                 HStack(spacing: 14) {
                                     Image(systemName: "thermometer")
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(.white.opacity(viewModel.isNight ? 0.85 : 1.0))
                                         .font(.title3)
                                         .frame(width: 30)
 
                                     Text("Temperature Units")
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(.white.opacity(viewModel.isNight ? 0.92 : 1.0))
                                         .font(.headline)
 
                                     Spacer()
@@ -122,13 +123,13 @@ struct SettingsView: View {
             switch weather.current.weatherCode {
             case 0:
                 return LinearGradient(
-                    colors: [Color(red: 0.03, green: 0.05, blue: 0.15), Color(red: 0.10, green: 0.16, blue: 0.32)],
+                    colors: [Color(red: 0.02, green: 0.05, blue: 0.14), Color(red: 0.08, green: 0.13, blue: 0.28)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
             case 1...3:
                 return LinearGradient(
-                    colors: [Color(red: 0.06, green: 0.08, blue: 0.18), Color(red: 0.14, green: 0.18, blue: 0.30)],
+                    colors: [Color(red: 0.05, green: 0.09, blue: 0.18), Color(red: 0.11, green: 0.16, blue: 0.30)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -158,7 +159,7 @@ struct SettingsView: View {
                 )
             default:
                 return LinearGradient(
-                    colors: [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.10, green: 0.14, blue: 0.24)],
+                    colors: [Color(red: 0.02, green: 0.06, blue: 0.14), Color(red: 0.08, green: 0.13, blue: 0.25)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -188,7 +189,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: UI.sectionSpacing) {
             Text(title)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.white.opacity(UI.sectionTitleOpacity))
+                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.82 : UI.sectionTitleOpacity))
                 .padding(.leading, UI.sectionTitleLeadingInset)
 
             VStack(spacing: 0) {
@@ -211,18 +212,18 @@ struct SettingsView: View {
     private func settingsRow(title: LocalizedStringKey, value: LocalizedStringKey, systemImage: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: systemImage)
-                .foregroundStyle(.white)
+                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.85 : 1.0))
                 .font(.title3)
                 .frame(width: 30)
 
             Text(title)
-                .foregroundStyle(.white)
+                .foregroundStyle(.white.opacity(viewModel.isNight ? 0.92 : 1.0))
                 .font(.headline)
 
             Spacer()
 
             Text(value)
-                .foregroundStyle(.white.opacity(UI.valueOpacity))
+                .foregroundStyle(.white.opacity(viewModel.isNight ? UI.valueNightOpacity : UI.valueOpacity))
                 .font(.subheadline.weight(.medium))
                 .multilineTextAlignment(.trailing)
         }
@@ -242,12 +243,22 @@ private struct SettingsGlassCardModifier: ViewModifier {
     let cornerRadius: CGFloat
 
     func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
         content
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.07), radius: 14, x: 0, y: 6)
+            .background {
+                ZStack {
+                    shape
+                        .fill(.ultraThinMaterial)
+
+                    shape
+                        .fill(colorScheme == .dark ? Color.black.opacity(0.34) : Color.white.opacity(0.10))
+                }
+            }
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
             .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(.white.opacity(colorScheme == .dark ? 0.16 : 0.24), lineWidth: 1)
+                shape
+                    .stroke(.white.opacity(colorScheme == .dark ? 0.10 : 0.28), lineWidth: 1)
             }
     }
 }
