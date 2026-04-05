@@ -621,6 +621,9 @@
         }
       }
     },
+    "Now" : {
+
+    },
     "Offline mode - showing last data" : {
       "localizations" : {
         "de" : {
@@ -733,6 +736,9 @@
         }
       }
     },
+    "Pressure" : {
+
+    },
     "Rain" : {
       "localizations" : {
         "de" : {
@@ -748,6 +754,9 @@
           }
         }
       }
+    },
+    "Rain Chance" : {
+
     },
     "Rain Showers" : {
       "localizations" : {
@@ -1196,6 +1205,9 @@
           }
         }
       }
+    },
+    "Wind Dir" : {
+
     },
     "Your Cities" : {
       "localizations" : {

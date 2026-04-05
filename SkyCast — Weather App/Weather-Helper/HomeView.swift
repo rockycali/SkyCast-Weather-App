@@ -6,6 +6,7 @@ struct HomeView: View {
     @ObservedObject var viewModel: WeatherViewModel
     @State private var showErrorAlert = false
     @State private var animateBackgroundGradient = false
+    @State private var isHeroCardExpanded = false
 
     enum UI {
         static let pageSpacing: CGFloat = 16
@@ -39,6 +40,10 @@ struct HomeView: View {
         static let backgroundAnimatedOffset: CGFloat = 0.10
         static let backgroundSecondaryLayerOpacity: CGFloat = 0.18
         static let backgroundSecondaryAnimationDuration: Double = 32
+        static let heroCardInnerPadding: CGFloat = 18
+        static let heroCardDetailSpacing: CGFloat = 12
+        static let heroDetailGridSpacing: CGFloat = 14
+        static let heroDetailRowSpacing: CGFloat = 2
     }
 
     var body: some View {
@@ -338,14 +343,26 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
-
-
-
-
     private var currentWeatherSection: some View {
         Group {
             if let weather = viewModel.weather {
-                VStack(spacing: UI.gridSpacing) {
+                VStack(spacing: UI.heroCardDetailSpacing) {
+                    HStack(alignment: .center) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Now")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.72))
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.down.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(.white.opacity(0.92))
+                            .rotationEffect(.degrees(isHeroCardExpanded ? 180 : 0))
+                            .scaleEffect(isHeroCardExpanded ? 1.06 : 1)
+                    }
+
                     Image(systemName: viewModel.isNight ? weather.current.nightSymbolName : weather.current.symbolName)
                         .symbolRenderingMode(.multicolor)
                         .resizable()
@@ -365,10 +382,44 @@ struct HomeView: View {
                     Text("H: \(weather.todayHighText)   L: \(weather.todayLowText)")
                         .font(.headline.weight(.medium))
                         .foregroundStyle(.white.opacity(0.92))
+
+                    if isHeroCardExpanded {
+                        VStack(spacing: UI.heroCardDetailSpacing) {
+                            Divider()
+                                .overlay(.white.opacity(0.14))
+                                .padding(.top, 4)
+
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.heroDetailGridSpacing) {
+                                HeroDetailItem(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
+
+                                HeroDetailItem(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
+
+                                HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
+
+                                HeroDetailItem(title: "Rain Chance", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
+
+                                // NEW INFO (expanded only)
+                                HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line")
+
+                                HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge")
+                            }
+                            .padding(.top, 10)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 18)
+                .padding(.vertical, UI.heroCardInnerPadding)
+                .padding(.horizontal, UI.heroCardInnerPadding)
                 .glassCard(cornerRadius: UI.heroCardCornerRadius)
+                .scaleEffect(isHeroCardExpanded ? 1.01 : 1.0)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+                        isHeroCardExpanded.toggle()
+                    }
+                }
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
                 loadingCard
@@ -378,7 +429,7 @@ struct HomeView: View {
 
     private var metricsSection: some View {
         Group {
-            if let weather = viewModel.weather {
+            if let weather = viewModel.weather, !isHeroCardExpanded {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.gridSpacing) {
                     WeatherMetricCard(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
                     WeatherMetricCard(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
@@ -478,6 +529,46 @@ struct HomeView: View {
         }
     }
 
+}
+private struct HeroDetailItem: View {
+    let title: LocalizedStringKey
+    let value: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 8) {
+            Image(systemName: systemImage)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white.opacity(0.92))
+                .frame(width: 18, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: HomeView.UI.heroDetailRowSpacing) {
+                Text(title)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.68))
+                    .lineLimit(1)
+
+                Text(value)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(.white.opacity(0.06))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
+        }
+    }
 }
 
 private struct WeatherMetricCard: View {
@@ -649,6 +740,15 @@ private struct TemperatureRangeBar: View {
         }
         .frame(height: 4)
         .accessibilityHidden(true)
+    }
+}
+private extension CurrentWeather {
+    var windDirectionText: String {
+        "--"
+    }
+
+    var pressureText: String {
+        "--"
     }
 }
 // Helper for extracting numeric temperature values from DailyForecastItem
