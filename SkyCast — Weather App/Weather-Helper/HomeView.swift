@@ -606,6 +606,20 @@ private struct WeatherMetricCard: View {
 private struct HourlyForecastCard: View {
     let hour: HourlyForecastItem
 
+    private var iconSize: CGFloat {
+        if hour.symbolName.contains("sun.max") || hour.symbolName.contains("cloud.sun") {
+            return 29
+        }
+        return 28
+    }
+
+    private var iconVerticalOffset: CGFloat {
+        if hour.symbolName.contains("sun.max") {
+            return -0.5
+        }
+        return 0
+    }
+
     var body: some View {
         VStack(spacing: 10) {
             Text(hour.timeLabel)
@@ -614,7 +628,10 @@ private struct HourlyForecastCard: View {
 
             Image(systemName: hour.symbolName)
                 .symbolRenderingMode(.multicolor)
-                .font(.title2)
+                .resizable()
+                .scaledToFit()
+                .frame(width: iconSize, height: iconSize)
+                .offset(y: iconVerticalOffset)
                 .shadow(color: .white.opacity(0.14), radius: 8, x: 0, y: 0)
 
             Text(hour.temperatureText)
