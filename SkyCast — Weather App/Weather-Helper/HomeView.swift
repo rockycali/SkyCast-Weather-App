@@ -429,12 +429,22 @@ struct HomeView: View {
     private var dailySection: some View {
         Group {
             if !viewModel.dailyForecast.isEmpty {
+                let dailyTemperatureValues = viewModel.dailyForecast.flatMap { day in
+                    [day.numericMinTemperature, day.numericMaxTemperature].compactMap { $0 }
+                }
+                let overallMinTemperature = dailyTemperatureValues.min() ?? 0
+                let overallMaxTemperature = dailyTemperatureValues.max() ?? 0
+
                 VStack(alignment: .leading, spacing: UI.sectionSpacing) {
                     sectionTitle("5-Day Forecast")
 
                     VStack(spacing: UI.rowSpacing) {
                         ForEach(viewModel.dailyForecast) { day in
-                            DailyForecastRow(day: day)
+                            DailyForecastRow(
+                                day: day,
+                                overallMinTemperature: overallMinTemperature,
+                                overallMaxTemperature: overallMaxTemperature
+                            )
                         }
                     }
                 }
@@ -527,35 +537,142 @@ private struct HourlyForecastCard: View {
 }
 
 private struct DailyForecastRow: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let day: DailyForecastItem
+    let overallMinTemperature: Double
+    let overallMaxTemperature: Double
+
+    private var isToday: Bool {
+        day.dayLabel == String(localized: "Today")
+    }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Text(day.dayLabel)
-                .font(.headline)
+                .font(.headline.weight(isToday ? .semibold : .medium))
                 .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(width: 68, alignment: .leading)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
 
             Image(systemName: day.symbolName)
                 .symbolRenderingMode(.multicolor)
                 .font(.title3)
-                .frame(width: 32)
+                .frame(width: 28)
 
-            Spacer(minLength: 10)
+            if let minTemperature = day.numericMinTemperature,
+               let maxTemperature = day.numericMaxTemperature {
+                Text(day.minText)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.74))
+                    .frame(width: 44, alignment: .trailing)
 
-            Text(day.minText)
-                .foregroundStyle(.white.opacity(0.78))
-                .frame(width: 42, alignment: .trailing)
+                TemperatureRangeBar(
+                    minTemperature: minTemperature,
+                    maxTemperature: maxTemperature,
+                    overallMinTemperature: overallMinTemperature,
+                    overallMaxTemperature: overallMaxTemperature
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.leading, 2)
 
-            Text(day.maxText)
-                .foregroundStyle(.white)
-                .frame(width: 42, alignment: .trailing)
+                Text(day.maxText)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 48, alignment: .trailing)
+            } else {
+                Spacer(minLength: 8)
+
+                Text(day.minText)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.74))
+                    .frame(width: 44, alignment: .trailing)
+
+                Text(day.maxText)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 48, alignment: .trailing)
+            }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.vertical, 16)
+        .background {
+            RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
+                .fill(isToday ? Color.white.opacity(colorScheme == .dark ? 0.12 : 0.16) : Color.clear)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
+                .stroke(.white.opacity(isToday ? 0.28 : 0), lineWidth: 1)
+        }
         .glassCard(cornerRadius: HomeView.UI.secondaryCardCornerRadius)
     }
 }
+
+private struct TemperatureRangeBar: View {
+    let minTemperature: Double
+    let maxTemperature: Double
+    let overallMinTemperature: Double
+    let overallMaxTemperature: Double
+
+    var body: some View {
+        GeometryReader { geometry in
+            let trackWidth = geometry.size.width
+            let totalRange = max(overallMaxTemperature - overallMinTemperature, 1)
+            let startRatio = (minTemperature - overallMinTemperature) / totalRange
+            let endRatio = (maxTemperature - overallMinTemperature) / totalRange
+            let clampedStart = min(max(startRatio, 0), 1)
+            let clampedEnd = min(max(endRatio, 0), 1)
+            let fillStart = trackWidth * clampedStart
+            let fillWidth = max(trackWidth * (clampedEnd - clampedStart), 24)
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(.white.opacity(0.12))
+                    .frame(height: 4)
+
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.6),
+                                Color.white.opacity(0.85)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: fillWidth, height: 4)
+                    .offset(x: fillStart)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(height: 4)
+        .accessibilityHidden(true)
+    }
+}
+// Helper for extracting numeric temperature values from DailyForecastItem
+private extension DailyForecastItem {
+    var numericMinTemperature: Double? {
+        Self.numericTemperature(from: minText)
+    }
+
+    var numericMaxTemperature: Double? {
+        Self.numericTemperature(from: maxText)
+    }
+
+    private static func numericTemperature(from value: String) -> Double? {
+        let cleanedValue = value
+            .replacingOccurrences(of: "°", with: "")
+            .replacingOccurrences(of: "C", with: "")
+            .replacingOccurrences(of: "F", with: "")
+            .replacingOccurrences(of: ",", with: ".")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return Double(cleanedValue)
+    }
+}
+
 
 #Preview {
     HomeView(viewModel: WeatherViewModel())
