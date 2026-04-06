@@ -108,6 +108,7 @@ struct CurrentWeather: Codable {
     let windDirection: Double?
     let pressure: Double?
     let uvIndex: Double?
+    let airQuality: Int?
 
     var temperatureText: String { Self.formatTemperature(temperature) }
     var apparentTemperatureText: String { Self.formatTemperature(apparentTemperature) }

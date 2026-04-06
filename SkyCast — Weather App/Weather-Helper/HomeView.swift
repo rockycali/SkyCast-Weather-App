@@ -764,7 +764,16 @@ private struct TemperatureRangeBar: View {
 }
 private extension CurrentWeather {
     var airQualityText: String {
-        "--"
+        guard let aqi = airQuality else { return "--" }
+
+        switch aqi {
+        case 0...50: return "\(aqi) • Good"
+        case 51...100: return "\(aqi) • Moderate"
+        case 101...150: return "\(aqi) • Unhealthy (Sensitive)"
+        case 151...200: return "\(aqi) • Unhealthy"
+        case 201...300: return "\(aqi) • Very Unhealthy"
+        default: return "\(aqi) • Hazardous"
+        }
     }
 
     var rainDescriptionText: String {
