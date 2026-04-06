@@ -87,13 +87,16 @@ struct HomeView: View {
                         }
                         .padding(.horizontal, UI.contentHorizontalPadding)
                         .padding(.top, UI.contentVerticalPadding)
-                        .padding(.bottom, 236)
+                        .padding(.bottom, 24)
                         .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
                         .id(temperatureUnit)
                     }
                     .refreshable {
                         print("🔄 Pull-to-refresh triggered")
                         await viewModel.refreshCurrentSource()
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear.frame(height: 120)
                     }
                     .onChange(of: isHeroCardExpanded) { _, isExpanded in
                         guard isExpanded else { return }
@@ -466,6 +469,7 @@ struct HomeView: View {
                     WeatherMetricCard(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
                     WeatherMetricCard(title: "Rain", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
                 }
+                .padding(.bottom, 20)
             }
         }
     }
