@@ -49,6 +49,7 @@ A quick walkthrough of ClimaFlow showcasing real-time weather, search, and dynam
 - ⭐ Saved Cities system with quick weather previews  
 - 🧭 Multi-screen navigation (Home, Cities, Settings)  
 - 🌙 Dynamic UI adapting to weather conditions  
+- 🧩 Interactive hero weather card with expandable insights (UV, AQI, wind, pressure)  
 - 🌍 Multi-language support (EN / DE / FR)  
 - ⚡ Async/await networking  
 - 🧠 Reactive state handling (Combine)  
