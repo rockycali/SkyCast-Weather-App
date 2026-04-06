@@ -814,14 +814,23 @@ private extension CurrentWeather {
     var airQualityText: String {
         guard let aqi = airQuality else { return "--" }
 
+        let label: String
         switch aqi {
-        case 0...50: return "\(aqi) • Good"
-        case 51...100: return "\(aqi) • Moderate"
-        case 101...150: return "\(aqi) • Unhealthy (Sensitive)"
-        case 151...200: return "\(aqi) • Unhealthy"
-        case 201...300: return "\(aqi) • Very Unhealthy"
-        default: return "\(aqi) • Hazardous"
+        case 0...50:
+            label = String(localized: "Good")
+        case 51...100:
+            label = String(localized: "Moderate")
+        case 101...150:
+            label = String(localized: "Unhealthy (Sensitive)")
+        case 151...200:
+            label = String(localized: "Unhealthy")
+        case 201...300:
+            label = String(localized: "Very Unhealthy")
+        default:
+            label = String(localized: "Hazardous")
         }
+
+        return "\(aqi) • \(label)"
     }
 
     var rainDescriptionText: String {
@@ -833,16 +842,19 @@ private extension CurrentWeather {
             return precipitationChanceText
         }
 
+        let label: String
         switch value {
         case 0:
-            return "0% • No rain"
+            label = String(localized: "No rain")
         case 1...30:
-            return "\(value)% • Slight chance"
+            label = String(localized: "Slight chance")
         case 31...60:
-            return "\(value)% • Possible rain"
+            label = String(localized: "Possible rain")
         default:
-            return "\(value)% • Likely rain"
+            label = String(localized: "Likely rain")
         }
+
+        return "\(value)% • \(label)"
     }
 }
 // Helper for extracting numeric temperature values from DailyForecastItem
@@ -980,13 +992,13 @@ private struct SunCycleCard: View {
         let now = Date()
 
         if now < sunrise {
-            return "Sunrise in \(timeString(from: sunrise.timeIntervalSince(now)))"
+            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: sunrise.timeIntervalSince(now)))
         } else if now < sunset {
-            return "Sunset in \(timeString(from: sunset.timeIntervalSince(now)))"
+            return String(localized: "Sunset in %@", defaultValue: "Sunset in %@").replacingOccurrences(of: "%@", with: timeString(from: sunset.timeIntervalSince(now)))
         } else {
             // After sunset → next sunrise (next day)
             let nextSunrise = Calendar.current.date(byAdding: .day, value: 1, to: sunrise) ?? sunrise
-            return "Sunrise in \(timeString(from: nextSunrise.timeIntervalSince(now)))"
+            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: nextSunrise.timeIntervalSince(now)))
         }
     }
 
