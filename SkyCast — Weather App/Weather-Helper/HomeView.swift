@@ -895,6 +895,11 @@ private struct SunCycleCard: View {
                     }
                 }
                 .frame(height: 10)
+
+                // ADDED: Time until next event text
+                Text(timeUntilNextEventText)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.85))
             }
         }
         .padding(18)
@@ -915,6 +920,34 @@ private struct SunCycleCard: View {
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
         return "\(hours)h \(minutes)m"
+    }
+
+    // ADDED: Time until next event computed property
+    private var timeUntilNextEventText: String {
+        let now = Date()
+
+        if now < sunrise {
+            return "Sunrise in \(timeString(from: sunrise.timeIntervalSince(now)))"
+        } else if now < sunset {
+            return "Sunset in \(timeString(from: sunset.timeIntervalSince(now)))"
+        } else {
+            // After sunset → next sunrise (next day)
+            let nextSunrise = Calendar.current.date(byAdding: .day, value: 1, to: sunrise) ?? sunrise
+            return "Sunrise in \(timeString(from: nextSunrise.timeIntervalSince(now)))"
+        }
+    }
+
+    // ADDED: Helper function for time formatting
+    private func timeString(from interval: TimeInterval) -> String {
+        let totalMinutes = max(Int(interval / 60), 0)
+        let hours = totalMinutes / 60
+        let minutes = totalMinutes % 60
+
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
     }
 }
 
