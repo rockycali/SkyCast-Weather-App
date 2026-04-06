@@ -473,7 +473,7 @@ struct HomeView: View {
                     SunCycleCard(
                         sunrise: today.sunrise,
                         sunset: today.sunset,
-                        prefersExtraContrast: isBrightDaylightWeather
+                        isNight: viewModel.isNight
                     )
                 }
                 .padding(.top, 12)
@@ -801,55 +801,8 @@ private struct TemperatureRangeBar: View {
         .accessibilityHidden(true)
     }
 }
-private extension CurrentWeather {
-// MARK: - Display Helpers
-    var airQualityText: String {
-        guard let aqi = airQuality else { return "--" }
 
-        let label: String
-        switch aqi {
-        case 0...50:
-            label = String(localized: "Good")
-        case 51...100:
-            label = String(localized: "Moderate")
-        case 101...150:
-            label = String(localized: "Unhealthy (Sensitive)")
-        case 151...200:
-            label = String(localized: "Unhealthy")
-        case 201...300:
-            label = String(localized: "Very Unhealthy")
-        default:
-            label = String(localized: "Hazardous")
-        }
-
-        return "\(aqi) • \(label)"
-    }
-
-    var rainDescriptionText: String {
-        let numericValue = precipitationChanceText
-            .replacingOccurrences(of: "%", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard let value = Int(numericValue) else {
-            return precipitationChanceText
-        }
-
-        let label: String
-        switch value {
-        case 0:
-            label = String(localized: "No rain")
-        case 1...30:
-            label = String(localized: "Slight chance")
-        case 31...60:
-            label = String(localized: "Possible rain")
-        default:
-            label = String(localized: "Likely rain")
-        }
-
-        return "\(value)% • \(label)"
-    }
-}
-// Helper for extracting numeric temperature values from DailyForecastItem
+// MARK: - Parsing Helpers
 private extension DailyForecastItem {
     var numericMinTemperature: Double? {
         Self.numericTemperature(from: minText)
@@ -872,139 +825,9 @@ private extension DailyForecastItem {
 }
 
 
-#Preview {
 // MARK: - Preview
+#Preview {
     HomeView(viewModel: WeatherViewModel())
-}
-
-// MARK: - Secondary Cards
-private struct SunCycleCard: View {
-    let sunrise: Date
-    let sunset: Date
-    let prefersExtraContrast: Bool
-
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
-    var body: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Sunrise", systemImage: "sunrise.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.96))
-
-                    Text(Self.timeFormatter.string(from: sunrise))
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Divider()
-                    .overlay(.white.opacity(0.18))
-                    .frame(maxHeight: 42)
-
-                VStack(alignment: .trailing, spacing: 8) {
-                    Label("Sunset", systemImage: "sunset.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.96))
-
-                    Text(Self.timeFormatter.string(from: sunset))
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Daylight")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.92))
-
-                    Spacer()
-
-                    Text(daylightDurationText)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
-                }
-
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(.white.opacity(0.18))
-                            .frame(height: 10)
-
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.yellow.opacity(0.95), Color.orange.opacity(0.95)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: max(18, geometry.size.width * daylightProgress), height: 10)
-                    }
-                }
-                .frame(height: 10)
-
-                Text(timeUntilNextEventText)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.85))
-            }
-        }
-        .padding(18)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
-        }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
-    }
-
-    private var daylightProgress: CGFloat {
-        let total = sunset.timeIntervalSince(sunrise)
-        guard total > 0 else { return 0 }
-
-        let current = Date().timeIntervalSince(sunrise)
-        let progress = current / total
-        return min(max(progress, 0), 1)
-    }
-
-    private var daylightDurationText: String {
-        let totalMinutes = max(Int(sunset.timeIntervalSince(sunrise) / 60), 0)
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-        return "\(hours)h \(minutes)m"
-    }
-
-    private var timeUntilNextEventText: String {
-        let now = Date()
-
-        if now < sunrise {
-            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: sunrise.timeIntervalSince(now)))
-        } else if now < sunset {
-            return String(localized: "Sunset in %@", defaultValue: "Sunset in %@").replacingOccurrences(of: "%@", with: timeString(from: sunset.timeIntervalSince(now)))
-        } else {
-            // After sunset → next sunrise (next day)
-            let nextSunrise = Calendar.current.date(byAdding: .day, value: 1, to: sunrise) ?? sunrise
-            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: nextSunrise.timeIntervalSince(now)))
-        }
-    }
-
-    private func timeString(from interval: TimeInterval) -> String {
-        let totalMinutes = max(Int(interval / 60), 0)
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        } else {
-            return "\(minutes)m"
-        }
-    }
 }
 
 // MARK: - View Modifiers
@@ -1038,4 +861,3 @@ private extension View {
         modifier(GlassCardModifier(cornerRadius: cornerRadius))
     }
 }
-
