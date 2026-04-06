@@ -802,6 +802,7 @@ private struct TemperatureRangeBar: View {
     }
 }
 
+ 
 // MARK: - Parsing Helpers
 private extension DailyForecastItem {
     var numericMinTemperature: Double? {
@@ -823,41 +824,9 @@ private extension DailyForecastItem {
         return Double(cleanedValue)
     }
 }
-
-
 // MARK: - Preview
 #Preview {
     HomeView(viewModel: WeatherViewModel())
 }
 
-// MARK: - View Modifiers
-private struct GlassCardModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
-    let cornerRadius: CGFloat
 
-    func body(content: Content) -> some View {
-        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-
-        content
-            .background {
-                ZStack {
-                    shape
-                        .fill(.ultraThinMaterial)
-
-                    shape
-                        .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.10))
-                }
-            }
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
-            .overlay {
-                shape
-                    .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0.28), lineWidth: 1)
-            }
-    }
-}
-
-private extension View {
-    func glassCard(cornerRadius: CGFloat = 22) -> some View {
-        modifier(GlassCardModifier(cornerRadius: cornerRadius))
-    }
-}
