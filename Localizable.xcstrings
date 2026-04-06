@@ -113,6 +113,9 @@
         }
       }
     },
+    "Air Quality" : {
+
+    },
     "App" : {
       "localizations" : {
         "de" : {
@@ -621,6 +624,9 @@
         }
       }
     },
+    "Now" : {
+
+    },
     "Offline mode - showing last data" : {
       "localizations" : {
         "de" : {
@@ -733,6 +739,9 @@
         }
       }
     },
+    "Pressure" : {
+
+    },
     "Rain" : {
       "localizations" : {
         "de" : {
@@ -748,6 +757,9 @@
           }
         }
       }
+    },
+    "Rain Chance" : {
+
     },
     "Rain Showers" : {
       "localizations" : {
@@ -1133,6 +1145,9 @@
         }
       }
     },
+    "UV Index" : {
+
+    },
     "Version" : {
       "localizations" : {
         "de" : {
@@ -1196,6 +1211,9 @@
           }
         }
       }
+    },
+    "Wind Dir" : {
+
     },
     "Your Cities" : {
       "localizations" : {

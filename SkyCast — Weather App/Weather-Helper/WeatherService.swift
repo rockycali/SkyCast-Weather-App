@@ -45,7 +45,7 @@ final class WeatherService: WeatherServiceProtocol {
         components.queryItems = [
             URLQueryItem(name: "latitude", value: String(latitude)),
             URLQueryItem(name: "longitude", value: String(longitude)),
-            URLQueryItem(name: "current", value: "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation_probability,weather_code"),
+            URLQueryItem(name: "current", value: "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,surface_pressure,uv_index,weather_code"),
             URLQueryItem(name: "hourly", value: "temperature_2m,apparent_temperature,weather_code"),
             URLQueryItem(name: "daily", value: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset"),
             URLQueryItem(name: "forecast_days", value: "5"),
@@ -61,10 +61,14 @@ final class WeatherService: WeatherServiceProtocol {
         try validate(response: response)
 
         let forecast = try decoder.decode(ForecastResponse.self, from: data)
-        return mapForecast(forecast, locationName: locationName)
+
+        // Fetch Air Quality (AQI)
+        let airQuality = try await fetchAirQuality(latitude: latitude, longitude: longitude)
+
+        return mapForecast(forecast, locationName: locationName, airQuality: airQuality)
     }
 
-    private func mapForecast(_ forecast: ForecastResponse, locationName: String) -> WeatherData {
+    private func mapForecast(_ forecast: ForecastResponse, locationName: String, airQuality: Int?) -> WeatherData {
         let cityTimeZone = TimeZone(identifier: forecast.timezone) ?? .current
 
         let dateFormatter = DateFormatter()
@@ -75,13 +79,19 @@ final class WeatherService: WeatherServiceProtocol {
         timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
         timeFormatter.timeZone = cityTimeZone
 
+        let currentDTO = forecast.current
+
         let current = CurrentWeather(
-            temperature: forecast.current.temperature2m,
-            weatherCode: forecast.current.weatherCode,
-            apparentTemperature: forecast.current.apparentTemperature,
-            humidity: forecast.current.relativeHumidity2m,
-            windSpeed: forecast.current.windSpeed10m,
-            precipitationProbability: forecast.current.precipitationProbability
+            temperature: currentDTO.temperature2m,
+            weatherCode: currentDTO.weatherCode,
+            apparentTemperature: currentDTO.apparentTemperature,
+            humidity: currentDTO.relativeHumidity2m,
+            windSpeed: currentDTO.windSpeed10m,
+            precipitationProbability: currentDTO.precipitationProbability,
+            windDirection: currentDTO.windDirection10m,
+            pressure: currentDTO.surfacePressure,
+            uvIndex: currentDTO.uvIndex,
+            airQuality: airQuality
         )
 
         let daily = zip(
@@ -152,6 +162,28 @@ final class WeatherService: WeatherServiceProtocol {
         return WeatherData(locationName: locationName, current: current, hourly: hourly, daily: daily)
     }
 
+    private func fetchAirQuality(latitude: Double, longitude: Double) async throws -> Int? {
+        guard var components = URLComponents(string: "https://air-quality-api.open-meteo.com/v1/air-quality") else {
+            return nil
+        }
+
+        components.queryItems = [
+            URLQueryItem(name: "latitude", value: String(latitude)),
+            URLQueryItem(name: "longitude", value: String(longitude)),
+            URLQueryItem(name: "current", value: "us_aqi")
+        ]
+
+        guard let url = components.url else { return nil }
+
+        do {
+            let (data, _) = try await session.data(from: url)
+            let result = try decoder.decode(AirQualityResponse.self, from: data)
+            return result.current.usAqi
+        } catch {
+            return nil
+        }
+    }
+
     private func validate(response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw WeatherError.invalidResponse
@@ -160,6 +192,18 @@ final class WeatherService: WeatherServiceProtocol {
         guard (200...299).contains(httpResponse.statusCode) else {
             throw WeatherError.serverError(httpResponse.statusCode)
         }
+    }
+}
+
+private struct AirQualityResponse: Decodable {
+    let current: AirQualityCurrent
+}
+
+private struct AirQualityCurrent: Decodable {
+    let usAqi: Int
+
+    enum CodingKeys: String, CodingKey {
+        case usAqi = "us_aqi"
     }
 }
 
