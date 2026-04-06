@@ -92,7 +92,7 @@ struct SettingsView: View {
                                 .opacity(0.85)
                             }
                             .padding(.vertical, 6)
-                            .glassCard(cornerRadius: UI.cardCornerRadius)
+                            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: settingsCardContrastOpacity)
                         }
 
                         settingsCard(
@@ -112,6 +112,15 @@ struct SettingsView: View {
             .navigationTitle("")
             .toolbarTitleDisplayMode(.inline)
         }
+    }
+
+    private var isBrightDaylightWeather: Bool {
+        guard let weather = viewModel.weather else { return false }
+        return !viewModel.isNight && weather.current.weatherCode == 0
+    }
+
+    private var settingsCardContrastOpacity: Double {
+        isBrightDaylightWeather ? 0.06 : 0
     }
 
     private var backgroundGradient: LinearGradient {
@@ -204,7 +213,7 @@ struct SettingsView: View {
                 }
             }
             .padding(.vertical, 6)
-            .glassCard(cornerRadius: UI.cardCornerRadius)
+            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: settingsCardContrastOpacity)
         }
     }
 
@@ -241,6 +250,7 @@ private struct SettingRowData {
 private struct SettingsGlassCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     let cornerRadius: CGFloat
+    let extraDarkTint: Double
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -253,6 +263,9 @@ private struct SettingsGlassCardModifier: ViewModifier {
 
                     shape
                         .fill(colorScheme == .dark ? Color.black.opacity(0.34) : Color.white.opacity(0.10))
+
+                    shape
+                        .fill(Color.black.opacity(extraDarkTint))
                 }
             }
             .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
@@ -264,8 +277,8 @@ private struct SettingsGlassCardModifier: ViewModifier {
 }
 
 private extension View {
-    func glassCard(cornerRadius: CGFloat = 22) -> some View {
-        modifier(SettingsGlassCardModifier(cornerRadius: cornerRadius))
+    func glassCard(cornerRadius: CGFloat = 22, extraDarkTint: Double = 0) -> some View {
+        modifier(SettingsGlassCardModifier(cornerRadius: cornerRadius, extraDarkTint: extraDarkTint))
     }
 }
 
