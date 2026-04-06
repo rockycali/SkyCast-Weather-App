@@ -94,7 +94,7 @@ struct HeroWeatherCard: View {
 }
 
 private struct HeroWeatherDetailItem: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
     let systemImage: String
     let prefersExtraContrast: Bool

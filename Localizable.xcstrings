@@ -114,7 +114,6 @@
       }
     },
     "Air Quality" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -292,23 +291,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Personnalisez les préférences et les informations de votre application."
-          }
-        }
-      }
-    },
-    "Daylight" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tageslicht"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lumière du jour"
           }
         }
       }
@@ -864,7 +846,6 @@
       }
     },
     "Pressure" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -897,7 +878,6 @@
       }
     },
     "Rain Chance" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1378,7 +1358,6 @@
       }
     },
     "UV Index" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1475,7 +1454,6 @@
       }
     },
     "Wind Dir" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
