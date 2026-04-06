@@ -16,31 +16,21 @@ struct HomeView: View {
         static let rowSpacing: CGFloat = 10
         static let contentHorizontalPadding: CGFloat = 20
         static let contentVerticalPadding: CGFloat = 16
-        static let fieldHorizontalPadding: CGFloat = 14
-        static let buttonHeight: CGFloat = 50
         static let hourlyCardWidth: CGFloat = 84
-        static let hourlyCardHeight: CGFloat = 0
         static let hourlyCardSpacing: CGFloat = 12
         static let hourlySectionSideInset: CGFloat = 6
         static let hourlySectionHorizontalBreakout: CGFloat = -8
-        static let inputCornerRadius: CGFloat = 16
         static let secondaryCardCornerRadius: CGFloat = 20
         static let cardCornerRadius: CGFloat = 22
         static let heroCardCornerRadius: CGFloat = 28
         static let subtleTextOpacity: CGFloat = 0.82
         static let secondaryTextOpacityDark: CGFloat = 0.94
         static let secondaryTextOpacityLight: CGFloat = 0.96
-        static let textFieldBackgroundOpacity: CGFloat = 0.16
-        static let secondaryButtonBackgroundOpacity: CGFloat = 0.14
-        static let fieldBorderOpacityDark: CGFloat = 0.22
-        static let fieldBorderOpacityLight: CGFloat = 0.12
-        static let buttonBorderOpacity: CGFloat = 0.2
         static let backgroundAnimationDuration: Double = 24
         static let backgroundStartPointX: CGFloat = 0.14
         static let backgroundEndPointX: CGFloat = 0.86
         static let backgroundAnimatedOffset: CGFloat = 0.10
         static let backgroundSecondaryLayerOpacity: CGFloat = 0.18
-        static let backgroundSecondaryAnimationDuration: Double = 32
         static let heroCardInnerPadding: CGFloat = 18
         static let heroCardDetailSpacing: CGFloat = 12
         static let heroDetailGridSpacing: CGFloat = 14
@@ -566,6 +556,7 @@ struct HomeView: View {
     }
 
 }
+// MARK: - Supporting Views
 private struct HeroDetailItem: View {
     let title: LocalizedStringKey
     let value: String
@@ -811,6 +802,7 @@ private struct TemperatureRangeBar: View {
     }
 }
 private extension CurrentWeather {
+// MARK: - Display Helpers
     var airQualityText: String {
         guard let aqi = airQuality else { return "--" }
 
@@ -881,9 +873,11 @@ private extension DailyForecastItem {
 
 
 #Preview {
+// MARK: - Preview
     HomeView(viewModel: WeatherViewModel())
 }
 
+// MARK: - Secondary Cards
 private struct SunCycleCard: View {
     let sunrise: Date
     let sunset: Date
@@ -957,7 +951,6 @@ private struct SunCycleCard: View {
                 }
                 .frame(height: 10)
 
-                // ADDED: Time until next event text
                 Text(timeUntilNextEventText)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.white.opacity(0.85))
@@ -987,7 +980,6 @@ private struct SunCycleCard: View {
         return "\(hours)h \(minutes)m"
     }
 
-    // ADDED: Time until next event computed property
     private var timeUntilNextEventText: String {
         let now = Date()
 
@@ -1002,7 +994,6 @@ private struct SunCycleCard: View {
         }
     }
 
-    // ADDED: Helper function for time formatting
     private func timeString(from interval: TimeInterval) -> String {
         let totalMinutes = max(Int(interval / 60), 0)
         let hours = totalMinutes / 60
@@ -1016,6 +1007,7 @@ private struct SunCycleCard: View {
     }
 }
 
+// MARK: - View Modifiers
 private struct GlassCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     let cornerRadius: CGFloat
