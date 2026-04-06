@@ -1,8 +1,6 @@
 import SwiftUI
 
 // MARK: - Glass Card Modifier
-import SwiftUI
-
 struct GlassCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     let cornerRadius: CGFloat
@@ -31,6 +29,7 @@ struct GlassCardModifier: ViewModifier {
             }
     }
 }
+
 // MARK: - View Extension
 extension View {
     func glassCard(cornerRadius: CGFloat = 22, extraDarkTint: Double = 0) -> some View {

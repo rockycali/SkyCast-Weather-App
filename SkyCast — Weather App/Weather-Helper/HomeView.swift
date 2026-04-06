@@ -324,10 +324,6 @@ struct HomeView: View {
         return !viewModel.isNight && weather.current.weatherCode == 0
     }
 
-    private var brightCardReadabilityOpacity: Double {
-        isBrightDaylightWeather ? 0.12 : 0
-    }
-
     private var headerSection: some View {
         VStack(spacing: 6) {
             Text("Current Weather")
@@ -360,89 +356,17 @@ struct HomeView: View {
     private var currentWeatherSection: some View {
         Group {
             if let weather = viewModel.weather {
-                VStack(spacing: UI.heroCardDetailSpacing) {
-                    HStack(alignment: .center) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Now")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.72))
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.down.circle.fill")
-                            .font(.title3)
-                            .foregroundStyle(.white.opacity(0.92))
-                            .rotationEffect(.degrees(isHeroCardExpanded ? 180 : 0))
-                            .scaleEffect(isHeroCardExpanded ? 1.06 : 1)
-                    }
-
-                    Image(systemName: viewModel.isNight ? weather.current.nightSymbolName : weather.current.symbolName)
-                        .symbolRenderingMode(.multicolor)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 124, height: 124)
-                        .shadow(color: .white.opacity(0.18), radius: 18, x: 0, y: 0)
-
-                    Text(weather.current.temperatureText)
-                        .font(.system(size: 68, weight: .semibold))
-                        .foregroundStyle(.white)
-
-                    Text(weather.current.summary)
-                        .font(.title3.weight(.semibold))
-                        .foregroundColor(.white)
-                        .opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight)
-
-                    Text("H: \(weather.todayHighText)   L: \(weather.todayLowText)")
-                        .font(.headline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.92))
-
-                    if isHeroCardExpanded {
-                        VStack(spacing: UI.heroCardDetailSpacing) {
-                            Divider()
-                                .overlay(.white.opacity(0.14))
-                                .padding(.top, 4)
-
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.heroDetailGridSpacing) {
-                                HeroDetailItem(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Rain Chance", value: weather.current.rainDescriptionText, systemImage: "cloud.rain.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "UV Index", value: weather.current.uvIndexText, systemImage: "sun.max.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Air Quality", value: weather.current.airQualityText, systemImage: "aqi.medium", prefersExtraContrast: isBrightDaylightWeather)
-                            }
-                            .padding(.top, 10)
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
-
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, isHeroCardExpanded ? 8 : 0)
-                .padding(.vertical, UI.heroCardInnerPadding)
-                .padding(.horizontal, UI.heroCardInnerPadding)
-                .background {
-                    RoundedRectangle(cornerRadius: UI.heroCardCornerRadius, style: .continuous)
-                        .fill(.black.opacity(brightCardReadabilityOpacity))
-                }
-                .glassCard(cornerRadius: UI.heroCardCornerRadius)
-                .scaleEffect(isHeroCardExpanded ? 1.01 : 1.0)
-                .contentShape(Rectangle())
-                .id(heroCardScrollID)
-                .onTapGesture {
+                HeroWeatherCard(
+                    weather: weather,
+                    isNight: viewModel.isNight,
+                    isExpanded: isHeroCardExpanded,
+                    prefersExtraContrast: isBrightDaylightWeather
+                ) {
                     withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
                         isHeroCardExpanded.toggle()
                     }
                 }
+                .id(heroCardScrollID)
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
                 loadingCard
@@ -556,49 +480,8 @@ struct HomeView: View {
     }
 
 }
+
 // MARK: - Supporting Views
-private struct HeroDetailItem: View {
-    let title: LocalizedStringKey
-    let value: String
-    let systemImage: String
-    let prefersExtraContrast: Bool
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.92))
-                .frame(width: 18, alignment: .leading)
-
-            VStack(alignment: .leading, spacing: HomeView.UI.heroDetailRowSpacing) {
-                Text(title)
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.68))
-                    .lineLimit(1)
-
-                Text(value)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-
-            Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.white.opacity(prefersExtraContrast ? 0.10 : 0.06))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.white.opacity(prefersExtraContrast ? 0.12 : 0.08), lineWidth: 1)
-        }
-    }
-}
-
 private struct WeatherMetricCard: View {
     let title: LocalizedStringKey
     let value: String

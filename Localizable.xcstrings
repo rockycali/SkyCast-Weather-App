@@ -114,6 +114,7 @@
       }
     },
     "Air Quality" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -863,6 +864,7 @@
       }
     },
     "Pressure" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -895,6 +897,7 @@
       }
     },
     "Rain Chance" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1375,6 +1378,7 @@
       }
     },
     "UV Index" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1471,6 +1475,7 @@
       }
     },
     "Wind Dir" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
