@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var showErrorAlert = false
     @State private var animateBackgroundGradient = false
     @State private var isHeroCardExpanded = false
+    private let heroCardScrollID = "heroWeatherCard"
 
     enum UI {
         static let pageSpacing: CGFloat = 16
@@ -69,29 +70,43 @@ struct HomeView: View {
                     }
                 }
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: UI.pageSpacing) {
-                        if viewModel.isOffline {
-                            Text("Offline mode - showing last data")
-                                .foregroundColor(.orange)
-                                .font(.caption)
+                ScrollViewReader { proxy in
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: UI.pageSpacing) {
+                            if viewModel.isOffline {
+                                Text("Offline mode - showing last data")
+                                    .foregroundColor(.orange)
+                                    .font(.caption)
+                            }
+                            headerSection
+                            currentWeatherSection
+                            metricsSection
+                            sunCycleSection
+                            hourlySection
+                            dailySection
                         }
-                        headerSection
-                        currentWeatherSection
-                        metricsSection
-                        sunCycleSection
-                        hourlySection
-                        dailySection
+                        .padding(.horizontal, UI.contentHorizontalPadding)
+                        .padding(.top, UI.contentVerticalPadding)
+                        .padding(.bottom, 24)
+                        .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
+                        .id(temperatureUnit)
                     }
-                    .padding(.horizontal, UI.contentHorizontalPadding)
-                    .padding(.top, UI.contentVerticalPadding)
-                    .padding(.bottom, 236)
-                    .animation(.easeInOut(duration: 0.4), value: viewModel.weather?.current.weatherCode ?? -1)
-                    .id(temperatureUnit)
-                }
-                .refreshable {
-                    print("🔄 Pull-to-refresh triggered")
-                    await viewModel.refreshCurrentSource()
+                    .refreshable {
+                        print("🔄 Pull-to-refresh triggered")
+                        await viewModel.refreshCurrentSource()
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear.frame(height: 120)
+                    }
+                    .onChange(of: isHeroCardExpanded) { _, isExpanded in
+                        guard isExpanded else { return }
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                proxy.scrollTo(heroCardScrollID, anchor: .top)
+                            }
+                        }
+                    }
                 }
 
                 VStack {
@@ -314,6 +329,15 @@ struct HomeView: View {
         }
     }
 
+    private var isBrightDaylightWeather: Bool {
+        guard let weather = viewModel.weather else { return false }
+        return !viewModel.isNight && weather.current.weatherCode == 0
+    }
+
+    private var brightCardReadabilityOpacity: Double {
+        isBrightDaylightWeather ? 0.12 : 0
+    }
+
     private var headerSection: some View {
         VStack(spacing: 6) {
             Text("Current Weather")
@@ -390,21 +414,21 @@ struct HomeView: View {
                                 .padding(.top, 4)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.heroDetailGridSpacing) {
-                                HeroDetailItem(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
+                                HeroDetailItem(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
+                                HeroDetailItem(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
+                                HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Rain Chance", value: weather.current.rainDescriptionText, systemImage: "cloud.rain.fill")
+                                HeroDetailItem(title: "Rain Chance", value: weather.current.rainDescriptionText, systemImage: "cloud.rain.fill", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line")
+                                HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge")
+                                HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "UV Index", value: weather.current.uvIndexText, systemImage: "sun.max.fill")
+                                HeroDetailItem(title: "UV Index", value: weather.current.uvIndexText, systemImage: "sun.max.fill", prefersExtraContrast: isBrightDaylightWeather)
 
-                                HeroDetailItem(title: "Air Quality", value: weather.current.airQualityText, systemImage: "aqi.medium")
+                                HeroDetailItem(title: "Air Quality", value: weather.current.airQualityText, systemImage: "aqi.medium", prefersExtraContrast: isBrightDaylightWeather)
                             }
                             .padding(.top, 10)
                         }
@@ -413,11 +437,17 @@ struct HomeView: View {
 
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.top, isHeroCardExpanded ? 8 : 0)
                 .padding(.vertical, UI.heroCardInnerPadding)
                 .padding(.horizontal, UI.heroCardInnerPadding)
+                .background {
+                    RoundedRectangle(cornerRadius: UI.heroCardCornerRadius, style: .continuous)
+                        .fill(.black.opacity(brightCardReadabilityOpacity))
+                }
                 .glassCard(cornerRadius: UI.heroCardCornerRadius)
                 .scaleEffect(isHeroCardExpanded ? 1.01 : 1.0)
                 .contentShape(Rectangle())
+                .id(heroCardScrollID)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
                         isHeroCardExpanded.toggle()
@@ -439,6 +469,7 @@ struct HomeView: View {
                     WeatherMetricCard(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
                     WeatherMetricCard(title: "Rain", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
                 }
+                .padding(.bottom, 20)
             }
         }
     }
@@ -451,7 +482,8 @@ struct HomeView: View {
 
                     SunCycleCard(
                         sunrise: today.sunrise,
-                        sunset: today.sunset
+                        sunset: today.sunset,
+                        prefersExtraContrast: isBrightDaylightWeather
                     )
                 }
                 .padding(.top, 12)
@@ -468,7 +500,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: UI.hourlyCardSpacing) {
                             ForEach(viewModel.hourlyForecast) { hour in
-                                HourlyForecastCard(hour: hour)
+                                HourlyForecastCard(hour: hour, prefersExtraContrast: isBrightDaylightWeather)
                             }
                         }
                         .padding(.leading, UI.hourlySectionSideInset)
@@ -497,7 +529,8 @@ struct HomeView: View {
                             DailyForecastRow(
                                 day: day,
                                 overallMinTemperature: overallMinTemperature,
-                                overallMaxTemperature: overallMaxTemperature
+                                overallMaxTemperature: overallMaxTemperature,
+                                prefersExtraContrast: isBrightDaylightWeather
                             )
                         }
                     }
@@ -537,6 +570,7 @@ private struct HeroDetailItem: View {
     let title: LocalizedStringKey
     let value: String
     let systemImage: String
+    let prefersExtraContrast: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
@@ -565,11 +599,11 @@ private struct HeroDetailItem: View {
         .padding(.vertical, 8)
         .background {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.white.opacity(0.06))
+                .fill(.white.opacity(prefersExtraContrast ? 0.10 : 0.06))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
+                .stroke(.white.opacity(prefersExtraContrast ? 0.12 : 0.08), lineWidth: 1)
         }
     }
 }
@@ -584,12 +618,12 @@ private struct WeatherMetricCard: View {
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: systemImage)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.96))
+                    .foregroundStyle(.white.opacity(1.0))
                     .frame(width: 18, alignment: .leading)
 
                 Text(title)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.96))
+                    .foregroundStyle(.white.opacity(1.0))
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -602,12 +636,17 @@ private struct WeatherMetricCard: View {
         }
         .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
         .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
+                .fill(Color.black.opacity(0.06))
+        }
         .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
 
 private struct HourlyForecastCard: View {
     let hour: HourlyForecastItem
+    let prefersExtraContrast: Bool
 
     private var iconSize: CGFloat {
         if hour.symbolName.contains("sun.max") || hour.symbolName.contains("cloud.sun") {
@@ -643,6 +682,10 @@ private struct HourlyForecastCard: View {
         }
         .frame(width: HomeView.UI.hourlyCardWidth)
         .padding(.vertical, 16)
+        .background {
+            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
+                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
+        }
         .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 }
@@ -653,6 +696,7 @@ private struct DailyForecastRow: View {
     let day: DailyForecastItem
     let overallMinTemperature: Double
     let overallMaxTemperature: Double
+    let prefersExtraContrast: Bool
 
     private var isToday: Bool {
         day.dayLabel == String(localized: "Today")
@@ -710,11 +754,15 @@ private struct DailyForecastRow: View {
         .padding(.vertical, 16)
         .background {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .fill(isToday ? Color.white.opacity(colorScheme == .dark ? 0.12 : 0.16) : Color.clear)
+                .fill(
+                    isToday
+                    ? Color.white.opacity(colorScheme == .dark ? 0.12 : 0.16)
+                    : Color.black.opacity(prefersExtraContrast ? 0.06 : 0)
+                )
         }
         .overlay {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .stroke(.white.opacity(isToday ? 0.28 : 0), lineWidth: 1)
+                .stroke(.white.opacity(isToday ? 0.28 : (prefersExtraContrast ? 0.10 : 0)), lineWidth: 1)
         }
         .glassCard(cornerRadius: HomeView.UI.secondaryCardCornerRadius)
     }
@@ -766,14 +814,23 @@ private extension CurrentWeather {
     var airQualityText: String {
         guard let aqi = airQuality else { return "--" }
 
+        let label: String
         switch aqi {
-        case 0...50: return "\(aqi) • Good"
-        case 51...100: return "\(aqi) • Moderate"
-        case 101...150: return "\(aqi) • Unhealthy (Sensitive)"
-        case 151...200: return "\(aqi) • Unhealthy"
-        case 201...300: return "\(aqi) • Very Unhealthy"
-        default: return "\(aqi) • Hazardous"
+        case 0...50:
+            label = String(localized: "Good")
+        case 51...100:
+            label = String(localized: "Moderate")
+        case 101...150:
+            label = String(localized: "Unhealthy (Sensitive)")
+        case 151...200:
+            label = String(localized: "Unhealthy")
+        case 201...300:
+            label = String(localized: "Very Unhealthy")
+        default:
+            label = String(localized: "Hazardous")
         }
+
+        return "\(aqi) • \(label)"
     }
 
     var rainDescriptionText: String {
@@ -785,16 +842,19 @@ private extension CurrentWeather {
             return precipitationChanceText
         }
 
+        let label: String
         switch value {
         case 0:
-            return "0% • No rain"
+            label = String(localized: "No rain")
         case 1...30:
-            return "\(value)% • Slight chance"
+            label = String(localized: "Slight chance")
         case 31...60:
-            return "\(value)% • Possible rain"
+            label = String(localized: "Possible rain")
         default:
-            return "\(value)% • Likely rain"
+            label = String(localized: "Likely rain")
         }
+
+        return "\(value)% • \(label)"
     }
 }
 // Helper for extracting numeric temperature values from DailyForecastItem
@@ -827,6 +887,7 @@ private extension DailyForecastItem {
 private struct SunCycleCard: View {
     let sunrise: Date
     let sunset: Date
+    let prefersExtraContrast: Bool
 
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -903,6 +964,10 @@ private struct SunCycleCard: View {
             }
         }
         .padding(18)
+        .background {
+            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
+                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
+        }
         .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
     }
 
@@ -927,13 +992,13 @@ private struct SunCycleCard: View {
         let now = Date()
 
         if now < sunrise {
-            return "Sunrise in \(timeString(from: sunrise.timeIntervalSince(now)))"
+            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: sunrise.timeIntervalSince(now)))
         } else if now < sunset {
-            return "Sunset in \(timeString(from: sunset.timeIntervalSince(now)))"
+            return String(localized: "Sunset in %@", defaultValue: "Sunset in %@").replacingOccurrences(of: "%@", with: timeString(from: sunset.timeIntervalSince(now)))
         } else {
             // After sunset → next sunrise (next day)
             let nextSunrise = Calendar.current.date(byAdding: .day, value: 1, to: sunrise) ?? sunrise
-            return "Sunrise in \(timeString(from: nextSunrise.timeIntervalSince(now)))"
+            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: nextSunrise.timeIntervalSince(now)))
         }
     }
 

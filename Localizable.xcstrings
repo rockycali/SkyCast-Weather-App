@@ -114,7 +114,20 @@
       }
     },
     "Air Quality" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luftqualität"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualité de l’air"
+          }
+        }
+      }
     },
     "App" : {
       "localizations" : {
@@ -394,6 +407,22 @@
         }
       }
     },
+    "Good" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gut"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bon"
+          }
+        }
+      }
+    },
     "H: %@   L: %@" : {
       "localizations" : {
         "de" : {
@@ -412,6 +441,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "H: %1$@   L: %2$@"
+          }
+        }
+      }
+    },
+    "Hazardous" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gefährlich"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dangereux"
           }
         }
       }
@@ -560,6 +605,22 @@
         }
       }
     },
+    "Likely rain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wahrscheinlich"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probable"
+          }
+        }
+      }
+    },
     "Loading weather..." : {
       "localizations" : {
         "de" : {
@@ -572,6 +633,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chargement de la météo..."
+          }
+        }
+      }
+    },
+    "Moderate" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mäßig"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modéré"
           }
         }
       }
@@ -624,8 +701,37 @@
         }
       }
     },
+    "No rain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Regen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de pluie"
+          }
+        }
+      }
+    },
     "Now" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenant"
+          }
+        }
+      }
     },
     "Offline mode - showing last data" : {
       "localizations" : {
@@ -723,6 +829,22 @@
         }
       }
     },
+    "Possible rain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möglich"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Possible"
+          }
+        }
+      }
+    },
     "Preferences" : {
       "localizations" : {
         "de" : {
@@ -740,7 +862,20 @@
       }
     },
     "Pressure" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luftdruck"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pression"
+          }
+        }
+      }
     },
     "Rain" : {
       "localizations" : {
@@ -759,7 +894,20 @@
       }
     },
     "Rain Chance" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regen %"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pluie %"
+          }
+        }
+      }
     },
     "Rain Showers" : {
       "localizations" : {
@@ -873,6 +1021,22 @@
         }
       }
     },
+    "Slight chance" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gering"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faible"
+          }
+        }
+      }
+    },
     "Snow" : {
       "localizations" : {
         "de" : {
@@ -969,6 +1133,22 @@
         }
       }
     },
+    "Sunrise in %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonnenaufgang in %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lever du soleil dans %@"
+          }
+        }
+      }
+    },
     "Sunset" : {
       "localizations" : {
         "de" : {
@@ -981,6 +1161,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coucher du soleil"
+          }
+        }
+      }
+    },
+    "Sunset in %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonnenuntergang in %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coucher du soleil dans %@"
           }
         }
       }
@@ -1113,6 +1309,38 @@
         }
       }
     },
+    "Unhealthy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungesund"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mauvais"
+          }
+        }
+      }
+    },
+    "Unhealthy (Sensitive)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungesund (empfindlich)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mauvais (sensibles)"
+          }
+        }
+      }
+    },
     "Unknown" : {
       "localizations" : {
         "de" : {
@@ -1146,7 +1374,20 @@
       }
     },
     "UV Index" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UV-Index"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indice UV"
+          }
+        }
+      }
     },
     "Version" : {
       "localizations" : {
@@ -1160,6 +1401,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
+          }
+        }
+      }
+    },
+    "Very Unhealthy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sehr ungesund"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très mauvais"
           }
         }
       }
@@ -1213,7 +1470,20 @@
       }
     },
     "Wind Dir" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Windrichtung"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direction du vent"
+          }
+        }
+      }
     },
     "Your Cities" : {
       "localizations" : {

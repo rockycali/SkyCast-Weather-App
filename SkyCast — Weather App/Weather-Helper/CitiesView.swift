@@ -83,7 +83,7 @@ struct CitiesView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 28)
-                                .glassCard(cornerRadius: UI.cardCornerRadius)
+                                .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
                             } else {
                                 ForEach(filteredFavorites.indices, id: \.self) { index in
                                     let favorite = filteredFavorites[index]
@@ -141,7 +141,7 @@ struct CitiesView: View {
                                     }
                                     .padding(.horizontal, UI.rowHorizontalPadding)
                                     .padding(.vertical, UI.rowVerticalPadding)
-                                    .glassCard(cornerRadius: UI.cardCornerRadius)
+                                    .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                         Button(role: .destructive) {
                                             viewModel.removeFavorite(favorite)
@@ -166,6 +166,15 @@ struct CitiesView: View {
             .navigationTitle("")
             .toolbarTitleDisplayMode(.inline)
         }
+    }
+
+    private var isBrightDaylightWeather: Bool {
+        guard let weather = viewModel.weather else { return false }
+        return !viewModel.isNight && weather.current.weatherCode == 0
+    }
+
+    private var citiesCardContrastOpacity: Double {
+        isBrightDaylightWeather ? 0.06 : 0
     }
 
     private var filteredFavorites: [FavoriteCity] {
@@ -265,6 +274,9 @@ struct CitiesView: View {
 
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(viewModel.isNight ? Color.black.opacity(0.22) : Color.white.opacity(0.12))
+
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.black.opacity(citiesCardContrastOpacity))
             }
         }
         .overlay {
@@ -324,7 +336,7 @@ struct CitiesView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
-                .glassCard(cornerRadius: UI.cardCornerRadius)
+                .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
             } else if !viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
                     ForEach(visibleSearchResults, id: \.id) { result in
@@ -408,7 +420,7 @@ struct CitiesView: View {
                         }
                         .padding(.horizontal, UI.rowHorizontalPadding)
                         .padding(.vertical, UI.rowVerticalPadding)
-                        .glassCard(cornerRadius: UI.cardCornerRadius)
+                        .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
                     }
                 }
             }
@@ -548,7 +560,7 @@ struct CitiesView: View {
             }
             .padding(.horizontal, UI.rowHorizontalPadding)
             .padding(.vertical, UI.rowVerticalPadding)
-            .glassCard(cornerRadius: UI.cardCornerRadius)
+            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
         }
         .buttonStyle(.plain)
     }
@@ -561,6 +573,7 @@ struct CitiesView: View {
 private struct GlassCardModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     let cornerRadius: CGFloat
+    let extraDarkTint: Double
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -573,6 +586,9 @@ private struct GlassCardModifier: ViewModifier {
 
                     shape
                         .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.10))
+
+                    shape
+                        .fill(Color.black.opacity(extraDarkTint))
                 }
             }
             .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
@@ -584,8 +600,8 @@ private struct GlassCardModifier: ViewModifier {
 }
 
 private extension View {
-    func glassCard(cornerRadius: CGFloat = 22) -> some View {
-        modifier(GlassCardModifier(cornerRadius: cornerRadius))
+    func glassCard(cornerRadius: CGFloat = 22, extraDarkTint: Double = 0) -> some View {
+        modifier(GlassCardModifier(cornerRadius: cornerRadius, extraDarkTint: extraDarkTint))
     }
 }
 
