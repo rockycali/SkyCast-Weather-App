@@ -27,6 +27,7 @@
 		5FC567C12F83FCF900D3FE67 /* CurrentWeather+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */; };
 		5FC567C32F83FE9D00D3FE67 /* SunCycleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */; };
 		5FC567C52F84016100D3FE67 /* GlassCardModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */; };
+		5FC567C72F8405C200D3FE67 /* DailyForecastItem+Parsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */; };
 		5FE2208E2F795FB300D570FF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 5FE2208D2F795FB300D570FF /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentWeather+Display.swift"; sourceTree = "<group>"; };
 		5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunCycleCard.swift; sourceTree = "<group>"; };
 		5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCardModifier.swift; sourceTree = "<group>"; };
+		5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyForecastItem+Parsing.swift"; sourceTree = "<group>"; };
 		5FE2208D2F795FB300D570FF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,6 +104,7 @@
 		5CB5D4EF2AE9660400EC9EE8 /* Weather-Helper */ = {
 			isa = PBXGroup;
 			children = (
+				5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */,
 				5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */,
 				5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */,
 				5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */,
@@ -302,6 +305,7 @@
 				5FC567C12F83FCF900D3FE67 /* CurrentWeather+Display.swift in Sources */,
 				5FC567C52F84016100D3FE67 /* GlassCardModifier.swift in Sources */,
 				5F09A59B2F6C01E70027CE17 /* WeatherModels.swift in Sources */,
+				5FC567C72F8405C200D3FE67 /* DailyForecastItem+Parsing.swift in Sources */,
 				5F09A59C2F6C01E70027CE17 /* WeatherService.swift in Sources */,
 				5F09A59D2F6C01E70027CE17 /* WeatherButton.swift in Sources */,
 				5F5B44A32F7675CB0028AE5B /* HomeView.swift in Sources */,
