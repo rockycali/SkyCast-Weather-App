@@ -31,7 +31,10 @@ struct CurrentWeatherDTO: Codable {
     let apparentTemperature: Double
     let relativeHumidity2m: Int
     let windSpeed10m: Double
+    let windDirection10m: Double?
     let precipitationProbability: Int
+    let surfacePressure: Double?
+    let uvIndex: Double?
 
     enum CodingKeys: String, CodingKey {
         case weatherCode = "weather_code"
@@ -39,7 +42,10 @@ struct CurrentWeatherDTO: Codable {
         case relativeHumidity2m = "relative_humidity_2m"
         case temperature2m = "temperature_2m"
         case windSpeed10m = "wind_speed_10m"
+        case windDirection10m = "wind_direction_10m"
         case precipitationProbability = "precipitation_probability"
+        case surfacePressure = "surface_pressure"
+        case uvIndex = "uv_index"
     }
 }
 
@@ -98,6 +104,11 @@ struct CurrentWeather: Codable {
     let windSpeed: Double
     let precipitationProbability: Int
 
+    // NEW (optional, may be nil if API not available)
+    let windDirection: Double?
+    let pressure: Double?
+    let uvIndex: Double?
+
     var temperatureText: String { Self.formatTemperature(temperature) }
     var apparentTemperatureText: String { Self.formatTemperature(apparentTemperature) }
     var humidityText: String { "\(humidity)%" }
@@ -106,7 +117,23 @@ struct CurrentWeather: Codable {
     var summary: String { WeatherCodeMapper.description(for: weatherCode) }
     var symbolName: String { WeatherCodeMapper.symbolName(for: weatherCode) }
     var nightSymbolName: String { WeatherCodeMapper.nightSymbolName(for: weatherCode) }
-    
+
+    // NEW formatted helpers
+    var windDirectionText: String {
+        guard let degrees = windDirection else { return "--" }
+        return Self.direction(from: degrees)
+    }
+
+    var pressureText: String {
+        guard let p = pressure else { return "--" }
+        return "\(Int(p.rounded())) hPa"
+    }
+
+    var uvIndexText: String {
+        guard let uv = uvIndex else { return "--" }
+        return "\(Int(uv.rounded()))"
+    }
+
     static func formatTemperature(_ value: Double) -> String {
         let unit = UserDefaults.standard.string(forKey: "temperatureUnit") ?? "C"
 
@@ -127,6 +154,12 @@ struct CurrentWeather: Codable {
         }
 
         return "\(Int(value.rounded())) km/h"
+    }
+
+    static func direction(from degrees: Double) -> String {
+        let directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+        let index = Int((degrees + 22.5) / 45.0) & 7
+        return directions[index]
     }
 }
 

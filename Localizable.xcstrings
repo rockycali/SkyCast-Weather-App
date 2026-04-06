@@ -113,6 +113,9 @@
         }
       }
     },
+    "Air Quality" : {
+
+    },
     "App" : {
       "localizations" : {
         "de" : {
@@ -1141,6 +1144,9 @@
           }
         }
       }
+    },
+    "UV Index" : {
+
     },
     "Version" : {
       "localizations" : {

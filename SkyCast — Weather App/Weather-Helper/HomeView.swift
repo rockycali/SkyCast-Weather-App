@@ -396,12 +396,15 @@ struct HomeView: View {
 
                                 HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
 
-                                HeroDetailItem(title: "Rain Chance", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
+                                HeroDetailItem(title: "Rain Chance", value: weather.current.rainDescriptionText, systemImage: "cloud.rain.fill")
 
-                                // NEW INFO (expanded only)
                                 HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line")
 
                                 HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge")
+
+                                HeroDetailItem(title: "UV Index", value: weather.current.uvIndexText, systemImage: "sun.max.fill")
+
+                                HeroDetailItem(title: "Air Quality", value: weather.current.airQualityText, systemImage: "aqi.medium")
                             }
                             .padding(.top, 10)
                         }
@@ -760,12 +763,29 @@ private struct TemperatureRangeBar: View {
     }
 }
 private extension CurrentWeather {
-    var windDirectionText: String {
+    var airQualityText: String {
         "--"
     }
 
-    var pressureText: String {
-        "--"
+    var rainDescriptionText: String {
+        let numericValue = precipitationChanceText
+            .replacingOccurrences(of: "%", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let value = Int(numericValue) else {
+            return precipitationChanceText
+        }
+
+        switch value {
+        case 0:
+            return "0% • No rain"
+        case 1...30:
+            return "\(value)% • Slight chance"
+        case 31...60:
+            return "\(value)% • Possible rain"
+        default:
+            return "\(value)% • Likely rain"
+        }
     }
 }
 // Helper for extracting numeric temperature values from DailyForecastItem

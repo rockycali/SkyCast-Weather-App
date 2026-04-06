@@ -45,7 +45,7 @@ final class WeatherService: WeatherServiceProtocol {
         components.queryItems = [
             URLQueryItem(name: "latitude", value: String(latitude)),
             URLQueryItem(name: "longitude", value: String(longitude)),
-            URLQueryItem(name: "current", value: "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation_probability,weather_code"),
+            URLQueryItem(name: "current", value: "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,precipitation_probability,surface_pressure,uv_index,weather_code"),
             URLQueryItem(name: "hourly", value: "temperature_2m,apparent_temperature,weather_code"),
             URLQueryItem(name: "daily", value: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset"),
             URLQueryItem(name: "forecast_days", value: "5"),
@@ -75,13 +75,18 @@ final class WeatherService: WeatherServiceProtocol {
         timeFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
         timeFormatter.timeZone = cityTimeZone
 
+        let currentDTO = forecast.current
+
         let current = CurrentWeather(
-            temperature: forecast.current.temperature2m,
-            weatherCode: forecast.current.weatherCode,
-            apparentTemperature: forecast.current.apparentTemperature,
-            humidity: forecast.current.relativeHumidity2m,
-            windSpeed: forecast.current.windSpeed10m,
-            precipitationProbability: forecast.current.precipitationProbability
+            temperature: currentDTO.temperature2m,
+            weatherCode: currentDTO.weatherCode,
+            apparentTemperature: currentDTO.apparentTemperature,
+            humidity: currentDTO.relativeHumidity2m,
+            windSpeed: currentDTO.windSpeed10m,
+            precipitationProbability: currentDTO.precipitationProbability,
+            windDirection: currentDTO.windDirection10m,
+            pressure: currentDTO.surfacePressure,
+            uvIndex: currentDTO.uvIndex
         )
 
         let daily = zip(
