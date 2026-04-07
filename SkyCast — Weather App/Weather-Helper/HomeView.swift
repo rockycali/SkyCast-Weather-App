@@ -378,10 +378,30 @@ struct HomeView: View {
         Group {
             if let weather = viewModel.weather, !isHeroCardExpanded {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.gridSpacing) {
-                    WeatherMetricCard(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
-                    WeatherMetricCard(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
-                    WeatherMetricCard(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
-                    WeatherMetricCard(title: "Rain", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
+                    WeatherMetricCard(
+                        title: "Feels Like",
+                        value: weather.current.apparentTemperatureText,
+                        systemImage: "thermometer.medium",
+                        prefersExtraContrast: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: "Wind",
+                        value: weather.current.windSpeedText,
+                        systemImage: "wind",
+                        prefersExtraContrast: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: "Humidity",
+                        value: weather.current.humidityText,
+                        systemImage: "drop.fill",
+                        prefersExtraContrast: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: "Rain",
+                        value: weather.current.precipitationChanceText,
+                        systemImage: "cloud.rain.fill",
+                        prefersExtraContrast: isBrightDaylightWeather
+                    )
                 }
                 .padding(.bottom, 20)
             }
@@ -466,7 +486,11 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .glassCard(cornerRadius: UI.heroCardCornerRadius)
+        .glassCard(
+            cornerRadius: UI.heroCardCornerRadius,
+            prefersExtraContrast: isBrightDaylightWeather,
+            isBrightDaylightWeather: isBrightDaylightWeather
+        )
     }
 
     private func sectionTitle(_ title: LocalizedStringKey) -> some View {
@@ -486,6 +510,7 @@ private struct WeatherMetricCard: View {
     let title: LocalizedStringKey
     let value: String
     let systemImage: String
+    let prefersExtraContrast: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -514,7 +539,11 @@ private struct WeatherMetricCard: View {
             RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
                 .fill(Color.black.opacity(0.06))
         }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.cardCornerRadius,
+            prefersExtraContrast: prefersExtraContrast,
+            isBrightDaylightWeather: prefersExtraContrast
+        )
     }
 }
 
@@ -560,7 +589,11 @@ private struct HourlyForecastCard: View {
             RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
                 .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
         }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.cardCornerRadius,
+            prefersExtraContrast: prefersExtraContrast,
+            isBrightDaylightWeather: prefersExtraContrast
+        )
     }
 }
 
@@ -638,7 +671,11 @@ private struct DailyForecastRow: View {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
                 .stroke(.white.opacity(isToday ? 0.28 : (prefersExtraContrast ? 0.10 : 0)), lineWidth: 1)
         }
-        .glassCard(cornerRadius: HomeView.UI.secondaryCardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.secondaryCardCornerRadius,
+            prefersExtraContrast: prefersExtraContrast,
+            isBrightDaylightWeather: prefersExtraContrast
+        )
     }
 }
 
