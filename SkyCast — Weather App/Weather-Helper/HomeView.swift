@@ -16,31 +16,21 @@ struct HomeView: View {
         static let rowSpacing: CGFloat = 10
         static let contentHorizontalPadding: CGFloat = 20
         static let contentVerticalPadding: CGFloat = 16
-        static let fieldHorizontalPadding: CGFloat = 14
-        static let buttonHeight: CGFloat = 50
         static let hourlyCardWidth: CGFloat = 84
-        static let hourlyCardHeight: CGFloat = 0
         static let hourlyCardSpacing: CGFloat = 12
         static let hourlySectionSideInset: CGFloat = 6
         static let hourlySectionHorizontalBreakout: CGFloat = -8
-        static let inputCornerRadius: CGFloat = 16
         static let secondaryCardCornerRadius: CGFloat = 20
         static let cardCornerRadius: CGFloat = 22
         static let heroCardCornerRadius: CGFloat = 28
         static let subtleTextOpacity: CGFloat = 0.82
         static let secondaryTextOpacityDark: CGFloat = 0.94
         static let secondaryTextOpacityLight: CGFloat = 0.96
-        static let textFieldBackgroundOpacity: CGFloat = 0.16
-        static let secondaryButtonBackgroundOpacity: CGFloat = 0.14
-        static let fieldBorderOpacityDark: CGFloat = 0.22
-        static let fieldBorderOpacityLight: CGFloat = 0.12
-        static let buttonBorderOpacity: CGFloat = 0.2
         static let backgroundAnimationDuration: Double = 24
         static let backgroundStartPointX: CGFloat = 0.14
         static let backgroundEndPointX: CGFloat = 0.86
         static let backgroundAnimatedOffset: CGFloat = 0.10
         static let backgroundSecondaryLayerOpacity: CGFloat = 0.18
-        static let backgroundSecondaryAnimationDuration: Double = 32
         static let heroCardInnerPadding: CGFloat = 18
         static let heroCardDetailSpacing: CGFloat = 12
         static let heroDetailGridSpacing: CGFloat = 14
@@ -334,10 +324,6 @@ struct HomeView: View {
         return !viewModel.isNight && weather.current.weatherCode == 0
     }
 
-    private var brightCardReadabilityOpacity: Double {
-        isBrightDaylightWeather ? 0.12 : 0
-    }
-
     private var headerSection: some View {
         VStack(spacing: 6) {
             Text("Current Weather")
@@ -370,89 +356,17 @@ struct HomeView: View {
     private var currentWeatherSection: some View {
         Group {
             if let weather = viewModel.weather {
-                VStack(spacing: UI.heroCardDetailSpacing) {
-                    HStack(alignment: .center) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Now")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.72))
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.down.circle.fill")
-                            .font(.title3)
-                            .foregroundStyle(.white.opacity(0.92))
-                            .rotationEffect(.degrees(isHeroCardExpanded ? 180 : 0))
-                            .scaleEffect(isHeroCardExpanded ? 1.06 : 1)
-                    }
-
-                    Image(systemName: viewModel.isNight ? weather.current.nightSymbolName : weather.current.symbolName)
-                        .symbolRenderingMode(.multicolor)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 124, height: 124)
-                        .shadow(color: .white.opacity(0.18), radius: 18, x: 0, y: 0)
-
-                    Text(weather.current.temperatureText)
-                        .font(.system(size: 68, weight: .semibold))
-                        .foregroundStyle(.white)
-
-                    Text(weather.current.summary)
-                        .font(.title3.weight(.semibold))
-                        .foregroundColor(.white)
-                        .opacity(colorScheme == .dark ? UI.secondaryTextOpacityDark : UI.secondaryTextOpacityLight)
-
-                    Text("H: \(weather.todayHighText)   L: \(weather.todayLowText)")
-                        .font(.headline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.92))
-
-                    if isHeroCardExpanded {
-                        VStack(spacing: UI.heroCardDetailSpacing) {
-                            Divider()
-                                .overlay(.white.opacity(0.14))
-                                .padding(.top, 4)
-
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.heroDetailGridSpacing) {
-                                HeroDetailItem(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Rain Chance", value: weather.current.rainDescriptionText, systemImage: "cloud.rain.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Wind Dir", value: weather.current.windDirectionText, systemImage: "location.north.line", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Pressure", value: weather.current.pressureText, systemImage: "gauge", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "UV Index", value: weather.current.uvIndexText, systemImage: "sun.max.fill", prefersExtraContrast: isBrightDaylightWeather)
-
-                                HeroDetailItem(title: "Air Quality", value: weather.current.airQualityText, systemImage: "aqi.medium", prefersExtraContrast: isBrightDaylightWeather)
-                            }
-                            .padding(.top, 10)
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
-
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, isHeroCardExpanded ? 8 : 0)
-                .padding(.vertical, UI.heroCardInnerPadding)
-                .padding(.horizontal, UI.heroCardInnerPadding)
-                .background {
-                    RoundedRectangle(cornerRadius: UI.heroCardCornerRadius, style: .continuous)
-                        .fill(.black.opacity(brightCardReadabilityOpacity))
-                }
-                .glassCard(cornerRadius: UI.heroCardCornerRadius)
-                .scaleEffect(isHeroCardExpanded ? 1.01 : 1.0)
-                .contentShape(Rectangle())
-                .id(heroCardScrollID)
-                .onTapGesture {
+                HeroWeatherCard(
+                    weather: weather,
+                    isNight: viewModel.isNight,
+                    isExpanded: isHeroCardExpanded,
+                    prefersExtraContrast: isBrightDaylightWeather
+                ) {
                     withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
                         isHeroCardExpanded.toggle()
                     }
                 }
+                .id(heroCardScrollID)
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else if viewModel.isLoading {
                 loadingCard
@@ -483,7 +397,7 @@ struct HomeView: View {
                     SunCycleCard(
                         sunrise: today.sunrise,
                         sunset: today.sunset,
-                        prefersExtraContrast: isBrightDaylightWeather
+                        isNight: viewModel.isNight
                     )
                 }
                 .padding(.top, 12)
@@ -566,48 +480,8 @@ struct HomeView: View {
     }
 
 }
-private struct HeroDetailItem: View {
-    let title: LocalizedStringKey
-    let value: String
-    let systemImage: String
-    let prefersExtraContrast: Bool
 
-    var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.92))
-                .frame(width: 18, alignment: .leading)
-
-            VStack(alignment: .leading, spacing: HomeView.UI.heroDetailRowSpacing) {
-                Text(title)
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.68))
-                    .lineLimit(1)
-
-                Text(value)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-
-            Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.white.opacity(prefersExtraContrast ? 0.10 : 0.06))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.white.opacity(prefersExtraContrast ? 0.12 : 0.08), lineWidth: 1)
-        }
-    }
-}
-
+// MARK: - Supporting Views
 private struct WeatherMetricCard: View {
     let title: LocalizedStringKey
     let value: String
@@ -810,240 +684,7 @@ private struct TemperatureRangeBar: View {
         .accessibilityHidden(true)
     }
 }
-private extension CurrentWeather {
-    var airQualityText: String {
-        guard let aqi = airQuality else { return "--" }
-
-        let label: String
-        switch aqi {
-        case 0...50:
-            label = String(localized: "Good")
-        case 51...100:
-            label = String(localized: "Moderate")
-        case 101...150:
-            label = String(localized: "Unhealthy (Sensitive)")
-        case 151...200:
-            label = String(localized: "Unhealthy")
-        case 201...300:
-            label = String(localized: "Very Unhealthy")
-        default:
-            label = String(localized: "Hazardous")
-        }
-
-        return "\(aqi) • \(label)"
-    }
-
-    var rainDescriptionText: String {
-        let numericValue = precipitationChanceText
-            .replacingOccurrences(of: "%", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard let value = Int(numericValue) else {
-            return precipitationChanceText
-        }
-
-        let label: String
-        switch value {
-        case 0:
-            label = String(localized: "No rain")
-        case 1...30:
-            label = String(localized: "Slight chance")
-        case 31...60:
-            label = String(localized: "Possible rain")
-        default:
-            label = String(localized: "Likely rain")
-        }
-
-        return "\(value)% • \(label)"
-    }
-}
-// Helper for extracting numeric temperature values from DailyForecastItem
-private extension DailyForecastItem {
-    var numericMinTemperature: Double? {
-        Self.numericTemperature(from: minText)
-    }
-
-    var numericMaxTemperature: Double? {
-        Self.numericTemperature(from: maxText)
-    }
-
-    private static func numericTemperature(from value: String) -> Double? {
-        let cleanedValue = value
-            .replacingOccurrences(of: "°", with: "")
-            .replacingOccurrences(of: "C", with: "")
-            .replacingOccurrences(of: "F", with: "")
-            .replacingOccurrences(of: ",", with: ".")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return Double(cleanedValue)
-    }
-}
-
-
+// MARK: - Preview
 #Preview {
     HomeView(viewModel: WeatherViewModel())
 }
-
-private struct SunCycleCard: View {
-    let sunrise: Date
-    let sunset: Date
-    let prefersExtraContrast: Bool
-
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
-    var body: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Sunrise", systemImage: "sunrise.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.96))
-
-                    Text(Self.timeFormatter.string(from: sunrise))
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Divider()
-                    .overlay(.white.opacity(0.18))
-                    .frame(maxHeight: 42)
-
-                VStack(alignment: .trailing, spacing: 8) {
-                    Label("Sunset", systemImage: "sunset.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.96))
-
-                    Text(Self.timeFormatter.string(from: sunset))
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Daylight")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.92))
-
-                    Spacer()
-
-                    Text(daylightDurationText)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
-                }
-
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(.white.opacity(0.18))
-                            .frame(height: 10)
-
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.yellow.opacity(0.95), Color.orange.opacity(0.95)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: max(18, geometry.size.width * daylightProgress), height: 10)
-                    }
-                }
-                .frame(height: 10)
-
-                // ADDED: Time until next event text
-                Text(timeUntilNextEventText)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.85))
-            }
-        }
-        .padding(18)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
-        }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
-    }
-
-    private var daylightProgress: CGFloat {
-        let total = sunset.timeIntervalSince(sunrise)
-        guard total > 0 else { return 0 }
-
-        let current = Date().timeIntervalSince(sunrise)
-        let progress = current / total
-        return min(max(progress, 0), 1)
-    }
-
-    private var daylightDurationText: String {
-        let totalMinutes = max(Int(sunset.timeIntervalSince(sunrise) / 60), 0)
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-        return "\(hours)h \(minutes)m"
-    }
-
-    // ADDED: Time until next event computed property
-    private var timeUntilNextEventText: String {
-        let now = Date()
-
-        if now < sunrise {
-            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: sunrise.timeIntervalSince(now)))
-        } else if now < sunset {
-            return String(localized: "Sunset in %@", defaultValue: "Sunset in %@").replacingOccurrences(of: "%@", with: timeString(from: sunset.timeIntervalSince(now)))
-        } else {
-            // After sunset → next sunrise (next day)
-            let nextSunrise = Calendar.current.date(byAdding: .day, value: 1, to: sunrise) ?? sunrise
-            return String(localized: "Sunrise in %@", defaultValue: "Sunrise in %@").replacingOccurrences(of: "%@", with: timeString(from: nextSunrise.timeIntervalSince(now)))
-        }
-    }
-
-    // ADDED: Helper function for time formatting
-    private func timeString(from interval: TimeInterval) -> String {
-        let totalMinutes = max(Int(interval / 60), 0)
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        } else {
-            return "\(minutes)m"
-        }
-    }
-}
-
-private struct GlassCardModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
-    let cornerRadius: CGFloat
-
-    func body(content: Content) -> some View {
-        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-
-        content
-            .background {
-                ZStack {
-                    shape
-                        .fill(.ultraThinMaterial)
-
-                    shape
-                        .fill(colorScheme == .dark ? Color.black.opacity(0.28) : Color.white.opacity(0.10))
-                }
-            }
-            .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.07), radius: 14, x: 0, y: 8)
-            .overlay {
-                shape
-                    .stroke(.white.opacity(colorScheme == .dark ? 0.14 : 0.28), lineWidth: 1)
-            }
-    }
-}
-
-private extension View {
-    func glassCard(cornerRadius: CGFloat = 22) -> some View {
-        modifier(GlassCardModifier(cornerRadius: cornerRadius))
-    }
-}
-

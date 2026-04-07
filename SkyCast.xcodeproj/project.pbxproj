@@ -24,6 +24,11 @@
 		5F5B44A92F767DC40028AE5B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5B44A82F767DBF0028AE5B /* ContentView.swift */; };
 		5F88900B2F7549A200151C5D /* FavoriteCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F88900A2F75499400151C5D /* FavoriteCity.swift */; };
 		5F88900D2F754A5D00151C5D /* FavoritesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F88900C2F754A5600151C5D /* FavoritesStorage.swift */; };
+		5FC567C12F83FCF900D3FE67 /* CurrentWeather+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */; };
+		5FC567C32F83FE9D00D3FE67 /* SunCycleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */; };
+		5FC567C52F84016100D3FE67 /* GlassCardModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */; };
+		5FC567C72F8405C200D3FE67 /* DailyForecastItem+Parsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */; };
+		5FC567C92F8407C300D3FE67 /* HeroWeatherCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC567C82F8407BE00D3FE67 /* HeroWeatherCard.swift */; };
 		5FE2208E2F795FB300D570FF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 5FE2208D2F795FB300D570FF /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +70,11 @@
 		5F5B44A82F767DBF0028AE5B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5F88900A2F75499400151C5D /* FavoriteCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCity.swift; sourceTree = "<group>"; };
 		5F88900C2F754A5600151C5D /* FavoritesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStorage.swift; sourceTree = "<group>"; };
+		5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentWeather+Display.swift"; sourceTree = "<group>"; };
+		5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunCycleCard.swift; sourceTree = "<group>"; };
+		5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCardModifier.swift; sourceTree = "<group>"; };
+		5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyForecastItem+Parsing.swift"; sourceTree = "<group>"; };
+		5FC567C82F8407BE00D3FE67 /* HeroWeatherCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroWeatherCard.swift; sourceTree = "<group>"; };
 		5FE2208D2F795FB300D570FF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,6 +106,11 @@
 		5CB5D4EF2AE9660400EC9EE8 /* Weather-Helper */ = {
 			isa = PBXGroup;
 			children = (
+				5FC567C82F8407BE00D3FE67 /* HeroWeatherCard.swift */,
+				5FC567C62F8405BD00D3FE67 /* DailyForecastItem+Parsing.swift */,
+				5FC567C42F84015A00D3FE67 /* GlassCardModifier.swift */,
+				5FC567C22F83FE9400D3FE67 /* SunCycleCard.swift */,
+				5FC567C02F83FCE000D3FE67 /* CurrentWeather+Display.swift */,
 				5F5B44A02F7675AF0028AE5B /* MainTabView.swift */,
 				5F5B44A62F7676090028AE5B /* SettingsView.swift */,
 				5F5B44A22F7675C90028AE5B /* HomeView.swift */,
@@ -290,7 +305,11 @@
 				5CDB60382AE554A700033E64 /* ClimaFlowApp.swift in Sources */,
 				5F88900D2F754A5D00151C5D /* FavoritesStorage.swift in Sources */,
 				5F09A59A2F6C01E70027CE17 /* LocationManager.swift in Sources */,
+				5FC567C12F83FCF900D3FE67 /* CurrentWeather+Display.swift in Sources */,
+				5FC567C52F84016100D3FE67 /* GlassCardModifier.swift in Sources */,
+				5FC567C92F8407C300D3FE67 /* HeroWeatherCard.swift in Sources */,
 				5F09A59B2F6C01E70027CE17 /* WeatherModels.swift in Sources */,
+				5FC567C72F8405C200D3FE67 /* DailyForecastItem+Parsing.swift in Sources */,
 				5F09A59C2F6C01E70027CE17 /* WeatherService.swift in Sources */,
 				5F09A59D2F6C01E70027CE17 /* WeatherButton.swift in Sources */,
 				5F5B44A32F7675CB0028AE5B /* HomeView.swift in Sources */,
@@ -299,6 +318,7 @@
 				5F09A59F2F6C01E70027CE17 /* WeatherViewModel.swift in Sources */,
 				5F5B44A92F767DC40028AE5B /* ContentView.swift in Sources */,
 				5F5B44A12F7675B70028AE5B /* MainTabView.swift in Sources */,
+				5FC567C32F83FE9D00D3FE67 /* SunCycleCard.swift in Sources */,
 				5F5B44A72F76760C0028AE5B /* SettingsView.swift in Sources */,
 				326900AB2F76BF7900250C7C /* WeatherCacheManager.swift in Sources */,
 			);
