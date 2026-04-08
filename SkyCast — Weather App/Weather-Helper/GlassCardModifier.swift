@@ -7,6 +7,7 @@ struct GlassCardModifier: ViewModifier {
     let extraDarkTint: Double
     let prefersExtraContrast: Bool
     let isBrightDaylightWeather: Bool
+    let shadowOpacityMultiplier: Double
 
     func body(content: Content) -> some View {
         let shouldBoostReadability = prefersExtraContrast || isBrightDaylightWeather
@@ -37,9 +38,11 @@ struct GlassCardModifier: ViewModifier {
             }
             .shadow(
                 color: Color.black.opacity(
-                    shouldBoostReadability
-                    ? (colorScheme == .dark ? 0.30 : 0.12)
-                    : (colorScheme == .dark ? 0.24 : 0.07)
+                    (
+                        shouldBoostReadability
+                        ? (colorScheme == .dark ? 0.30 : 0.12)
+                        : (colorScheme == .dark ? 0.24 : 0.07)
+                    ) * shadowOpacityMultiplier
                 ),
                 radius: shouldBoostReadability ? 18 : 14,
                 x: 0,
@@ -65,14 +68,16 @@ extension View {
         cornerRadius: CGFloat = 22,
         extraDarkTint: Double = 0,
         prefersExtraContrast: Bool = false,
-        isBrightDaylightWeather: Bool = false
+        isBrightDaylightWeather: Bool = false,
+        shadowOpacityMultiplier: Double = 1
     ) -> some View {
         modifier(
             GlassCardModifier(
                 cornerRadius: cornerRadius,
                 extraDarkTint: extraDarkTint,
                 prefersExtraContrast: prefersExtraContrast,
-                isBrightDaylightWeather: isBrightDaylightWeather
+                isBrightDaylightWeather: isBrightDaylightWeather,
+                shadowOpacityMultiplier: shadowOpacityMultiplier
             )
         )
     }

@@ -487,7 +487,7 @@ struct HomeView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
         .glassCard(
-            cornerRadius: UI.heroCardCornerRadius,
+            cornerRadius: HomeView.UI.heroCardCornerRadius,
             prefersExtraContrast: isBrightDaylightWeather,
             isBrightDaylightWeather: isBrightDaylightWeather
         )
@@ -535,10 +535,6 @@ private struct WeatherMetricCard: View {
         }
         .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
         .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(0.06))
-        }
         .glassCard(
             cornerRadius: HomeView.UI.cardCornerRadius,
             prefersExtraContrast: prefersExtraContrast,
@@ -585,14 +581,11 @@ private struct HourlyForecastCard: View {
         }
         .frame(width: HomeView.UI.hourlyCardWidth)
         .padding(.vertical, 16)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
-        }
         .glassCard(
             cornerRadius: HomeView.UI.cardCornerRadius,
             prefersExtraContrast: prefersExtraContrast,
-            isBrightDaylightWeather: prefersExtraContrast
+            isBrightDaylightWeather: prefersExtraContrast,
+            shadowOpacityMultiplier: 0.2
         )
     }
 }
@@ -659,14 +652,6 @@ private struct DailyForecastRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .fill(
-                    isToday
-                    ? Color.white.opacity(colorScheme == .dark ? 0.12 : 0.16)
-                    : Color.black.opacity(prefersExtraContrast ? 0.06 : 0)
-                )
-        }
         .overlay {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
                 .stroke(.white.opacity(isToday ? 0.28 : (prefersExtraContrast ? 0.10 : 0)), lineWidth: 1)
