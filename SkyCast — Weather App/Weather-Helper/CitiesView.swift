@@ -83,7 +83,12 @@ struct CitiesView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 28)
-                                .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
+                                .glassCard(
+                                    cornerRadius: UI.cardCornerRadius,
+                                    extraDarkTint: citiesCardContrastOpacity,
+                                    prefersExtraContrast: isBrightDaylightWeather,
+                                    isBrightDaylightWeather: isBrightDaylightWeather
+                                )
                             } else {
                                 ForEach(filteredFavorites.indices, id: \.self) { index in
                                     let favorite = filteredFavorites[index]
@@ -141,7 +146,12 @@ struct CitiesView: View {
                                     }
                                     .padding(.horizontal, UI.rowHorizontalPadding)
                                     .padding(.vertical, UI.rowVerticalPadding)
-                                    .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
+                                    .glassCard(
+                                        cornerRadius: UI.cardCornerRadius,
+                                        extraDarkTint: citiesCardContrastOpacity,
+                                        prefersExtraContrast: isBrightDaylightWeather,
+                                        isBrightDaylightWeather: isBrightDaylightWeather
+                                    )
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                         Button(role: .destructive) {
                                             viewModel.removeFavorite(favorite)
@@ -273,7 +283,11 @@ struct CitiesView: View {
                     .fill(.ultraThinMaterial)
 
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(viewModel.isNight ? Color.black.opacity(0.22) : Color.white.opacity(0.12))
+                    .fill(
+                        viewModel.isNight
+                        ? Color.black.opacity(isBrightDaylightWeather ? 0.28 : 0.22)
+                        : Color.white.opacity(isBrightDaylightWeather ? 0.18 : 0.12)
+                    )
 
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color.black.opacity(citiesCardContrastOpacity))
@@ -281,7 +295,14 @@ struct CitiesView: View {
         }
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.white.opacity(viewModel.isNight ? 0.14 : 0.22), lineWidth: 1)
+                .stroke(
+                    .white.opacity(
+                        viewModel.isNight
+                        ? (isBrightDaylightWeather ? 0.18 : 0.14)
+                        : (isBrightDaylightWeather ? 0.30 : 0.22)
+                    ),
+                    lineWidth: 1
+                )
         }
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -317,6 +338,12 @@ struct CitiesView: View {
                         .font(.subheadline)
                 }
                 .padding()
+                .glassCard(
+                    cornerRadius: UI.cardCornerRadius,
+                    extraDarkTint: citiesCardContrastOpacity,
+                    prefersExtraContrast: isBrightDaylightWeather,
+                    isBrightDaylightWeather: isBrightDaylightWeather
+                )
             }
 
             // Show empty state only if not searching and results are empty
@@ -336,7 +363,12 @@ struct CitiesView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
-                .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
+                .glassCard(
+                    cornerRadius: UI.cardCornerRadius,
+                    extraDarkTint: citiesCardContrastOpacity,
+                    prefersExtraContrast: isBrightDaylightWeather,
+                    isBrightDaylightWeather: isBrightDaylightWeather
+                )
             } else if !viewModel.citySearchResults.isEmpty {
                 VStack(spacing: 10) {
                     ForEach(visibleSearchResults, id: \.id) { result in
@@ -420,7 +452,12 @@ struct CitiesView: View {
                         }
                         .padding(.horizontal, UI.rowHorizontalPadding)
                         .padding(.vertical, UI.rowVerticalPadding)
-                        .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
+                        .glassCard(
+                            cornerRadius: UI.cardCornerRadius,
+                            extraDarkTint: citiesCardContrastOpacity,
+                            prefersExtraContrast: isBrightDaylightWeather,
+                            isBrightDaylightWeather: isBrightDaylightWeather
+                        )
                     }
                 }
             }
@@ -560,7 +597,12 @@ struct CitiesView: View {
             }
             .padding(.horizontal, UI.rowHorizontalPadding)
             .padding(.vertical, UI.rowVerticalPadding)
-            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: citiesCardContrastOpacity)
+            .glassCard(
+                cornerRadius: UI.cardCornerRadius,
+                extraDarkTint: citiesCardContrastOpacity,
+                prefersExtraContrast: isBrightDaylightWeather,
+                isBrightDaylightWeather: isBrightDaylightWeather
+            )
         }
         .buttonStyle(.plain)
     }
