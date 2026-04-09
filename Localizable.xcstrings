@@ -161,6 +161,9 @@
         }
       }
     },
+    "Available Soon" : {
+
+    },
     "Built With" : {
       "localizations" : {
         "de" : {
@@ -226,6 +229,7 @@
       }
     },
     "Coming Soon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -718,6 +722,7 @@
       }
     },
     "Offline mode - showing last data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -988,6 +993,9 @@
           }
         }
       }
+    },
+    "Service temporarily unavailable — showing last updated data" : {
+
     },
     "Settings" : {
       "localizations" : {

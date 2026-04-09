@@ -64,7 +64,7 @@ struct HomeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: UI.pageSpacing) {
                             if viewModel.isOffline {
-                                Text("Offline mode - showing last data")
+                                Text("Service temporarily unavailable — showing last updated data")
                                     .foregroundColor(.orange)
                                     .font(.caption)
                             }
@@ -382,25 +382,25 @@ struct HomeView: View {
                         title: "Feels Like",
                         value: weather.current.apparentTemperatureText,
                         systemImage: "thermometer.medium",
-                        prefersExtraContrast: isBrightDaylightWeather
+                        shouldBoostReadability: isBrightDaylightWeather
                     )
                     WeatherMetricCard(
                         title: "Wind",
                         value: weather.current.windSpeedText,
                         systemImage: "wind",
-                        prefersExtraContrast: isBrightDaylightWeather
+                        shouldBoostReadability: isBrightDaylightWeather
                     )
                     WeatherMetricCard(
                         title: "Humidity",
                         value: weather.current.humidityText,
                         systemImage: "drop.fill",
-                        prefersExtraContrast: isBrightDaylightWeather
+                        shouldBoostReadability: isBrightDaylightWeather
                     )
                     WeatherMetricCard(
                         title: "Rain",
                         value: weather.current.precipitationChanceText,
                         systemImage: "cloud.rain.fill",
-                        prefersExtraContrast: isBrightDaylightWeather
+                        shouldBoostReadability: isBrightDaylightWeather
                     )
                 }
                 .padding(.bottom, 20)
@@ -434,7 +434,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: UI.hourlyCardSpacing) {
                             ForEach(viewModel.hourlyForecast) { hour in
-                                HourlyForecastCard(hour: hour, prefersExtraContrast: isBrightDaylightWeather)
+                                HourlyForecastCard(hour: hour, shouldBoostReadability: isBrightDaylightWeather)
                             }
                         }
                         .padding(.leading, UI.hourlySectionSideInset)
@@ -464,7 +464,7 @@ struct HomeView: View {
                                 day: day,
                                 overallMinTemperature: overallMinTemperature,
                                 overallMaxTemperature: overallMaxTemperature,
-                                prefersExtraContrast: isBrightDaylightWeather
+                                shouldBoostReadability: isBrightDaylightWeather
                             )
                         }
                     }
@@ -510,7 +510,7 @@ private struct WeatherMetricCard: View {
     let title: LocalizedStringKey
     let value: String
     let systemImage: String
-    let prefersExtraContrast: Bool
+    let shouldBoostReadability: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -537,15 +537,15 @@ private struct WeatherMetricCard: View {
         .padding(12)
         .glassCard(
             cornerRadius: HomeView.UI.cardCornerRadius,
-            prefersExtraContrast: prefersExtraContrast,
-            isBrightDaylightWeather: prefersExtraContrast
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability
         )
     }
 }
 
 private struct HourlyForecastCard: View {
     let hour: HourlyForecastItem
-    let prefersExtraContrast: Bool
+    let shouldBoostReadability: Bool
 
     private var iconSize: CGFloat {
         if hour.symbolName.contains("sun.max") || hour.symbolName.contains("cloud.sun") {
@@ -583,8 +583,8 @@ private struct HourlyForecastCard: View {
         .padding(.vertical, 16)
         .glassCard(
             cornerRadius: HomeView.UI.cardCornerRadius,
-            prefersExtraContrast: prefersExtraContrast,
-            isBrightDaylightWeather: prefersExtraContrast,
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability,
             shadowOpacityMultiplier: 0.2
         )
     }
@@ -596,7 +596,7 @@ private struct DailyForecastRow: View {
     let day: DailyForecastItem
     let overallMinTemperature: Double
     let overallMaxTemperature: Double
-    let prefersExtraContrast: Bool
+    let shouldBoostReadability: Bool
 
     private var isToday: Bool {
         day.dayLabel == String(localized: "Today")
@@ -654,12 +654,12 @@ private struct DailyForecastRow: View {
         .padding(.vertical, 16)
         .overlay {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .stroke(.white.opacity(isToday ? 0.28 : (prefersExtraContrast ? 0.10 : 0)), lineWidth: 1)
+                .stroke(.white.opacity(isToday ? 0.28 : (shouldBoostReadability ? 0.10 : 0)), lineWidth: 1)
         }
         .glassCard(
             cornerRadius: HomeView.UI.secondaryCardCornerRadius,
-            prefersExtraContrast: prefersExtraContrast,
-            isBrightDaylightWeather: prefersExtraContrast
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability
         )
     }
 }
