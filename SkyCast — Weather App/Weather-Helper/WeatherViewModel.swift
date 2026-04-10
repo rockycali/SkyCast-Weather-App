@@ -7,6 +7,7 @@ import SwiftUI
 final class WeatherViewModel: ObservableObject {
     @Published var weather: WeatherData?
     @Published var isLoading = false
+    @Published var isRefreshing = false
     @Published var errorMessage: String?
     @Published var displayName = "Weather"
     @Published var currentSource: WeatherSource = .default
@@ -23,6 +24,8 @@ final class WeatherViewModel: ObservableObject {
     private var lastObservedLocation: CLLocation?
     private var currentLatitude: Double?
     private var currentLongitude: Double?
+    private var activeWeatherRequestKey: String?
+    private var weatherLoadTask: Task<Void, Never>?
     private let cache = WeatherCacheManager()
   
 
@@ -72,6 +75,59 @@ final class WeatherViewModel: ObservableObject {
         guard let today = weather.daily.first else { return false }
         let now = Date()
         return now < today.sunrise || now > today.sunset
+    }
+
+    private func applyCachedWeather(
+        _ cached: WeatherData,
+        latitude: Double,
+        longitude: Double,
+        markOffline: Bool = false
+    ) {
+        currentLatitude = latitude
+        currentLongitude = longitude
+        weather = cached
+        displayName = cached.locationName
+        errorMessage = nil
+        isOffline = markOffline
+    }
+
+    private func weatherRequestKey(latitude: Double, longitude: Double) -> String {
+        let roundedLatitude = (latitude * 10_000).rounded() / 10_000
+        let roundedLongitude = (longitude * 10_000).rounded() / 10_000
+
+        let sourceKey: String
+        switch currentSource {
+        case .myLocation:
+            sourceKey = "myLocation"
+        case .city:
+            sourceKey = "city"
+        case .default:
+            sourceKey = "default"
+        }
+
+        return "\(sourceKey)-\(roundedLatitude)-\(roundedLongitude)"
+    }
+
+    private func shouldSkipWeatherRequest(for requestKey: String) -> Bool {
+        guard let activeWeatherRequestKey else { return false }
+        return activeWeatherRequestKey == requestKey
+    }
+
+    private func isShowingWeather(near latitude: Double, longitude: Double, threshold: Double = 0.001) -> Bool {
+        guard let currentLatitude, let currentLongitude else { return false }
+        return abs(currentLatitude - latitude) < threshold && abs(currentLongitude - longitude) < threshold
+    }
+
+    private func startWeatherLoad(latitude: Double, longitude: Double, name: String) {
+        weatherLoadTask?.cancel()
+        weatherLoadTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            await self.loadWeather(
+                latitude: latitude,
+                longitude: longitude,
+                name: name
+            )
+        }
     }
 
     private func isCancellationError(_ error: Error) -> Bool {
@@ -124,7 +180,7 @@ final class WeatherViewModel: ObservableObject {
 
             if let location = locationManager.lastLocation {
                 let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
-                await loadWeather(
+                startWeatherLoad(
                     latitude: location.coordinate.latitude,
                     longitude: location.coordinate.longitude,
                     name: name
@@ -139,11 +195,11 @@ final class WeatherViewModel: ObservableObject {
 
         case .denied, .restricted:
             currentSource = .default
-            await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
+            startWeatherLoad(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
 
         @unknown default:
             currentSource = .default
-            await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
+            startWeatherLoad(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
         }
     }
 
@@ -151,7 +207,7 @@ final class WeatherViewModel: ObservableObject {
         guard !hasLoadedDefault else { return }
         hasLoadedDefault = true
         currentSource = .default
-        await loadWeather(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
+        startWeatherLoad(latitude: 47.3769, longitude: 8.5417, name: "Zurich, Switzerland")
     }
 
     func refreshCurrentSource() async {
@@ -159,7 +215,7 @@ final class WeatherViewModel: ObservableObject {
         case .myLocation:
             if let location = locationManager.lastLocation {
                 let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
-                await loadWeather(
+                startWeatherLoad(
                     latitude: location.coordinate.latitude,
                     longitude: location.coordinate.longitude,
                     name: name
@@ -172,7 +228,7 @@ final class WeatherViewModel: ObservableObject {
             await searchCity(named: name)
 
         case .default:
-            await loadWeather(
+            startWeatherLoad(
                 latitude: 47.3769,
                 longitude: 8.5417,
                 name: "Zurich, Switzerland"
@@ -192,7 +248,7 @@ final class WeatherViewModel: ObservableObject {
                 throw WeatherError.noResults
             }
             currentSource = .city(first.displayName)
-            await loadWeather(
+            startWeatherLoad(
                 latitude: first.latitude,
                 longitude: first.longitude,
                 name: first.displayName
@@ -238,7 +294,7 @@ final class WeatherViewModel: ObservableObject {
         currentSource = .city(result.displayName)
         citySearchResults = []
 
-        await loadWeather(
+        startWeatherLoad(
             latitude: result.latitude,
             longitude: result.longitude,
             name: result.displayName
@@ -251,14 +307,26 @@ final class WeatherViewModel: ObservableObject {
 
         if let location = locationManager.lastLocation {
             let name = locationManager.cityName.isEmpty ? "My Location" : locationManager.cityName
-            lastObservedLocation = location
-            Task {
-                await loadWeather(
-                    latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude,
-                    name: name
-                )
+            let isNearDuplicateLocation: Bool
+            if let previousLocation = lastObservedLocation {
+                isNearDuplicateLocation = previousLocation.distance(from: location) < 50
+            } else {
+                isNearDuplicateLocation = false
             }
+
+            if isNearDuplicateLocation,
+               isShowingWeather(near: location.coordinate.latitude, longitude: location.coordinate.longitude) {
+                print("🌦 skipping requestLocation weather reload for near-duplicate location already on screen")
+                displayName = name
+                return
+            }
+
+            lastObservedLocation = location
+            startWeatherLoad(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude,
+                name: name
+            )
         } else {
             locationManager.requestLocation()
         }
@@ -266,9 +334,44 @@ final class WeatherViewModel: ObservableObject {
 
     func loadWeather(latitude: Double, longitude: Double, name: String) async {
         print("🌦 loadWeather called:", latitude, longitude, name)
+        if Task.isCancelled {
+            print("⚠️ skipping cancelled weather load before start")
+            return
+        }
+        let requestKey = weatherRequestKey(latitude: latitude, longitude: longitude)
+        if shouldSkipWeatherRequest(for: requestKey) {
+            print("🌦 skipping duplicate weather request:", requestKey)
+            return
+        }
+        
+        activeWeatherRequestKey = requestKey
         errorMessage = nil
-        isLoading = true
-        defer { isLoading = false }
+
+        let cachedWeather = cache.load(latitude: latitude, longitude: longitude)
+        let hasVisibleWeather = weather != nil
+
+        if let cachedWeather {
+            applyCachedWeather(
+                cachedWeather,
+                latitude: latitude,
+                longitude: longitude,
+                markOffline: false
+            )
+        }
+
+        if cachedWeather != nil || hasVisibleWeather {
+            isRefreshing = true
+        } else {
+            isLoading = true
+        }
+
+        defer {
+            isLoading = false
+            isRefreshing = false
+            if activeWeatherRequestKey == requestKey {
+                activeWeatherRequestKey = nil
+            }
+        }
 
         do {
             let requestDisplayName: String
@@ -283,6 +386,10 @@ final class WeatherViewModel: ObservableObject {
                 longitude: longitude,
                 locationName: requestDisplayName
             )
+            if Task.isCancelled {
+                print("⚠️ weather load cancelled before applying result")
+                return
+            }
 
             let finalDisplayName: String
             if case .myLocation = currentSource, !locationManager.cityName.isEmpty {
@@ -298,22 +405,30 @@ final class WeatherViewModel: ObservableObject {
 
             cache.save(result, latitude: latitude, longitude: longitude)
             isOffline = false
+            errorMessage = nil
 
         } catch {
             if isCancellationError(error) {
                 print("⚠️ load cancelled")
                 return
             }
+            if Task.isCancelled {
+                print("⚠️ load cancelled by task state")
+                return
+            }
 
             print("API failed, trying cache...")
 
-            if let cached = cache.load(latitude: latitude, longitude: longitude) {
-                currentLatitude = latitude
-                currentLongitude = longitude
-                weather = cached
-                displayName = cached.locationName
-                errorMessage = nil
+            if let cachedWeather {
+                applyCachedWeather(
+                    cachedWeather,
+                    latitude: latitude,
+                    longitude: longitude,
+                    markOffline: true
+                )
+            } else if weather != nil, isLikelyNetworkFailure(error) {
                 isOffline = true
+                errorMessage = nil
             } else {
                 errorMessage = error.localizedDescription
             }
@@ -391,7 +506,7 @@ final class WeatherViewModel: ObservableObject {
             fullName = "\(favorite.name), \(favorite.country)"
         }
 
-        await loadWeather(
+        startWeatherLoad(
             latitude: favorite.latitude,
             longitude: favorite.longitude,
             name: fullName
@@ -474,15 +589,16 @@ final class WeatherViewModel: ObservableObject {
                     }
 
                     if let previousLocation = self.lastObservedLocation,
-                       previousLocation.distance(from: location) < 50 {
-                        print("🌦 ignored near-duplicate location update")
+                       previousLocation.distance(from: location) < 50,
+                       self.isShowingWeather(near: location.coordinate.latitude, longitude: location.coordinate.longitude) {
+                        print("🌦 ignored near-duplicate location update already matching visible weather")
                         return
                     }
 
                     self.lastObservedLocation = location
 
                     print("🌦 observeLocation received:", location.coordinate.latitude, location.coordinate.longitude)
-                    await self.loadWeather(
+                    self.startWeatherLoad(
                         latitude: location.coordinate.latitude,
                         longitude: location.coordinate.longitude,
                         name: "My Location"
@@ -499,6 +615,7 @@ final class WeatherViewModel: ObservableObject {
                     guard let self else { return }
                     guard case .myLocation = self.currentSource else { return }
                     print("🌦 cityName updated:", cityName)
+                    if self.isRefreshing || self.isLoading { return }
                     self.displayName = cityName
                 }
             }
