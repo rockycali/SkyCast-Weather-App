@@ -119,6 +119,12 @@ final class WeatherViewModel: ObservableObject {
     }
 
     private func startWeatherLoad(latitude: Double, longitude: Double, name: String) {
+        // Prevent refresh spam
+        if isRefreshing {
+            print("🌦 skipping startWeatherLoad - already refreshing")
+            return
+        }
+
         weatherLoadTask?.cancel()
         weatherLoadTask = Task { @MainActor [weak self] in
             guard let self else { return }
@@ -341,6 +347,15 @@ final class WeatherViewModel: ObservableObject {
         let requestKey = weatherRequestKey(latitude: latitude, longitude: longitude)
         if shouldSkipWeatherRequest(for: requestKey) {
             print("🌦 skipping duplicate weather request:", requestKey)
+            return
+        }
+        
+        // Prevent reload if only the display name changed (same coordinates, My Location only)
+        if case .myLocation = currentSource,
+           isShowingWeather(near: latitude, longitude: longitude),
+           displayName != name {
+            print("🌦 skipping reload for same coordinates (My Location), only name changed")
+            displayName = name
             return
         }
         
