@@ -161,6 +161,22 @@
         }
       }
     },
+    "Available Soon" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demnächst verfügbar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible prochainement"
+          }
+        }
+      }
+    },
     "Built With" : {
       "localizations" : {
         "de" : {
@@ -221,28 +237,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ClimaFlow"
-          }
-        }
-      }
-    },
-    "Coming Soon" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bald verfügbar"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Available Soon"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bientôt disponible"
           }
         }
       }
@@ -332,13 +326,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gefühlte Temperatur"
+            "value" : "Gefühlt"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Température ressentie"
+            "value" : "Ressenti"
           }
         }
       }
@@ -717,22 +711,6 @@
         }
       }
     },
-    "Offline mode - showing last data" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Offline-Modus – letzte Daten werden angezeigt"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mode hors ligne – affichage des dernières données"
-          }
-        }
-      }
-    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -882,13 +860,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Regen %"
+            "value" : "Regenchance"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pluie %"
+            "value" : "Risque de pluie"
           }
         }
       }
@@ -985,6 +963,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recherche en cours…"
+          }
+        }
+      }
+    },
+    "Service temporarily unavailable — showing last updated data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dienst vorübergehend nicht verfügbar — zuletzt aktualisierte Daten werden angezeigt"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service temporairement indisponible — affichage des dernières données mises à jour"
           }
         }
       }

@@ -19,6 +19,20 @@ struct SettingsView: View {
         static let valueNightOpacity: CGFloat = 0.72
         static let dividerOpacity: CGFloat = 0.10
     }
+    private enum L10n {
+        static let settings: LocalizedStringKey = "Settings"
+        static let customizeAppPreferences: LocalizedStringKey = "Customize app preferences and information."
+        static let app: LocalizedStringKey = "App"
+        static let appName: LocalizedStringKey = "App Name"
+        static let version: LocalizedStringKey = "Version"
+        static let preferences: LocalizedStringKey = "Preferences"
+        static let temperatureUnits: LocalizedStringKey = "Temperature Units"
+        static let language: LocalizedStringKey = "Language"
+        static let availableSoon: LocalizedStringKey = "Available Soon"
+        static let about: LocalizedStringKey = "About"
+        static let builtWith: LocalizedStringKey = "Built With"
+        static let weatherAPI: LocalizedStringKey = "Weather API"
+    }
 
     @ObservedObject var viewModel: WeatherViewModel
     @AppStorage("temperatureUnit") private var temperatureUnit = "C"
@@ -33,25 +47,25 @@ struct SettingsView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: UI.pageSpacing) {
                         VStack(alignment: .leading, spacing: UI.headerSpacing) {
-                            Text("Settings")
+                            Text(L10n.settings)
                                 .font(.system(size: 34, weight: .bold))
                                 .foregroundStyle(.white.opacity(viewModel.isNight ? 0.96 : 1.0))
 
-                            Text("Customize app preferences and information.")
+                            Text(L10n.customizeAppPreferences)
                                 .font(.subheadline)
                                 .foregroundStyle(.white.opacity(viewModel.isNight ? 0.86 : UI.subtitleOpacity))
                         }
 
                         settingsCard(
-                            title: "App",
+                            title: L10n.app,
                             rows: [
-                                SettingRowData(title: "App Name", value: "ClimaFlow", systemImage: "app.fill"),
-                                SettingRowData(title: "Version", value: "1.0", systemImage: "info.circle.fill")
+                                SettingRowData(title: L10n.appName, value: "ClimaFlow", systemImage: "app.fill"),
+                                SettingRowData(title: L10n.version, value: "1.0", systemImage: "info.circle.fill")
                             ]
                         )
 
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Preferences")
+                            Text(L10n.preferences)
                                 .font(.title3.weight(.semibold))
                                 .foregroundStyle(.white.opacity(viewModel.isNight ? 0.82 : UI.sectionTitleOpacity))
                                 .padding(.leading, UI.sectionTitleLeadingInset)
@@ -63,13 +77,13 @@ struct SettingsView: View {
                                         .font(.title3)
                                         .frame(width: 30)
 
-                                    Text("Temperature Units")
+                                    Text(L10n.temperatureUnits)
                                         .foregroundStyle(.white.opacity(viewModel.isNight ? 0.92 : 1.0))
                                         .font(.headline)
 
                                     Spacer()
 
-                                    Picker("Temperature Units", selection: $temperatureUnit) {
+                                    Picker(L10n.temperatureUnits, selection: $temperatureUnit) {
                                         Text("°C").tag("C")
                                         Text("°F").tag("F")
                                     }
@@ -85,21 +99,26 @@ struct SettingsView: View {
                                     .padding(.leading, 56)
 
                                 settingsRow(
-                                    title: "Language",
-                                    value: "Coming Soon",
+                                    title: L10n.language,
+                                    value: L10n.availableSoon,
                                     systemImage: "globe"
                                 )
                                 .opacity(0.85)
                             }
                             .padding(.vertical, 6)
-                            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: settingsCardContrastOpacity)
+                            .glassCard(
+                                cornerRadius: UI.cardCornerRadius,
+                                extraDarkTint: settingsCardContrastOpacity,
+                                prefersExtraContrast: isBrightDaylightWeather,
+                                isBrightDaylightWeather: isBrightDaylightWeather
+                            )
                         }
 
                         settingsCard(
-                            title: "About",
+                            title: L10n.about,
                             rows: [
-                                SettingRowData(title: "Built With", value: "SwiftUI + MVVM", systemImage: "hammer.fill"),
-                                SettingRowData(title: "Weather API", value: "Open-Meteo", systemImage: "cloud.sun.fill")
+                                SettingRowData(title: L10n.builtWith, value: "SwiftUI + MVVM", systemImage: "hammer.fill"),
+                                SettingRowData(title: L10n.weatherAPI, value: "Open-Meteo", systemImage: "cloud.sun.fill")
                             ]
                         )
                     }
@@ -213,7 +232,12 @@ struct SettingsView: View {
                 }
             }
             .padding(.vertical, 6)
-            .glassCard(cornerRadius: UI.cardCornerRadius, extraDarkTint: settingsCardContrastOpacity)
+            .glassCard(
+                cornerRadius: UI.cardCornerRadius,
+                extraDarkTint: settingsCardContrastOpacity,
+                prefersExtraContrast: isBrightDaylightWeather,
+                isBrightDaylightWeather: isBrightDaylightWeather
+            )
         }
     }
 

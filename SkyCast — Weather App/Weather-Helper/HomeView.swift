@@ -9,6 +9,21 @@ struct HomeView: View {
     @State private var isHeroCardExpanded = false
     private let heroCardScrollID = "heroWeatherCard"
 
+    private enum L10n {
+        static let serviceTemporarilyUnavailableShowingLastUpdatedData: LocalizedStringKey = "Service temporarily unavailable — showing last updated data"
+        static let appName: LocalizedStringKey = "ClimaFlow"
+        static let ok: LocalizedStringKey = "OK"
+        static let currentWeather: LocalizedStringKey = "Current Weather"
+        static let feelsLike: LocalizedStringKey = "Feels Like"
+        static let wind: LocalizedStringKey = "Wind"
+        static let humidity: LocalizedStringKey = "Humidity"
+        static let rain: LocalizedStringKey = "Rain"
+        static let sunriseAndSunset: LocalizedStringKey = "Sunrise & Sunset"
+        static let hourlyForecast: LocalizedStringKey = "Hourly Forecast"
+        static let fiveDayForecast: LocalizedStringKey = "5-Day Forecast"
+        static let loadingWeather: LocalizedStringKey = "Loading weather..."
+    }
+
     enum UI {
         static let pageSpacing: CGFloat = 16
         static let sectionSpacing: CGFloat = 14
@@ -64,7 +79,7 @@ struct HomeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: UI.pageSpacing) {
                             if viewModel.isOffline {
-                                Text("Offline mode - showing last data")
+                                Text(L10n.serviceTemporarilyUnavailableShowingLastUpdatedData)
                                     .foregroundColor(.orange)
                                     .font(.caption)
                             }
@@ -121,8 +136,8 @@ struct HomeView: View {
             .task {
                 await viewModel.loadInitialWeatherIfNeeded()
             }
-            .alert("ClimaFlow", isPresented: $showErrorAlert) {
-                Button("OK", role: .cancel) {
+            .alert(L10n.appName, isPresented: $showErrorAlert) {
+                Button(L10n.ok, role: .cancel) {
                     viewModel.errorMessage = nil
                 }
             } message: {
@@ -326,7 +341,7 @@ struct HomeView: View {
 
     private var headerSection: some View {
         VStack(spacing: 6) {
-            Text("Current Weather")
+            Text(L10n.currentWeather)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.white.opacity(UI.subtleTextOpacity))
 
@@ -378,10 +393,30 @@ struct HomeView: View {
         Group {
             if let weather = viewModel.weather, !isHeroCardExpanded {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: UI.gridSpacing) {
-                    WeatherMetricCard(title: "Feels Like", value: weather.current.apparentTemperatureText, systemImage: "thermometer.medium")
-                    WeatherMetricCard(title: "Wind", value: weather.current.windSpeedText, systemImage: "wind")
-                    WeatherMetricCard(title: "Humidity", value: weather.current.humidityText, systemImage: "drop.fill")
-                    WeatherMetricCard(title: "Rain", value: weather.current.precipitationChanceText, systemImage: "cloud.rain.fill")
+                    WeatherMetricCard(
+                        title: L10n.feelsLike,
+                        value: weather.current.apparentTemperatureText,
+                        systemImage: "thermometer.medium",
+                        shouldBoostReadability: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: L10n.wind,
+                        value: weather.current.windSpeedText,
+                        systemImage: "wind",
+                        shouldBoostReadability: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: L10n.humidity,
+                        value: weather.current.humidityText,
+                        systemImage: "drop.fill",
+                        shouldBoostReadability: isBrightDaylightWeather
+                    )
+                    WeatherMetricCard(
+                        title: L10n.rain,
+                        value: weather.current.precipitationChanceText,
+                        systemImage: "cloud.rain.fill",
+                        shouldBoostReadability: isBrightDaylightWeather
+                    )
                 }
                 .padding(.bottom, 20)
             }
@@ -392,7 +427,7 @@ struct HomeView: View {
         Group {
             if let today = viewModel.dailyForecast.first {
                 VStack(alignment: .leading, spacing: UI.sectionSpacing) {
-                    sectionTitle("Sunrise & Sunset")
+                    sectionTitle(L10n.sunriseAndSunset)
 
                     SunCycleCard(
                         sunrise: today.sunrise,
@@ -409,12 +444,12 @@ struct HomeView: View {
         Group {
             if !viewModel.hourlyForecast.isEmpty {
                 VStack(alignment: .leading, spacing: UI.sectionSpacing) {
-                    sectionTitle("Hourly Forecast")
+                    sectionTitle(L10n.hourlyForecast)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: UI.hourlyCardSpacing) {
                             ForEach(viewModel.hourlyForecast) { hour in
-                                HourlyForecastCard(hour: hour, prefersExtraContrast: isBrightDaylightWeather)
+                                HourlyForecastCard(hour: hour, shouldBoostReadability: isBrightDaylightWeather)
                             }
                         }
                         .padding(.leading, UI.hourlySectionSideInset)
@@ -436,7 +471,7 @@ struct HomeView: View {
                 let overallMaxTemperature = dailyTemperatureValues.max() ?? 0
 
                 VStack(alignment: .leading, spacing: UI.sectionSpacing) {
-                    sectionTitle("5-Day Forecast")
+                    sectionTitle(L10n.fiveDayForecast)
 
                     VStack(spacing: UI.rowSpacing) {
                         ForEach(viewModel.dailyForecast) { day in
@@ -444,7 +479,7 @@ struct HomeView: View {
                                 day: day,
                                 overallMinTemperature: overallMinTemperature,
                                 overallMaxTemperature: overallMaxTemperature,
-                                prefersExtraContrast: isBrightDaylightWeather
+                                shouldBoostReadability: isBrightDaylightWeather
                             )
                         }
                     }
@@ -460,13 +495,17 @@ struct HomeView: View {
                 .tint(.white)
                 .scaleEffect(1.2)
 
-            Text("Loading weather...")
+            Text(L10n.loadingWeather)
                 .foregroundStyle(.white)
                 .font(.headline)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .glassCard(cornerRadius: UI.heroCardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.heroCardCornerRadius,
+            prefersExtraContrast: isBrightDaylightWeather,
+            isBrightDaylightWeather: isBrightDaylightWeather
+        )
     }
 
     private func sectionTitle(_ title: LocalizedStringKey) -> some View {
@@ -486,6 +525,7 @@ private struct WeatherMetricCard: View {
     let title: LocalizedStringKey
     let value: String
     let systemImage: String
+    let shouldBoostReadability: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -510,17 +550,17 @@ private struct WeatherMetricCard: View {
         }
         .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
         .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(0.06))
-        }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.cardCornerRadius,
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability
+        )
     }
 }
 
 private struct HourlyForecastCard: View {
     let hour: HourlyForecastItem
-    let prefersExtraContrast: Bool
+    let shouldBoostReadability: Bool
 
     private var iconSize: CGFloat {
         if hour.symbolName.contains("sun.max") || hour.symbolName.contains("cloud.sun") {
@@ -556,21 +596,21 @@ private struct HourlyForecastCard: View {
         }
         .frame(width: HomeView.UI.hourlyCardWidth)
         .padding(.vertical, 16)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.cardCornerRadius, style: .continuous)
-                .fill(Color.black.opacity(prefersExtraContrast ? 0.06 : 0))
-        }
-        .glassCard(cornerRadius: HomeView.UI.cardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.cardCornerRadius,
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability,
+            shadowOpacityMultiplier: 0.2
+        )
     }
 }
 
 private struct DailyForecastRow: View {
-    @Environment(\.colorScheme) private var colorScheme
 
     let day: DailyForecastItem
     let overallMinTemperature: Double
     let overallMaxTemperature: Double
-    let prefersExtraContrast: Bool
+    let shouldBoostReadability: Bool
 
     private var isToday: Bool {
         day.dayLabel == String(localized: "Today")
@@ -626,19 +666,15 @@ private struct DailyForecastRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-        .background {
-            RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .fill(
-                    isToday
-                    ? Color.white.opacity(colorScheme == .dark ? 0.12 : 0.16)
-                    : Color.black.opacity(prefersExtraContrast ? 0.06 : 0)
-                )
-        }
         .overlay {
             RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                .stroke(.white.opacity(isToday ? 0.28 : (prefersExtraContrast ? 0.10 : 0)), lineWidth: 1)
+                .stroke(.white.opacity(isToday ? 0.28 : (shouldBoostReadability ? 0.10 : 0)), lineWidth: 1)
         }
-        .glassCard(cornerRadius: HomeView.UI.secondaryCardCornerRadius)
+        .glassCard(
+            cornerRadius: HomeView.UI.secondaryCardCornerRadius,
+            prefersExtraContrast: shouldBoostReadability,
+            isBrightDaylightWeather: shouldBoostReadability
+        )
     }
 }
 
