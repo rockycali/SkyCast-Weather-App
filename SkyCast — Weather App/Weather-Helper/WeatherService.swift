@@ -9,8 +9,16 @@ final class WeatherService: WeatherServiceProtocol {
     private let session: URLSession
     private let decoder: JSONDecoder
 
-    init(session: URLSession = .shared) {
-        self.session = session
+    init(session: URLSession? = nil) {
+        if let session {
+            self.session = session
+        } else {
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 8
+            configuration.timeoutIntervalForResource = 12
+            self.session = URLSession(configuration: configuration)
+        }
+
         self.decoder = JSONDecoder()
     }
 
@@ -38,6 +46,49 @@ final class WeatherService: WeatherServiceProtocol {
     }
 
     func fetchWeather(latitude: Double, longitude: Double, locationName: String) async throws -> WeatherData {
+        try await fetchWeather(
+            latitude: latitude,
+            longitude: longitude,
+            locationName: locationName,
+            retryCount: 1
+        )
+    }
+
+    private func fetchWeather(
+        latitude: Double,
+        longitude: Double,
+        locationName: String,
+        retryCount: Int
+    ) async throws -> WeatherData {
+        do {
+            return try await performWeatherFetch(
+                latitude: latitude,
+                longitude: longitude,
+                locationName: locationName
+            )
+        } catch {
+            let mappedError = WeatherError.from(error)
+
+            if retryCount > 0 {
+                switch mappedError {
+                case .timeout, .connectionLost:
+                    try await Task.sleep(nanoseconds: 700_000_000)
+                    return try await fetchWeather(
+                        latitude: latitude,
+                        longitude: longitude,
+                        locationName: locationName,
+                        retryCount: retryCount - 1
+                    )
+                default:
+                    break
+                }
+            }
+
+            throw mappedError
+        }
+    }
+
+    private func performWeatherFetch(latitude: Double, longitude: Double, locationName: String) async throws -> WeatherData {
         guard var components = URLComponents(string: "https://api.open-meteo.com/v1/forecast") else {
             throw WeatherError.invalidURL
         }
@@ -176,7 +227,8 @@ final class WeatherService: WeatherServiceProtocol {
         guard let url = components.url else { return nil }
 
         do {
-            let (data, _) = try await session.data(from: url)
+            let (data, response) = try await session.data(from: url)
+            try validate(response: response)
             let result = try decoder.decode(AirQualityResponse.self, from: data)
             return result.current.usAqi
         } catch {
@@ -213,6 +265,11 @@ enum WeatherError: LocalizedError {
     case serverError(Int)
     case noResults
     case locationUnavailable
+    case timeout
+    case networkUnavailable
+    case connectionLost
+    case decodingFailed
+    case unknown
 
     var errorDescription: String? {
         switch self {
@@ -226,6 +283,41 @@ enum WeatherError: LocalizedError {
             return "No matching city was found. Try another search."
         case .locationUnavailable:
             return "Your current location is not available yet."
+        case .timeout:
+            return "The weather service took too long to respond."
+        case .networkUnavailable:
+            return "You appear to be offline."
+        case .connectionLost:
+            return "The network connection was lost."
+        case .decodingFailed:
+            return "Weather data could not be read."
+        case .unknown:
+            return "Something went wrong while loading weather data."
         }
+    }
+
+    static func from(_ error: Error) -> WeatherError {
+        if let weatherError = error as? WeatherError {
+            return weatherError
+        }
+
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .timedOut:
+                return .timeout
+            case .notConnectedToInternet:
+                return .networkUnavailable
+            case .networkConnectionLost:
+                return .connectionLost
+            default:
+                return .unknown
+            }
+        }
+
+        if error is DecodingError {
+            return .decodingFailed
+        }
+
+        return .unknown
     }
 }
