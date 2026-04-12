@@ -204,11 +204,11 @@ private struct HeroWeatherDetailItem: View {
     }
 
     private var labelOpacity: Double {
-        prefersExtraContrast ? 0.98 : 0.82
+        prefersExtraContrast ? 0.98 : 0.78
     }
 
     private var labelShadowOpacity: Double {
-        prefersExtraContrast ? 0.18 : 0.10
+        prefersExtraContrast ? 0.18 : 0.08
     }
 
     var body: some View {
