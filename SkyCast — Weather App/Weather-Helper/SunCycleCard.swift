@@ -46,6 +46,7 @@ struct SunCycleCard: View {
                 Label(String(localized: "Sunrise & Sunset"), systemImage: "sun.horizon.fill")
                     .font(.headline)
                     .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
                 Spacer()
             }
 
@@ -55,9 +56,11 @@ struct SunCycleCard: View {
                         Text(String(localized: "Sunrise"))
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.72))
+                            .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
                         Text(sunrise.formatted(date: .omitted, time: .shortened))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
                     }
 
                     Spacer()
@@ -66,9 +69,11 @@ struct SunCycleCard: View {
                         Text(String(localized: "Sunset"))
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.72))
+                            .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
                         Text(sunset.formatted(date: .omitted, time: .shortened))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
                     }
                 }
 
@@ -93,6 +98,7 @@ struct SunCycleCard: View {
                 Text(timeUntilNextEventText)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.white.opacity(0.85))
+                    .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)
             }
         }
         .padding(18)
@@ -102,7 +108,7 @@ struct SunCycleCard: View {
                 .fill(.ultraThinMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
-                        .fill(isNight ? Color.white.opacity(0.035) : Color.white.opacity(0.045))
+                        .fill(isNight ? Color.white.opacity(0.035) : Color.black.opacity(0.05))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: HomeView.UI.secondaryCardCornerRadius, style: .continuous)
