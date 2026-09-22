@@ -9,12 +9,15 @@ final class LocationManager: NSObject, ObservableObject {
 
     private let manager = CLLocationManager()
     private let geocoder = CLGeocoder()
+    private var isRequestingLocation = false
+    private var locationRetryCount = 0
+    private let maxLocationRetries = 2
 
     override init() {
         self.authorizationStatus = manager.authorizationStatus
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         manager.distanceFilter = kCLDistanceFilterNone
     }
 
@@ -29,8 +32,13 @@ final class LocationManager: NSObject, ObservableObject {
             manager.requestWhenInUseAuthorization()
 
         case .authorizedWhenInUse, .authorizedAlways:
+            guard !isRequestingLocation else {
+                print("📍 location request already in progress — skipping duplicate")
+                return
+            }
             print("📍 requesting actual location")
             cityName = "My Location"
+            isRequestingLocation = true
             manager.requestLocation()
 
         case .denied, .restricted:
@@ -55,7 +63,12 @@ extension LocationManager: CLLocationManagerDelegate {
             DispatchQueue.main.async {
                 self.errorMessage = nil
             }
+            guard !isRequestingLocation else {
+                print("📍 location request already in progress after authorization — skipping duplicate")
+                return
+            }
             print("📍 auto-requesting location after permission granted")
+            isRequestingLocation = true
             manager.requestLocation()
 
         case .restricted:
@@ -80,6 +93,9 @@ extension LocationManager: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
+        isRequestingLocation = false
+        locationRetryCount = 0
+        manager.stopUpdatingLocation()
         print("📍 didUpdateLocations:", location.coordinate.latitude, location.coordinate.longitude)
 
         DispatchQueue.main.async {
@@ -102,10 +118,37 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // While offline, Core Location often fails with a network error; don't surface it as a blocking alert.
-        if let clError = error as? CLError, clError.code == .network {
-            print("📍 location failed (offline / network):", error.localizedDescription)
-            return
+        isRequestingLocation = false
+
+        if let clError = error as? CLError {
+            switch clError.code {
+            case .locationUnknown:
+                guard locationRetryCount < maxLocationRetries else {
+                    print("📍 location temporarily unavailable — retry limit reached")
+                    return
+                }
+
+                locationRetryCount += 1
+                let retryAttempt = locationRetryCount
+                print("📍 location temporarily unavailable — retrying with continuous updates (\(retryAttempt)/\(maxLocationRetries))")
+
+                Task { @MainActor [weak self] in
+                    try? await Task.sleep(for: .seconds(1))
+                    guard let self, !self.isRequestingLocation else { return }
+                    self.isRequestingLocation = true
+                    self.manager.startUpdatingLocation()
+                }
+                return
+
+            case .network:
+                // While offline, Core Location can fail with a network error. Weather caching
+                // handles the offline experience, so don't surface this as a blocking alert.
+                print("📍 location failed (offline / network):", error.localizedDescription)
+                return
+
+            default:
+                break
+            }
         }
 
         DispatchQueue.main.async {
